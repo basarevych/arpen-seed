@@ -37,11 +37,12 @@ class StaticFiles {
 
     /**
      * Register middleware
+     * @param {string} name                         Server name
      * @return {Promise}
      */
-    register() {
+    register(name) {
         for (let _module of this._config.modules) {
-            for (let dir of _module.static) {
+            for (let dir of _module.static || []) {
                 let filename = dir[0] == '/' ?
                     dir :
                     path.join(this._config.base_path, 'modules', _module.name, dir);

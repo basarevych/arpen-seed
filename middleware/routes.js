@@ -35,12 +35,16 @@ class Routes {
 
     /**
      * Register middleware
+     * @param {string} name                         Server name
      * @return {Promise}
      */
-    register() {
+    register(name) {
         return Array.from(this._modules).reduce(
             (prev, [ curName, curModule ]) => {
                 return prev.then(() => {
+                    if (!curModule.routes)
+                        return;
+
                     let result = curModule.routes(this._express);
                     if (result === null || typeof result != 'object' || typeof result.then != 'function')
                         throw new Error(`Module '${curName}' routes() did not return a Promise`);

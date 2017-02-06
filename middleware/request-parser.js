@@ -37,14 +37,15 @@ class RequestParser {
 
     /**
      * Register middleware
+     * @param {string} name                         Server name
      * @return {Promise}
      */
-    register() {
+    register(name) {
         this._express.use(bodyParser.json({
-            limit: this._config.get('web_server.options.body_limit'),
+            limit: this._config.get(`servers.${name}.options.body_limit`),
         }));
         this._express.use(bodyParser.urlencoded({
-            limit: this._config.get('web_server.options.body_limit'),
+            limit: this._config.get(`servers.${name}.options.body_limit`),
             extended: false,
         }));
 

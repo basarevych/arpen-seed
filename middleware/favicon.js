@@ -38,11 +38,12 @@ class Favicon {
 
     /**
      * Register middleware
+     * @param {string} name                         Server name
      * @return {Promise}
      */
-    register() {
+    register(name) {
         for (let _module of this._config.modules) {
-            for (let dir of _module.static) {
+            for (let dir of _module.static || []) {
                 let filename = path.join(
                     dir[0] == '/' ?
                         dir :

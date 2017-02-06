@@ -39,12 +39,13 @@ class RequestLogger {
 
     /**
      * Register middleware
+     * @param {string} name                         Server name
      * @return {Promise}
      */
-    register() {
+    register(name) {
         this._express.use(morgan('dev'));
 
-        let logStream = RotatingFileStream(this._app.name + '-access.log', this._config.get(`servers.${this._app.name}.access_log`));
+        let logStream = RotatingFileStream(name + '-access.log', this._config.get(`servers.${name}.access_log`));
         this._express.use(morgan('combined', { stream: logStream }));
 
         return Promise.resolve();

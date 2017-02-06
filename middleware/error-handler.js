@@ -40,9 +40,10 @@ class ErrorHandler {
 
     /**
      * Register middleware
+     * @param {string} name                         Server name
      * @return {Promise}
      */
-    register() {
+    register(name) {
         this._express.use((req, res, next) => {
             next(this._error.newNotFound());
         });
