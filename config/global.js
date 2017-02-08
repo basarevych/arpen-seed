@@ -11,5 +11,7 @@ module.exports = {
         '!src/services',
         'subscribers',
         'middleware',
+        'models',
+        'repositories',
     ],
 };

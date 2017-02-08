@@ -11,9 +11,11 @@ class Index {
     /**
      * Create the module
      * @param {App} app             The application
+     * @param {object} config       Configuration
      */
-    constructor(app) {
+    constructor(app, config) {
         this._app = app;
+        this._config = config;
     }
 
     /**
@@ -29,7 +31,7 @@ class Index {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app' ];
+        return [ 'app', 'config' ];
     }
 
     /**
@@ -41,11 +43,15 @@ class Index {
     }
 
     /**
-     * Register the routes
-     * @param {object} express              Express app
+     * Register with the server
+     * @param {string} name                     Server name as in config
      * @return {Promise}
      */
-    routes(express) {
+    register(name) {
+        if (this._config.get(`servers.${name}.class`) != 'servers.express')
+            return Promise.resolve();
+
+        let express = this._app.get('express');
         express.use('/', this._app.get('modules.index.routes.index').router);
         return Promise.resolve();
     }
