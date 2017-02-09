@@ -8,8 +8,7 @@ module.exports = {
     instance: 'server1',
 
     // Environment
-    //env: process.env.NODE_ENV || 'production',
-    env: process.env.NODE_ENV || 'development',
+    env: process.env.NODE_ENV || 'production',
 
     // Loaded modules
     modules: [
@@ -50,11 +49,13 @@ module.exports = {
                 'middleware.routes',
                 'middleware.errorHandler',              // should be the last one
             ],
-            subscribers: [ // PUBSUB subscribers, service names
-                'subscribers.invalidateCache',
-            ],
         },
     },
+
+    // PUBSUB
+    subscribers: [ // service names
+        'subscribers.invalidateCache',
+    ],
 
     // SMTP servers
     smtp: {
