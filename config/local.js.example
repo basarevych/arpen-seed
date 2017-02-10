@@ -36,6 +36,11 @@ module.exports = {
             options: {
                 body_limit: "500mb",
             },
+            error_log: {
+                path: path.join(__dirname, '..', 'logs'),
+                interval: '1d',
+                mode: 0o640,
+            },
             access_log: {
                 path: path.join(__dirname, '..', 'logs'),
                 interval: '1d',
