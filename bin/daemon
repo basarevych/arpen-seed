@@ -79,6 +79,9 @@ function restart() {
                     text: stripAnsi(buffer),
                 })
                 .then(function () {
+                    if (result.code === 200)
+                        process.exit(200);
+
                     setTimeout(() => { restart(); }, 1000);
                 });
         })
