@@ -46,12 +46,12 @@ require('daemon')();
 
 let fd = fs.openSync(pidFile, 'r+');
 try {
-    fs.flockSync(fd, 'ex');
+    fs.flockSync(fd, 'exnb');
 } catch (error) {
     process.exit(0);
 }
 
-let pidBuffer = Buffer(process.pid.toString());
+let pidBuffer = Buffer(process.pid.toString() + '\n');
 fs.ftruncateSync(fd);
 fs.writeSync(fd, pidBuffer, 0, pidBuffer.length, null);
 
@@ -73,7 +73,7 @@ function restart() {
                 if (result.code === 200)
                     process.exit(200);
 
-                setTimeout(() => { restart(); }, 1000);
+                return setTimeout(() => { restart(); }, 1000);
             }
 
             return emailer.send({
