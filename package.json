@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "arpen": "~0.0.1",
+    "arpen": "~0.0.4",
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
     "daemon": "~1.1.0",
