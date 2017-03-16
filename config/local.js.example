@@ -113,6 +113,7 @@ module.exports = {
 
     logs: {
         main: {
+            level: 'info',
             default: true,
             name: 'error.log',
             path: path.join(__dirname, '..', 'logs'),
@@ -120,6 +121,7 @@ module.exports = {
             mode: 0o640,
         },
         access_log: {
+            level: 'info',
             name: 'access.log',
             path: path.join(__dirname, '..', 'logs'),
             interval: '1d',
