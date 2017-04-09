@@ -2,7 +2,6 @@
  * User model
  * @module models/user
  */
-const bcrypt = require('bcrypt');
 const Model = require('./base');
 
 /**
@@ -36,25 +35,6 @@ class UserModel extends Model {
      */
     static get minPasswordLength() {
         return 6;
-    }
-
-    /**
-     * Create hash of a password
-     * @param {string} password     The password
-     * @return {string}             Returns the hash
-     */
-    static encryptPassword(password) {
-        let salt = bcrypt.genSaltSync(10);
-        return bcrypt.hashSync(password, salt);
-    }
-
-    /**
-     * Check if password matches current user
-     * @param {string} password     Password to check
-     * @return {boolean}
-     */
-    checkPassword(password) {
-        return bcrypt.compareSync(password, this.password);
     }
 
     /**

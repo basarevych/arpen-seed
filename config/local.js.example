@@ -46,11 +46,6 @@ module.exports = {
         },
     },
 
-    // PUBSUB
-    subscribers: [ // service names
-        'subscribers.invalidateCache',
-    ],
-
     // SMTP servers
     smtp: {
         main: {
@@ -97,7 +92,7 @@ module.exports = {
             level: 'error',
             to: 'debug@example.com',
         },
-        crush: {
+        crash: {
             enable: false,                  // email program crash or not
             to: 'debug@example.com',
         },

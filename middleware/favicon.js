@@ -45,7 +45,7 @@ class Favicon {
         for (let _module of this._config.modules) {
             for (let dir of _module.static || []) {
                 let filename = path.join(
-                    dir[0] == '/' ?
+                    dir[0] === '/' ?
                         dir :
                         path.join(this._config.base_path, 'modules', _module.name, dir),
                     'img',

@@ -1,6 +1,6 @@
 /**
- * Invalidate cache subscriber
- * @module subscribers/invalidate-cache
+ * Invalidate cache service
+ * @module services/invalidate-cache
  */
 
 class InvalidateCache {
@@ -11,17 +11,18 @@ class InvalidateCache {
      * @param {Logger} logger                   Logger service
      */
     constructor(pubsub, cacher, logger) {
+        this._started = false;
         this._pubsub = pubsub;
         this._cacher = cacher;
         this._logger = logger;
     }
 
     /**
-     * Service name is 'subscribers.invalidateCache'
+     * Service name is 'invalidateCache'
      * @type {string}
      */
     static get provides() {
-        return 'subscribers.invalidateCache';
+        return 'invalidateCache';
     }
 
     /**
@@ -33,10 +34,22 @@ class InvalidateCache {
     }
 
     /**
+     * This service is a singleton
+     * @type {string}
+     */
+    static get lifecycle() {
+        return 'singleton';
+    }
+
+    /**
      * Initialize the subscriber
      * @return {Promise}
      */
     register() {
+        if (this._started)
+            return Promise.resolve();
+
+        this._started = true;
         return this._pubsub.connect('InvalidateCache', 'postgres.main')
             .then(client => {
                 return client.subscribe("invalidate_cache", this.onMessage.bind(this));
@@ -48,7 +61,7 @@ class InvalidateCache {
      * @param {*} message                       Body of the message
      */
     onMessage(message) {
-        if (typeof message != 'object' || typeof message.key != 'string')
+        if (typeof message !== 'object' || typeof message.key !== 'string')
             this._logger.error('Received invalid cache invalidation message', message);
 
         this._cacher.unset('sql:' + message.key)

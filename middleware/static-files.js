@@ -43,7 +43,7 @@ class StaticFiles {
     register(name) {
         for (let _module of this._config.modules) {
             for (let dir of _module.static || []) {
-                let filename = dir[0] == '/' ?
+                let filename = dir[0] === '/' ?
                     dir :
                     path.join(this._config.base_path, 'modules', _module.name, dir);
                 this._express.use(express.static(filename));

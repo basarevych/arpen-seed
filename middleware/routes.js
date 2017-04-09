@@ -39,20 +39,15 @@ class Routes {
      * @return {Promise}
      */
     register(name) {
-        return Array.from(this._modules).reduce(
-            (prev, [ curName, curModule ]) => {
-                return prev.then(() => {
-                    if (!curModule.routes)
-                        return;
+        for (let [ moduleName, moduleInstance ] of this._modules) {
+            if (!Array.isArray(moduleInstance.routers))
+                continue;
 
-                    let result = curModule.routes(this._express);
-                    if (result === null || typeof result != 'object' || typeof result.then != 'function')
-                        throw new Error(`Module '${curName}' routes() did not return a Promise`);
-                    return result;
-                });
-            },
-            Promise.resolve()
-        );
+            for (let router of moduleInstance.routers)
+                this._express.use('/', router);
+        }
+
+        return Promise.resolve();
     }
 }
 

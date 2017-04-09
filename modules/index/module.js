@@ -10,12 +10,16 @@
 class Index {
     /**
      * Create the module
-     * @param {App} app             The application
-     * @param {object} config       Configuration
+     * @param {App} app                             The application
+     * @param {object} config                       Configuration
+     * @param {InvalidateCache} invalidateCache     InvalidateCache service
      */
-    constructor(app, config) {
+    constructor(app, config, invalidateCache) {
+        this.routers = [];
+
         this._app = app;
         this._config = config;
+        this._invalidateCache = invalidateCache;
     }
 
     /**
@@ -31,7 +35,7 @@ class Index {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config' ];
+        return [ 'app', 'config', 'invalidateCache' ];
     }
 
     /**
@@ -39,7 +43,7 @@ class Index {
      * @return {Promise}
      */
     bootstrap() {
-        return Promise.resolve();
+        return this._invalidateCache.register();
     }
 
     /**
@@ -48,11 +52,10 @@ class Index {
      * @return {Promise}
      */
     register(name) {
-        if (this._config.get(`servers.${name}.class`) != 'servers.express')
-            return Promise.resolve();
+        if (this._config.get(`servers.${name}.class`) === 'servers.express') {
+            this.routers.push(this._app.get('modules.index.routes.index').router);
+        }
 
-        let express = this._app.get('express');
-        express.use('/', this._app.get('modules.index.routes.index').router);
         return Promise.resolve();
     }
 }

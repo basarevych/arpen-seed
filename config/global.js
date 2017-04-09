@@ -9,7 +9,7 @@ module.exports = {
     autoload: [
         '!src/servers',
         '!src/services',
-        'subscribers',
+        'services',
         'middleware',
         'models',
         'repositories',
