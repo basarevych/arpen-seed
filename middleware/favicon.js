@@ -40,19 +40,19 @@ class Favicon {
      * @return {Promise}
      */
     register(server) {
-        for (let _module of this._config.modules) {
-            for (let dir of _module.static || []) {
+        for (let [ moduleName, moduleConfig ] of this._config.modules) {
+            for (let dir of moduleConfig.static || []) {
                 let filename = path.join(
                     dir[0] === '/' ?
                         dir :
-                        path.join(this._config.base_path, 'modules', _module.name, dir),
+                        path.join(this._config.base_path, 'modules', moduleName, dir),
                     'img',
                     'favicon.ico'
                 );
                 try {
                     if (fs.lstatSync(filename).isFile()) {
                         server.express.use(favicon(filename));
-                        break;
+                        return Promise.resolve();
                     }
                 } catch (error) {
                     // do nothing
