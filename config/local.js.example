@@ -48,8 +48,10 @@ module.exports = {
             port: 4000,
             ssl: {
                 enable: true,
-                key: '/etc/letsencrypt/live/server1.example.com/privkey.pem',
-                cert: '/etc/letsencrypt/live/server1.example.com/fullchain.pem',
+                key: path.join(__dirname, '..', 'certs', 'server1.key'),
+                // key: '/etc/letsencrypt/live/server1.example.com/privkey.pem',
+                cert: path.join(__dirname, '..', 'certs', 'server1.cert'),
+                // cert: '/etc/letsencrypt/live/server1.example.com/fullchain.pem',
             },
             express: {
                 view_engine: 'pug',

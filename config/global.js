@@ -10,6 +10,7 @@ module.exports = {
         '!src/servers',
         '!src/services',
         'services',
+        'commands',
         'middleware',
         'models',
         'repositories',

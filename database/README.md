@@ -20,8 +20,12 @@ The database
   # psql -U username_here -d db_name_here -h 127.0.0.1 < database/schema.sql
   ```
 
-2. Populate the new database
+2. Update configuration
+
+  Update local.js with the credentials
+
+3. Populate the new database
 
   ```shell
-  > ./bin/cmd populate-db
+  > ./bin/cmd create-db
   ```
