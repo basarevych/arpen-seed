@@ -13,13 +13,11 @@ class RequestLogger {
      * @param {App} app                 Application
      * @param {object} config           Configuration
      * @param {object} logStreams       Log streams
-     * @param {object} express          Express app
      */
-    constructor(app, config, logStreams, express) {
+    constructor(app, config, logStreams) {
         this._app = app;
         this._config = config;
         this._logStreams = logStreams;
-        this._express = express;
     }
 
     /**
@@ -35,17 +33,17 @@ class RequestLogger {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'logger.streamContainer', 'express' ];
+        return [ 'app', 'config', 'logger.streamContainer' ];
     }
 
     /**
      * Register middleware
-     * @param {string} name                         Server name
+     * @param {Express} server          The server
      * @return {Promise}
      */
-    register(name) {
-        this._express.use(morgan('dev'));
-        this._express.use(morgan('combined', { stream: this._logStreams.logs.get('access').stream }));
+    register(server) {
+        server.express.use(morgan('dev'));
+        server.express.use(morgan('combined', { stream: this._logStreams.logs.get('access').stream }));
 
         return Promise.resolve();
     }

@@ -43,20 +43,8 @@ class Index {
      * @return {Promise}
      */
     bootstrap() {
+        this.routers.push(this._app.get('modules.index.routes.index').router);
         return this._invalidateCache.register();
-    }
-
-    /**
-     * Register with the server
-     * @param {string} name                     Server name as in config
-     * @return {Promise}
-     */
-    register(name) {
-        if (this._config.get(`servers.${name}.class`) === 'servers.express') {
-            this.routers.push(this._app.get('modules.index.routes.index').router);
-        }
-
-        return Promise.resolve();
     }
 }
 

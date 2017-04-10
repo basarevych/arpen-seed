@@ -12,11 +12,9 @@ class RequestParser {
     /**
      * Create the service
      * @param {object} config           Configuration
-     * @param {object} express          Express app
      */
-    constructor(config, express) {
+    constructor(config) {
         this._config = config;
-        this._express = express;
     }
 
     /**
@@ -32,24 +30,24 @@ class RequestParser {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'config', 'express' ];
+        return [ 'config' ];
     }
 
     /**
      * Register middleware
-     * @param {string} name                         Server name
+     * @param {Express} server          The server
      * @return {Promise}
      */
-    register(name) {
-        this._express.use(bodyParser.json({
-            limit: this._config.get(`servers.${name}.options.body_limit`),
+    register(server) {
+        server.express.use(bodyParser.json({
+            limit: this._config.get(`servers.${server.name}.options.body_limit`),
         }));
-        this._express.use(bodyParser.urlencoded({
-            limit: this._config.get(`servers.${name}.options.body_limit`),
+        server.express.use(bodyParser.urlencoded({
+            limit: this._config.get(`servers.${server.name}.options.body_limit`),
             extended: false,
         }));
 
-        this._express.use(cookieParser());
+        server.express.use(cookieParser());
 
         return Promise.resolve();
     }

@@ -13,11 +13,9 @@ class Favicon {
     /**
      * Create the service
      * @param {object} config           Configuration
-     * @param {object} express          Express app
      */
-    constructor(config, express) {
+    constructor(config) {
         this._config = config;
-        this._express = express;
     }
 
     /**
@@ -33,15 +31,15 @@ class Favicon {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'config', 'express' ];
+        return [ 'config' ];
     }
 
     /**
      * Register middleware
-     * @param {string} name                         Server name
+     * @param {Express} server          The server
      * @return {Promise}
      */
-    register(name) {
+    register(server) {
         for (let _module of this._config.modules) {
             for (let dir of _module.static || []) {
                 let filename = path.join(
@@ -53,7 +51,7 @@ class Favicon {
                 );
                 try {
                     if (fs.lstatSync(filename).isFile()) {
-                        this._express.use(favicon(filename));
+                        server.express.use(favicon(filename));
                         break;
                     }
                 } catch (error) {

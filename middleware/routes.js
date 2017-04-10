@@ -10,11 +10,9 @@ class Routes {
     /**
      * Create the service
      * @param {Map} modules             Loaded application modules
-     * @param {object} express          Express app
      */
-    constructor(modules, express) {
+    constructor(modules) {
         this._modules = modules;
-        this._express = express;
     }
 
     /**
@@ -30,21 +28,21 @@ class Routes {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'modules', 'express' ];
+        return [ 'modules' ];
     }
 
     /**
      * Register middleware
-     * @param {string} name                         Server name
+     * @param {Express} server          The server
      * @return {Promise}
      */
-    register(name) {
+    register(server) {
         for (let [ moduleName, moduleInstance ] of this._modules) {
             if (!Array.isArray(moduleInstance.routers))
                 continue;
 
             for (let router of moduleInstance.routers)
-                this._express.use('/', router);
+                server.express.use('/', router);
         }
 
         return Promise.resolve();

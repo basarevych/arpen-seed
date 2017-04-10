@@ -12,13 +12,11 @@ class ErrorHandler {
      * Create the service
      * @param {object} config           Configuration
      * @param {ErrorHelper} error       Error helper service
-     * @param {object} express          Express app
      * @param {Logger} logger           Logger service
      */
-    constructor(config, error, express, logger) {
+    constructor(config, error, logger) {
         this._config = config;
         this._error = error;
-        this._express = express;
         this._logger = logger;
     }
 
@@ -35,19 +33,19 @@ class ErrorHandler {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'config', 'error', 'express', 'logger' ];
+        return [ 'config', 'error', 'logger' ];
     }
 
     /**
      * Register middleware
-     * @param {string} name                         Server name
+     * @param {Express} server          The server
      * @return {Promise}
      */
-    register(name) {
-        this._express.use((req, res, next) => {
+    register(server) {
+        server.express.use((req, res, next) => {
             next(this._error.newNotFound());
         });
-        this._express.use((err, req, res, next) => {
+        server.express.use((err, req, res, next) => {
             let info = this._error.info(err);
             let status = (info && info.httpStatus) || 500;
 

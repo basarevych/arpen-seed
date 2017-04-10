@@ -12,11 +12,9 @@ class StaticFiles {
     /**
      * Create the service
      * @param {object} config           Configuration
-     * @param {object} _express         Express app
      */
-    constructor(config, _express) {
+    constructor(config) {
         this._config = config;
-        this._express = _express;
     }
 
     /**
@@ -32,21 +30,21 @@ class StaticFiles {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'config', 'express' ];
+        return [ 'config' ];
     }
 
     /**
      * Register middleware
-     * @param {string} name                         Server name
+     * @param {Express} server          The server
      * @return {Promise}
      */
-    register(name) {
+    register(server) {
         for (let _module of this._config.modules) {
             for (let dir of _module.static || []) {
                 let filename = dir[0] === '/' ?
                     dir :
                     path.join(this._config.base_path, 'modules', _module.name, dir);
-                this._express.use(express.static(filename));
+                server.express.use(express.static(filename));
             }
         }
         return Promise.resolve();
