@@ -43,7 +43,7 @@ module.exports = {
 
         'twbs': 'bootstrap-loader',
         'fa':   'font-awesome-sass-loader!./fa.config.js',
-        'index': './src/index.js',
+        'index': './front/index.js',
 
     },
 
@@ -62,7 +62,7 @@ module.exports = {
         extensions: [ '.js', '.json' ],
 
         // An array of directory names to be resolved to the current directory
-        modules: [ root('src'), root('node_modules') ],
+        modules: [ root('front'), root('node_modules') ],
 
     },
 

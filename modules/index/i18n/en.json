@@ -1,0 +1,10 @@
+{
+  "project_title": {
+    "message": "ARPEN",
+    "description": "Name of the project"
+  },
+  "page_title": {
+    "message": "ARPEN",
+    "description": "Title of browser tab"
+  }
+}

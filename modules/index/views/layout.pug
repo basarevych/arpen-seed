@@ -10,10 +10,11 @@ html
     body
         nav.navbar.navbar-toggleable-md.sticky-top.navbar-light.bg-faded
             .container
-                button.navbar-toggler.navbar-toggler-right(type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation")
+                button.navbar-toggler.navbar-toggler-right(type="button" data-toggle="collapse" data-target="#navbarText"
+                    aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation")
                     span.navbar-toggler-icon
                 a.navbar-brand(href="javascript:void(0)") ARPEN
-                .collapse.navbar-collapse#navbarText
+                #navbarText.collapse.navbar-collapse
                     ul.navbar-nav.mr-auto
                         li.nav-item.active
                             a.nav-link(href="/") Home

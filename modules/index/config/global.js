@@ -8,6 +8,11 @@ module.exports = {
         'routes',
     ],
 
+    // Translation directories
+    i18n: [
+        'i18n',
+    ],
+
     // View directories
     views: [
         'views',
