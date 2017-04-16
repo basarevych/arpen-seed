@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "webpack"
+    "build": "webpack --progress",
+    "watch": "webpack --progress --watch"
   },
   "devDependencies": {
     "autoprefixer": "~6.7.7",

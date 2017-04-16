@@ -43,7 +43,7 @@ module.exports = {
 
         'twbs': 'bootstrap-loader',
         'fa':   'font-awesome-sass-loader!./fa.config.js',
-        'index': './front/index.js',
+        'index': [ './front/index.js', './front/styles/index.scss' ],
 
     },
 
@@ -59,7 +59,7 @@ module.exports = {
          *
          * See: http://webpack.github.io/docs/configuration.html#resolve-extensions
          */
-        extensions: [ '.js', '.json' ],
+        extensions: [ '.js', '.json', '.css', '.scss' ],
 
         // An array of directory names to be resolved to the current directory
         modules: [ root('front'), root('node_modules') ],
@@ -120,12 +120,12 @@ module.exports = {
              */
             {
                 test: /\.css$/,
-                use: [ 'raw-loader' ],
+                use: [ 'style-loader', 'css-loader' ],
             },
 
             {
                 test: /\.scss$/,
-                use: [ 'raw-loader', 'sass-loader' ]
+                use: [ 'style-loader', 'css-loader', 'sass-loader' ]
             },
 
             /**
