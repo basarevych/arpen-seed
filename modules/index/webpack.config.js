@@ -8,7 +8,6 @@ const root = path.join.bind(path, path.resolve(__dirname));
  * Webpack Plugins
  */
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeJsPlugin = require('optimize-js-plugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
@@ -192,14 +191,6 @@ module.exports = {
         new OptimizeJsPlugin({
             sourceMap: false
         }),
-
-        /**
-         * Plugin: ExtractTextPlugin
-         * Description: Extracts imported CSS files into external stylesheet
-         *
-         * See: https://github.com/webpack/extract-text-webpack-plugin
-         */
-        new ExtractTextPlugin('[name].[contenthash].css'),
 
         /**
          * Plugin: UglifyJsPlugin

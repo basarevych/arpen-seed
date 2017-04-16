@@ -4,10 +4,11 @@ html
         title= i18n('page_title')
         meta(charset="utf-8")
         meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    body
         script(src="/twbs.bundle.js")
         script(src="/fa.bundle.js")
         script(src="/index.bundle.js")
-    body(class=bodyClass)
+
         nav.navbar.navbar-toggleable-md.sticky-top.navbar-light.bg-faded
             .container
                 button.navbar-toggler.navbar-toggler-right(type="button" data-toggle="collapse" data-target="#navbarText"
@@ -20,4 +21,5 @@ html
                             a.nav-link(href="/") Home
                         li.nav-item
                             a.nav-link(href="/test") Test
+
         block content
