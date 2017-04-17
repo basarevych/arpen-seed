@@ -16,7 +16,7 @@ class RoleModel extends Model {
 
         this.id = undefined;
         this.parentId = undefined;
-        this.name = undefined;
+        this.title = undefined;
     }
 
     /**
@@ -60,19 +60,19 @@ class RoleModel extends Model {
     }
 
     /**
-     * Name setter
+     * Title setter
      * @type {undefined|string}
      */
-    set name(name) {
-        this._setField('name', name);
+    set title(name) {
+        this._setField('title', name);
     }
 
     /**
-     * Name getter
+     * Title getter
      * @type {undefined|string}
      */
-    get name() {
-        return this._getField('name');
+    get title() {
+        return this._getField('title');
     }
 }
 

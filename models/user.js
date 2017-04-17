@@ -15,8 +15,8 @@ class UserModel extends Model {
         super();
 
         this.id = undefined;
-        this.name = undefined;
         this.email = undefined;
+        this.displayName = undefined;
         this.password = undefined;
         this.createdAt = undefined;
         this.blockedAt = undefined;
@@ -28,13 +28,6 @@ class UserModel extends Model {
      */
     static get provides() {
         return 'models.user';
-    }
-
-    /**
-     * Minimum password length
-     */
-    static get minPasswordLength() {
-        return 6;
     }
 
     /**
@@ -54,22 +47,6 @@ class UserModel extends Model {
     }
 
     /**
-     * Name setter
-     * @type {undefined|string|null}
-     */
-    set name(name) {
-        this._setField('name', name);
-    }
-
-    /**
-     * Name getter
-     * @type {undefined|string|null}
-     */
-    get name() {
-        return this._getField('name');
-    }
-
-    /**
      * Email setter
      * @type {undefined|string}
      */
@@ -86,8 +63,24 @@ class UserModel extends Model {
     }
 
     /**
+     * Display name setter
+     * @type {undefined|string|null}
+     */
+    set displayName(name) {
+        this._setField('display_name', name);
+    }
+
+    /**
+     * Display name getter
+     * @type {undefined|string|null}
+     */
+    get displayName() {
+        return this._getField('display_name');
+    }
+
+    /**
      * Password setter
-     * @type {undefined|string}
+     * @type {undefined|string|null}
      */
     set password(password) {
         this._setField('password', password);
@@ -95,7 +88,7 @@ class UserModel extends Model {
 
     /**
      * Password getter
-     * @type {undefined|string}
+     * @type {undefined|string|null}
      */
     get password() {
         return this._getField('password');
