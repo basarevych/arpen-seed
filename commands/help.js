@@ -70,6 +70,7 @@ class Help {
                 '\thelp\t\tPrint help about any other command\n' +
                 '\tcreate-cert\tCreate self-signed certificates\n' +
                 '\tcreate-db\tCreate the database schema\n' +
+                '\tuser\t\tManage users\n' +
                 '\tclear-cache\tClear the cache'
 
             )
@@ -112,6 +113,23 @@ class Help {
         return this._app.info(
                 'Usage:\tcmd create-db\n\n' +
                 '\tDrop if present and recreate all the database tables'
+            )
+            .then(() => {
+                process.exit(0);
+            });
+    }
+
+    /**
+     * User command
+     */
+    helpUser(argv) {
+        return this._app.info(
+                'Usage:\tcmd user <email> [-n <name> ] [-p <password>] [-a <role>] [-r <role>]\n\n' +
+                '\tManage users (user is created on first operation):\n' +
+                '\t-n sets display name\n' +
+                '\t-p sets password\n' +
+                '\t-a adds role\n' +
+                '\t-r removes role'
             )
             .then(() => {
                 process.exit(0);

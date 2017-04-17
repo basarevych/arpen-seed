@@ -18,8 +18,6 @@ class AccountModel extends Model {
         this.userId = undefined;
         this.source = undefined;
         this.identifier = undefined;
-        this.confirmed = undefined;
-        this.secret = undefined;
         this.createdAt = undefined;
     }
 
@@ -93,38 +91,6 @@ class AccountModel extends Model {
      */
     get identifier() {
         return this._getField('identifier');
-    }
-
-    /**
-     * Confirmed setter
-     * @type {undefined|boolean}
-     */
-    set confirmed(confirmed) {
-        this._setField('confirmed', confirmed);
-    }
-
-    /**
-     * Confirmed getter
-     * @type {undefined|boolean}
-     */
-    get confirmed() {
-        return this._getField('confirmed');
-    }
-
-    /**
-     * Secret setter
-     * @type {undefined|string}
-     */
-    set secret(secret) {
-        this._setField('secret', secret);
-    }
-
-    /**
-     * Secret getter
-     * @type {undefined|string}
-     */
-    get secret() {
-        return this._getField('secret');
     }
 
     /**

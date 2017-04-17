@@ -13,14 +13,18 @@ const argvParser = require('argv');
 class CreateDb {
     /**
      * Create the service
-     * @param {App} app                 The application
-     * @param {object} config           Configuration
-     * @param {Runner} runner           Runner service
+     * @param {App} app                         The application
+     * @param {object} config                   Configuration
+     * @param {Runner} runner                   Runner service
+     * @param {RoleRepository} roleRepo         Role repository
+     * @param {PermissionRepository} permRepo   Permission repository
      */
-    constructor(app, config, runner) {
+    constructor(app, config, runner, roleRepo, permRepo) {
         this._app = app;
         this._config = config;
         this._runner = runner;
+        this._roleRepo = roleRepo;
+        this._permRepo = permRepo;
     }
 
     /**
@@ -36,7 +40,7 @@ class CreateDb {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'runner' ];
+        return [ 'app', 'config', 'runner', 'repositories.role', 'repositories.permission' ];
     }
 
     /**
@@ -52,6 +56,8 @@ class CreateDb {
                 type: 'boolean',
             })
             .run(argv);
+
+        let member, user, admin;
 
         return new Promise((resolve, reject) => {
                 read({ prompt: 'Destroy the data and recreate the schema? (yes/no): ' }, (error, answer) => {
@@ -87,6 +93,31 @@ class CreateDb {
                             reject(error);
                         });
                 });
+            })
+            .then(() => {
+                member = this._roleRepo.create();
+                member.parentId = null;
+                member.title = 'Member';
+                return this._roleRepo.save(member);
+            })
+            .then(() => {
+                admin = this._roleRepo.create();
+                admin.parentId = member.id;
+                admin.title = 'Admin';
+                return this._roleRepo.save(admin);
+            })
+            .then(() => {
+                user = this._roleRepo.create();
+                user.parentId = member.id;
+                user.title = 'User';
+                return this._roleRepo.save(user);
+            })
+            .then(() => {
+                let perm = this._permRepo.create();
+                perm.roleId = admin.id;
+                perm.resource = null;
+                perm.action = null;
+                return this._permRepo.save(perm);
             })
             .then(() => {
                 process.exit(0);

@@ -21,6 +21,14 @@ class PermissionModel extends Model {
     }
 
     /**
+     * Service name is 'models.permission'
+     * @type {string}
+     */
+    static get provides() {
+        return 'models.permission';
+    }
+
+    /**
      * ID setter
      * @type {undefined|number}
      */

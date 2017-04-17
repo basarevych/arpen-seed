@@ -17,7 +17,9 @@ class UserModel extends Model {
         this.id = undefined;
         this.email = undefined;
         this.displayName = undefined;
+        this.confirmed = undefined;
         this.password = undefined;
+        this.secret = undefined;
         this.createdAt = undefined;
         this.blockedAt = undefined;
     }
@@ -79,6 +81,22 @@ class UserModel extends Model {
     }
 
     /**
+     * Confirmed setter
+     * @type {undefined|boolean}
+     */
+    set confirmed(confirmed) {
+        this._setField('confirmed', confirmed);
+    }
+
+    /**
+     * Confirmed getter
+     * @type {undefined|boolean}
+     */
+    get confirmed() {
+        return this._getField('confirmed');
+    }
+
+    /**
      * Password setter
      * @type {undefined|string|null}
      */
@@ -92,6 +110,22 @@ class UserModel extends Model {
      */
     get password() {
         return this._getField('password');
+    }
+
+    /**
+     * Secret setter
+     * @type {undefined|string}
+     */
+    set secret(secret) {
+        this._setField('secret', secret);
+    }
+
+    /**
+     * Secret getter
+     * @type {undefined|string}
+     */
+    get secret() {
+        return this._getField('secret');
     }
 
     /**
