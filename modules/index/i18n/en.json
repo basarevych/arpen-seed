@@ -6,5 +6,17 @@
   "page_title": {
     "message": "ARPEN",
     "description": "Title of browser tab"
+  },
+  "sign_in_button": {
+    "message": "Sign in",
+    "description": "Title of sign in button"
+  },
+  "sign_up_button": {
+    "message": "Sign up",
+    "description": "Title of sign up button"
+  },
+  "sign_buttons_divider": {
+    "message": "or",
+    "description": "Text between sign in and sign up buttons"
   }
 }

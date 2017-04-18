@@ -21,8 +21,9 @@ html
                             a.nav-link(href="/") Home
                         li.nav-item
                             a.nav-link(href="/test") Test
-                    form.form-inline(onsubmit="return false")
-                        button.btn.btn-primary.mr-2 Sign In
-                        button.btn.btn-primary Sign Up
+                    span.navbar-text
+                        a(href="javascript:void(0)") #{i18n('sign_in_button')}
+                        span.mx-2 #{i18n('sign_buttons_divider')}
+                        a(href="javascript:void(0)") #{i18n('sign_up_button')}
 
         block content
