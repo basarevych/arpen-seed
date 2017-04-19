@@ -18,5 +18,33 @@
   "sign_buttons_divider": {
     "message": "or",
     "description": "Text between sign in and sign up buttons"
+  },
+  "navbar_menu_button": {
+    "message": "Menu",
+    "description": "Label for menu button of navbar"
+  },
+  "modal_close_button": {
+    "message": "Close",
+    "description": "Label for X button of modals"
+  },
+  "sign_in_title": {
+    "message": "Sign in",
+    "description": "Title of sign in modal"
+  },
+  "sign_in_email_label": {
+    "message": "Email:",
+    "description": "Label of email input of sign in modal"
+  },
+  "sign_in_password_label": {
+    "message": "Password:",
+    "description": "Label of password input of sign in modal"
+  },
+  "sign_in_cancel_button": {
+    "message": "Cancel",
+    "description": "Title of cancel button of sign in modal"
+  },
+  "sign_in_submit_button": {
+    "message": "Sign in",
+    "description": "Title of submit button of sign in modal"
   }
 }

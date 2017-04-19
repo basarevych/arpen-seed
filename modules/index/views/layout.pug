@@ -9,21 +9,55 @@ html
         script(src="/fa.bundle.js")
         script(src="/index.bundle.js")
 
-        nav.navbar.navbar-toggleable-md.sticky-top.navbar-light.bg-faded
-            .container
+        #signInModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true")
+            .modal-dialog(role="document")
+                form
+                    .modal-content
+                        .modal-header
+                            h5.modal-title #{i18n('sign_in_title')}
+                            button.close(type="button" data-dismiss="modal" aria-label="#{i18n('modal_close_button')}")
+                                span(aria-hidden="true") &times;
+                        .modal-body
+                            .form-group.row
+                                label.col-sm-4.col-form-label.text-sm-right(for="inputEmail") #{i18n('sign_in_email_label')}
+                                .col-sm-8
+                                    input#inputEmail.form-control(type="email")
+                            .form-group.row
+                                label.col-sm-4.col-form-label.text-sm-right(for="inputPassword") #{i18n('sign_in_password_label')}
+                                .col-sm-8
+                                    input#inputPassword.form-control(type="password")
+                        .modal-footer
+                            button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_in_cancel_button')}
+                            button.btn.btn-primary(type="submit") #{i18n('sign_in_submit_button')}
+
+        .hidden-md-up
+            nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
                 button.navbar-toggler.navbar-toggler-right(type="button" data-toggle="collapse" data-target="#navbarText"
-                    aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation")
+                    aria-controls="navbarText" aria-expanded="false" aria-label="#{i18n('navbar_menu_button')")
                     span.navbar-toggler-icon
-                a.navbar-brand(href="javascript:void(0)") ARPEN
+                a.navbar-brand(href="javascript:void(0)") #{i18n('project_title')}
                 #navbarText.collapse.navbar-collapse
                     ul.navbar-nav.mr-auto
                         li.nav-item.active
                             a.nav-link(href="/") Home
                         li.nav-item
                             a.nav-link(href="/test") Test
-                    span.navbar-text
-                        a(href="javascript:void(0)") #{i18n('sign_in_button')}
-                        span.mx-2 #{i18n('sign_buttons_divider')}
-                        a(href="javascript:void(0)") #{i18n('sign_up_button')}
+                        li.nav-item
+                            a.nav-link(href="javascript:$('#signInModal').modal()") #{i18n('sign_in_button')}
+                        li.nav-item
+                            a.nav-link(href="javascript:$('#signUpModal').modal()") #{i18n('sign_up_button')}
 
-        block content
+        .hidden-sm-down
+            nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
+                .container
+                    a.navbar-brand.float-left(href="javascript:void(0)") #{i18n('project_title')}
+                    .collapse.navbar-collapse
+                        .nav.navbar-nav.mr-auto
+                            a.nav-item.nav-link.active(href="/") Home
+                            a.nav-item.nav-link(href="/test") Test
+                        form.form-inline
+                            button.btn.btn-link(type="button" data-toggle="modal" data-target="#signInModal") #{i18n('sign_in_button')}
+                            span #{i18n('sign_buttons_divider')}
+                            button.btn.btn-link(type="button" data-toggle="modal" data-target="#signUpModal") #{i18n('sign_up_button')}
+
+    block content
