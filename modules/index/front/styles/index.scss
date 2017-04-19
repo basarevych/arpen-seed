@@ -1,3 +1,9 @@
-.top-offset {
-  margin-top: 70px;
+@import '~bootstrap/scss/_variables';
+@import '~bootstrap/scss/mixins/_breakpoints';
+
+@include media-breakpoint-down(sm) {
+  .navbar .container {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }

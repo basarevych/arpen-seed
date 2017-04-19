@@ -30,34 +30,25 @@ html
                             button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_in_cancel_button')}
                             button.btn.btn-primary(type="submit") #{i18n('sign_in_submit_button')}
 
-        .hidden-md-up
-            nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
+        nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
+            .container
                 button.navbar-toggler.navbar-toggler-right(type="button" data-toggle="collapse" data-target="#navbarText"
                     aria-controls="navbarText" aria-expanded="false" aria-label="#{i18n('navbar_menu_button')")
                     span.navbar-toggler-icon
                 a.navbar-brand(href="javascript:void(0)") #{i18n('project_title')}
-                #navbarText.collapse.navbar-collapse
-                    ul.navbar-nav.mr-auto
+                #navbarText.collapse.navbar-collapse.justify-content-between
+                    ul.navbar-nav
                         li.nav-item.active
                             a.nav-link(href="/") Home
                         li.nav-item
                             a.nav-link(href="/test") Test
-                        li.nav-item
+                        li.nav-item.hidden-md-up
                             a.nav-link(href="javascript:$('#signInModal').modal()") #{i18n('sign_in_button')}
-                        li.nav-item
+                        li.nav-item.hidden-md-up
                             a.nav-link(href="javascript:$('#signUpModal').modal()") #{i18n('sign_up_button')}
-
-        .hidden-sm-down
-            nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
-                .container
-                    a.navbar-brand.float-left(href="javascript:void(0)") #{i18n('project_title')}
-                    .collapse.navbar-collapse
-                        .nav.navbar-nav.mr-auto
-                            a.nav-item.nav-link.active(href="/") Home
-                            a.nav-item.nav-link(href="/test") Test
-                        form.form-inline
-                            button.btn.btn-link(type="button" data-toggle="modal" data-target="#signInModal") #{i18n('sign_in_button')}
-                            span #{i18n('sign_buttons_divider')}
-                            button.btn.btn-link(type="button" data-toggle="modal" data-target="#signUpModal") #{i18n('sign_up_button')}
+                    form.form-inline.hidden-sm-down
+                        button.btn.btn-link(type="button" data-toggle="modal" data-target="#signInModal") #{i18n('sign_in_button')}
+                        span #{i18n('sign_buttons_divider')}
+                        button.btn.btn-link(type="button" data-toggle="modal" data-target="#signUpModal") #{i18n('sign_up_button')}
 
     block content
