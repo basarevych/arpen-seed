@@ -20,7 +20,6 @@ class I18n {
         this.formatters = new Map();
 
         this._config = config;
-        this._loaded = false;
     }
 
     /**
@@ -47,9 +46,6 @@ class I18n {
     register(server) {
         return Promise.resolve()
             .then(() => {
-                if (this._loaded)
-                    return;
-
                 return new Promise((resolve, reject) => {
                     try {
                         for (let [moduleName, moduleConfig] of this._config.modules) {
@@ -80,7 +76,6 @@ class I18n {
                             this.formatters.set(locale, formatMessage);
                         }
 
-                        this._loaded = true;
                         resolve();
                     } catch (error) {
                         reject(error);
