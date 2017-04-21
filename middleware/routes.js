@@ -38,10 +38,10 @@ class Routes {
      */
     register(server) {
         for (let [ moduleName, moduleInstance ] of this._modules) {
-            if (!Array.isArray(moduleInstance.routers))
+            if (typeof moduleInstance.routers !== 'function')
                 continue;
 
-            for (let router of moduleInstance.routers)
+            for (let router of moduleInstance.routers())
                 server.express.use('/', router);
         }
 

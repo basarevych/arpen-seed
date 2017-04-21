@@ -1,6 +1,6 @@
 /**
  * Index route
- * @module index/routes/index/index
+ * @module index/routes/index
  */
 const express = require('express');
 
@@ -16,7 +16,7 @@ class IndexRoute {
         this._error = error;
 
         this.router = express.Router();
-        this.router.get('/', this.index.bind(this));
+        this.router.get('/', this.getIndex.bind(this));
     }
 
     /**
@@ -41,7 +41,7 @@ class IndexRoute {
      * @param {object} res          Express response
      * @param {function} next       Express next middleware function
      */
-    index(req, res, next) {
+    getIndex(req, res, next) {
         res.render('index', { title: 'Express' });
     }
 }

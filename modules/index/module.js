@@ -15,8 +15,6 @@ class Index {
      * @param {InvalidateCache} invalidateCache     InvalidateCache service
      */
     constructor(app, config, invalidateCache) {
-        this.routers = [];
-
         this._app = app;
         this._config = config;
         this._invalidateCache = invalidateCache;
@@ -43,8 +41,18 @@ class Index {
      * @return {Promise}
      */
     bootstrap() {
-        this.routers.push(this._app.get('modules.index.routes.index').router);
         return this._invalidateCache.register();
+    }
+
+    /**
+     * Register routes with the server
+     * @return {Array}
+     */
+    routers() {
+        return [
+            this._app.get('modules.index.routes.index').router,
+            this._app.get('modules.index.routes.login').router,
+        ];
     }
 }
 

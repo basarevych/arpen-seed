@@ -101,8 +101,15 @@ module.exports = {
          *
          * See: http://webpack.github.io/docs/configuration.html#output-chunkfilename
          */
-        chunkFilename: '[id].chunk.js'
+        chunkFilename: '[id].chunk.js',
 
+        /**
+         * Export code to the browser
+         *
+         * See: http://webpack.github.io/docs/configuration.html#output-library
+         */
+        library: '[name]',
+        libraryTarget: "umd",
     },
 
     /**

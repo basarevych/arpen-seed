@@ -46,5 +46,13 @@
   "sign_in_submit_button": {
     "message": "Sign in",
     "description": "Title of submit button of sign in modal"
+  },
+  "form_email_invalid": {
+    "message": "Email required",
+    "description": "Message when email is not valid"
+  },
+  "form_min_length": {
+    "message": "Minimum length of the field is {min} {min, plural, =1 {character} other {characters}}",
+    "description": "Title of submit button of sign in modal"
   }
 }
