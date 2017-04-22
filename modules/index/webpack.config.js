@@ -42,7 +42,7 @@ module.exports = {
 
         'twbs': 'bootstrap-loader',
         'fa':   'font-awesome-sass-loader!./fa.config.js',
-        'index': [ './front/index.js', './front/styles/index.scss' ],
+        'index': './front/index.js',
 
     },
 
@@ -109,7 +109,6 @@ module.exports = {
          * See: http://webpack.github.io/docs/configuration.html#output-library
          */
         library: '[name]',
-        libraryTarget: "umd",
     },
 
     /**
@@ -120,6 +119,12 @@ module.exports = {
     module: {
 
         rules: [
+
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: [ 'babel-loader' ],
+            },
 
             /**
              * Sass loader (required for Bootstrap 4)

@@ -8,6 +8,9 @@
   },
   "devDependencies": {
     "autoprefixer": "~6.7.7",
+    "babel-core": "~6.24.1",
+    "babel-loader": "~7.0.0",
+    "babel-preset-env": "~1.4.0",
     "bootstrap-loader": "~2.0.0-beta.20",
     "clean-webpack-plugin": "~0.1.16",
     "copy-webpack-plugin": "~4.0.1",

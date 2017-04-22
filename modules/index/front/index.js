@@ -1,13 +1,11 @@
-function loginSubmit() {
+import 'styles/index.scss';
+
+export function loginSubmit() {
     'use strict';
 
-    $.post('/login', $('#signInModal').find('form').serialize(), function (data) {
+    $.post('/login', $('#signInModal').find('form').serialize(), data => {
         console.log(data);
     });
 
     return false;
 }
-
-exports.default = {
-    loginSubmit: loginSubmit,
-};
