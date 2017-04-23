@@ -40,6 +40,14 @@ class I18n {
     }
 
     /**
+     * Default locale
+     * @type {string}
+     */
+    static get defaultLocale() {
+        return 'en';
+    }
+
+    /**
      * Register middleware
      * @param {Express} server          The server
      * @return {Promise}
@@ -52,45 +60,46 @@ class I18n {
 
                 this._loaded = true;
                 return new Promise((resolve, reject) => {
-                    try {
-                        for (let [ moduleName, moduleConfig ] of this._config.modules) {
-                            for (let dir of moduleConfig.i18n || []) {
-                                let filename = dir[0] === '/' ?
-                                    dir :
-                                    path.join(this._config.base_path, 'modules', moduleName, dir);
+                        try {
+                            for (let [ moduleName, moduleConfig ] of this._config.modules) {
+                                for (let dir of moduleConfig.i18n || []) {
+                                    let filename = dir[0] === '/' ?
+                                        dir :
+                                        path.join(this._config.base_path, 'modules', moduleName, dir);
 
-                                for (let file of fs.readdirSync(filename)) {
-                                    if (!file.endsWith('.json'))
-                                        continue;
+                                    for (let file of fs.readdirSync(filename)) {
+                                        if (!file.endsWith('.json'))
+                                            continue;
 
-                                    let locale = path.basename(file, '.json');
-                                    if (!this.translations[locale])
-                                        this.translations[locale] = {};
+                                        let locale = path.basename(file, '.json');
+                                        if (!this.translations[locale])
+                                            this.translations[locale] = {};
 
-                                    merge.recursive(this.translations[locale], require(path.join(filename, file)));
+                                        merge.recursive(this.translations[locale], require(path.join(filename, file)));
+                                    }
                                 }
                             }
-                        }
 
-                        for (let locale of Object.keys(this.translations)) {
-                            let formatMessage = require('format-message');
-                            formatMessage.setup({
-                                locale: locale,
-                                translations: this.translations,
-                            });
-                            this.formatters.set(locale, formatMessage);
-                        }
+                            for (let locale of Object.keys(this.translations)) {
+                                let formatMessage = require('format-message');
+                                formatMessage.setup({
+                                    locale: locale,
+                                    translations: this.translations,
+                                });
+                                this.formatters.set(locale, formatMessage);
+                            }
 
-                        resolve();
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
+                            resolve();
+                        } catch (error) {
+                            reject(error);
+                        }
+                    })
+                    .then(() => {
+                        if (Object.keys(this.translations).indexOf(this.constructor.defaultLocale) !== -1)
+                            this.locale = this.constructor.defaultLocale;
+                    });
             })
             .then(() => {
-                if (Object.keys(this.translations).indexOf('en') !== -1)
-                    this.locale =  'en';
-
                 server.express.use((req, res, next) => {
                     res.locals.locale = null;
                     if (Object.keys(this.translations).length) {
