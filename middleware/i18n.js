@@ -15,7 +15,7 @@ class I18n {
      * @param {object} config           Configuration
      */
     constructor(config) {
-        this.locale = 'en';
+        this.locale = null;
         this.translations = {};
         this.formatters = new Map();
 
@@ -88,8 +88,34 @@ class I18n {
                 });
             })
             .then(() => {
+                if (Object.keys(this.translations).indexOf('en') !== -1)
+                    this.locale =  'en';
+
                 server.express.use((req, res, next) => {
-                    res.locals.i18n = this.translate.bind(this);
+                    res.locals.locale = null;
+                    if (Object.keys(this.translations).length) {
+                        if (req.cookies)
+                            res.locals.locale = Object.keys(this.translations).indexOf(req.cookies.locale) === -1 ? null : req.cookies.locale;
+                        if (!res.locals.locale)
+                            res.locals.locale = req.acceptsLanguages(Object.keys(this.translations));
+                    }
+                    if (!res.locals.locale)
+                        res.locals.locale = this.locale;
+
+                    res.locals.i18n = (id, ...args) => {
+                        let options = {}, locale = res.locals.locale;
+                        if (args.length >= 2) {
+                            options = args[0];
+                            locale = args[1];
+                        } else if (args.length === 1) {
+                            if (typeof args[0] === 'object')
+                                options = args[0];
+                            else
+                                locale = args[0];
+                        }
+                        return this.translate(id, options, locale);
+                    };
+
                     next();
                 });
             });
@@ -112,6 +138,9 @@ class I18n {
             else
                 locale = args[0];
         }
+
+        if (!locale)
+            throw new Error(`No locale is set`);
 
         let formatter = this.formatters.get(locale);
         if (!formatter)
