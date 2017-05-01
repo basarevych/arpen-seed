@@ -46,8 +46,8 @@ class LoginRoute {
      */
     postLogin(req, res, next) {
         this._loginForm.validate(req.body)
-            .then(result => {
-                res.json(result);
+            .then(form => {
+                res.json(form.toJson());
             })
             .catch(error => {
                 next(new WError(error, 'postLogin()'));

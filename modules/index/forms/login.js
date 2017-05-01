@@ -10,11 +10,11 @@ const validator = require('validator');
 class LoginForm {
     /**
      * Create service
-     * @param {Util} util                   Util service
+     * @param {App} app                     The application
      * @param {Map} middleware              Middleware store
      */
-    constructor(util, middleware) {
-        this._util = util;
+    constructor(app, middleware) {
+        this._app = app;
         this._i18n = middleware.get('middleware.i18n');
     }
 
@@ -31,42 +31,35 @@ class LoginForm {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'util', 'middleware' ];
+        return [ 'app', 'middleware' ];
+    }
+
+    /**
+     * Create new instance of the form
+     * @param {object} vars                 Fields of the form
+     * @return {Promise}                    Resolves to Fieldset
+     */
+    create(vars) {
+        let form = this._app.get('fieldset');
+        form.addField('email', vars.email, { required: true });
+        form.addField('password', vars.password, { required: true });
+        return Promise.resolve(form);
     }
 
     /**
      * Validate the form
      * @param {object} vars                 Fields of the form
-     * @return {Promise}
+     * @return {Promise}                    Resolves to Fieldset
      */
     validate(vars) {
-        return Promise.resolve()
-            .then(() => {
-                let result = {
-                    email: {
-                        value: this._util.trim(vars.email),
-                        valid: true,
-                        errors: [],
-                    },
-                    password: {
-                        value: this._util.trim(vars.password),
-                        valid: true,
-                        errors: [],
-                    }
-                };
+        return this.create(vars)
+            .then(form => {
+                if (!validator.isEmail(form.getField('email')))
+                    form.addError('email', this._i18n.translate('form_email_invalid'));
+                if (!validator.isLength(form.getField('password'), { min: 6 }))
+                    form.addError('password', this._i18n.translate('form_min_length', { min: 6 }));
 
-                if (!validator.isEmail(result.email.value)) {
-                    result.email.valid = false;
-                    result.email.errors.push(this._i18n.translate('form_email_invalid'));
-                }
-                if (!validator.isLength(result.password.value, { min: 6 })) {
-                    result.password.valid = false;
-                    result.password.errors.push(this._i18n.translate('form_min_length', { min: 6 }));
-                }
-
-                result.password.value = '';
-
-                return result;
+                return form;
             });
     }
 }
