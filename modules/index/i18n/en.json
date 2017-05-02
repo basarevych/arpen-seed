@@ -27,6 +27,10 @@
     "message": "Close",
     "description": "Label for X button of modals"
   },
+  "modal_control_required": {
+    "message": "Required field",
+    "description": "Label for controls that must have input"
+  },
   "sign_in_title": {
     "message": "Sign in",
     "description": "Title of sign in modal"

@@ -20,11 +20,13 @@ html
                         .modal-body
                             .form-group.row
                                 label.col-sm-4.col-form-label.text-sm-right(for="inputEmail") #{i18n('sign_in_email_label')}
+                                    span.control-required #{i18n('modal_control_required')}
                                 .col-sm-8
                                     input#inputEmail.form-control(type="email" name="email")
                                     .errors
                             .form-group.row
                                 label.col-sm-4.col-form-label.text-sm-right(for="inputPassword") #{i18n('sign_in_password_label')}
+                                    span.control-required #{i18n('modal_control_required')}
                                 .col-sm-8
                                     input#inputPassword.form-control(type="password" name="password")
                                     .errors

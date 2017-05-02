@@ -7,3 +7,10 @@
     margin-right: 0;
   }
 }
+
+.control-required {
+  display: block;
+  color: $brand-danger;
+  font-size: xx-small;
+  text-transform: uppercase;
+}
