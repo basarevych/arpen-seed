@@ -110,6 +110,7 @@ module.exports = {
         expire_timeout: 14 * 24 * 60 * 60,  // seconds, delete inactive sessions
         save_interval: 60,                  // seconds, 0 to update session in the DB on every request
         secret: 'some unique secret here',  // could be "pwgen 32 1" output
+        //ip_header: 'X-Custom-Header',     // Name of header to get IP from (socket IP otherwise)
     },
 
     email: {

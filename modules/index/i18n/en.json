@@ -51,6 +51,10 @@
     "message": "Sign in",
     "description": "Title of submit button of sign in modal"
   },
+  "sign_in_invalid_credentials": {
+    "message": "Invalid email or password",
+    "description": "Message for wrong email or password in sign in modal"
+  },
   "form_field_required": {
     "message": "This field is required",
     "description": "Message when the field is empty"

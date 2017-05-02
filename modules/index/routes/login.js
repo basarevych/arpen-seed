@@ -11,11 +11,21 @@ const WError = require('verror').WError;
 class LoginRoute {
     /**
      * Create service
-     * @param {ErrorHelper} error       Error helper service
-     * @param {LoginForm} loginForm     Login form
+     * @param {object} config               Config service
+     * @param {Session} session             Session service
+     * @param {Util} util                   Util service
+     * @param {ErrorHelper} error           Error helper service
+     * @param {Map} middleware              Middleware store
+     * @param {UserRepository} userRepo     User repository
+     * @param {LoginForm} loginForm         Login form
      */
-    constructor(error, loginForm) {
+    constructor(config, session, util, error, middleware, userRepo, loginForm) {
+        this._config = config;
+        this._session = session;
+        this._util = util;
         this._error = error;
+        this._i18n = middleware.get('middleware.i18n');
+        this._userRepo = userRepo;
         this._loginForm = loginForm;
 
         this.router = express.Router();
@@ -35,7 +45,15 @@ class LoginRoute {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'error', 'modules.index.forms.login' ];
+        return [
+            'config',
+            'session',
+            'util',
+            'error',
+            'middleware',
+            'repositories.user',
+            'modules.index.forms.login'
+        ];
     }
 
     /**
@@ -47,7 +65,36 @@ class LoginRoute {
     postLogin(req, res, next) {
         this._loginForm.validate(req.body)
             .then(form => {
-                res.json(form.toJson());
+                if (!form.success)
+                    return res.json(form.toJson());
+
+                let password = form.getField('password');
+                form.setField('password', '');
+
+                return this._userRepo.findByEmail(form.getField('email'))
+                    .then(users => {
+                        let user = users.length && users[0];
+                        if (!user || !user.confirmedAt || !this._util.checkPassword(password, user.password)) {
+                            form.addMessage('error', this._i18n.translate('sign_in_invalid_credentials'));
+                            return res.json(form.toJson());
+                        }
+
+                        return this._session.start(user, req)
+                            .then(session => {
+                                let lifetime = this._config.get('session.expire_timeout');
+                                if (lifetime)
+                                    lifetime *= 1000;
+
+                                res.json({
+                                    success: true,
+                                    cookie: {
+                                        name: `${this._config.project}sid`,
+                                        value: this._session.encodeJwt(session),
+                                        lifetime: lifetime || null,
+                                    }
+                                });
+                            });
+                    })
             })
             .catch(error => {
                 next(new WError(error, 'postLogin()'));

@@ -92,10 +92,10 @@ class User {
                     user = this._userRepo.create();
                     user.email = email;
                     user.displayName = null;
-                    user.confirmed = false;
                     user.password = null;
                     user.secret = null;
                     user.createdAt = moment();
+                    user.confirmedAt = user.createdAt;
                     user.blockedAt = null;
                 }
                 

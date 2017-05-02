@@ -135,10 +135,10 @@ CREATE TABLE users (
     id bigserial NOT NULL,
     email varchar(255) NOT NULL,
     display_name varchar(255) NULL,
-    confirmed boolean NOT NULL,
     password varchar(255) NULL,
     secret varchar(255) NULL,
     created_at timestamp NOT NULL,
+    confirmed_at timestamp NULL,
     blocked_at timestamp NULL,
     CONSTRAINT users_pk PRIMARY KEY (id)
 );

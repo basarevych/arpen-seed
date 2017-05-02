@@ -6,6 +6,7 @@ export class Form {
     }
 
     static reset(el) {
+        el.find('.messages').empty().hide();
         el.find('.form-group').removeClass('has-danger');
         el.find('.form-control').removeClass('form-control-danger');
         el.find('.errors').empty();
@@ -22,23 +23,31 @@ export class Form {
     }
 
     update(el) {
-        this.constructor.reset(el);
+        let messagesEl = el.find('.messages');
+        for (let msg of this.data.messages) {
+            let msgEl = $(`<div class="alert ${msg.type === 'error' ? 'alert-danger' : 'alert-success'}"></div>`).html(msg.message);
+            let colEl = $('<div class="col-sm-12"></div>').append(msgEl);
+            let rowEl = $('<div class="row"></div>').append(colEl);
+            messagesEl.append(rowEl);
+        }
+        if (this.data.messages.length)
+            messagesEl.show('slow');
 
-        for (let field of Object.keys(this.data)) {
+        for (let field of Object.keys(this.data.form)) {
             let fieldEl = el.find(`[name="${field}"]`);
             if (!fieldEl.length)
                 continue;
 
-            fieldEl.val(this.data[field].value);
+            fieldEl.val(this.data.form[field].value);
 
-            if (!this.data[field].valid) {
+            if (!this.data.form[field].valid) {
                 fieldEl.addClass('form-control-danger');
 
                 let groupEl = fieldEl.parents('.form-group');
                 groupEl.addClass('has-danger');
 
                 let errorsEl = groupEl.find('.errors');
-                for (let error of this.data[field].errors)
+                for (let error of this.data.form[field].errors)
                     errorsEl.append($('<div class="form-control-feedback"></div>').text(error))
             }
         }

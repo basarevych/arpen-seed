@@ -1,6 +1,7 @@
 import 'bootstrap';
 import 'styles/index.scss';
 import { Form } from 'form';
+import { Cookie } from 'cookie';
 
 'use strict';
 
@@ -15,12 +16,17 @@ $(() => {
 });
 
 export function loginSubmit() {
-    'use strict';
-
     $.post('/login', signInModal.find('form').serialize(), data => {
-        let form = new Form(data.form);
-        form.update(signInModal);
-        Form.unlock(signInModal);
+        Form.reset(signInModal);
+        if (data.success) {
+            Cookie.set(data.cookie.name, data.cookie.value, data.cookie.lifetime);
+            signInModal.find('[data-dismiss="modal"]').click();
+            window.location.reload();
+        } else {
+            let form = new Form(data);
+            form.update(signInModal);
+            Form.unlock(signInModal);
+        }
     });
     Form.lock(signInModal);
 

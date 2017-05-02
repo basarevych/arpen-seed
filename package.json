@@ -11,6 +11,8 @@
     "express": "~4.15.2",
     "format-message": "~5.1.2",
     "fs-ext": "~0.6.0",
+    "geoip-lite": "~1.2.0",
+    "jsonwebtoken": "^7.4.0",
     "merge": "~1.2.0",
     "moment-timezone": "~0.5.13",
     "morgan": "~1.8.1",

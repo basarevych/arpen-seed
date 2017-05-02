@@ -18,6 +18,7 @@ html
                             button.close(type="button" data-dismiss="modal" aria-label="#{i18n('modal_close_button')}")
                                 span(aria-hidden="true") &times;
                         .modal-body
+                            .form-group.messages
                             .form-group.row
                                 label.col-sm-4.col-form-label.text-sm-right(for="inputEmail") #{i18n('sign_in_email_label')}
                                     span.control-required #{i18n('modal_control_required')}

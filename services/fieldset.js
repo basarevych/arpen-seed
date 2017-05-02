@@ -14,6 +14,7 @@ class Fieldset {
      */
     constructor(util, middleware) {
         this.success = true;
+        this.messages = [];
         this.fields = new Map();
 
         this._util = util;
@@ -37,6 +38,25 @@ class Fieldset {
     }
 
     /**
+     * Add message
+     * @param {string} type                             'error' or 'info'
+     * @param {string} message                          Message text
+     */
+    addMessage(type, message) {
+        if (type === 'error')
+            this.success = false;
+
+        for (let msg of this.messages) {
+            if (msg.message === message) {
+                msg.type = type;
+                return;
+            }
+        }
+
+        this.messages.push({ type, message });
+    }
+
+    /**
      * Add field to the form
      * @param {string} name                             Field name
      * @param {*} value                                 Field value
@@ -56,6 +76,19 @@ class Fieldset {
 
         if (required && !value.length)
             this.addError(name, this._i18n.translate('form_field_required'));
+    }
+
+    /**
+     * Set field value
+     * @param {string} name                             Field name
+     * @param {*} value                                 Field value
+     * @retun {string}
+     */
+    setField(name, value) {
+        let field = this.fields.get(name);
+        if (!field)
+            throw new Error(`Unknown field ${name}`);
+        field.value = value;
     }
 
     /**
@@ -105,6 +138,7 @@ class Fieldset {
     toJson() {
         let json = {
             success: this.success,
+            messages: this.messages,
             form: {},
         };
 
