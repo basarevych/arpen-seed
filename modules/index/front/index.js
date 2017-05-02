@@ -8,8 +8,9 @@ let signInModal;
 
 $(() => {
     signInModal = $('#signInModal');
-    signInModal.on('hidden.bs.modal', () => {
+    signInModal.on('show.bs.modal', () => {
         Form.reset(signInModal);
+        Form.unlock(signInModal);
     });
 });
 
@@ -19,7 +20,9 @@ export function loginSubmit() {
     $.post('/login', signInModal.find('form').serialize(), data => {
         let form = new Form(data.form);
         form.update(signInModal);
+        Form.unlock(signInModal);
     });
+    Form.lock(signInModal);
 
     return false;
 }

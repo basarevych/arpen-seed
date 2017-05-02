@@ -11,6 +11,16 @@ export class Form {
         el.find('.errors').empty();
     }
 
+    static lock(el) {
+        el.find('.form-control').prop('disabled', true);
+        el.find('[type="submit"]').prop('disabled', true);
+    }
+
+    static unlock(el) {
+        el.find('.form-control').prop('disabled', false);
+        el.find('[type="submit"]').prop('disabled', false);
+    }
+
     update(el) {
         this.constructor.reset(el);
 
