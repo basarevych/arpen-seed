@@ -13,6 +13,9 @@ $(() => {
         Form.reset(signInModal);
         Form.unlock(signInModal);
     });
+    signInModal.on('shown.bs.modal', () => {
+        Form.focus(signInModal);
+    });
 });
 
 export function loginSubmit() {
@@ -24,8 +27,8 @@ export function loginSubmit() {
             window.location.reload();
         } else {
             let form = new Form(data);
-            form.update(signInModal);
             Form.unlock(signInModal);
+            form.update(signInModal);
         }
     });
     Form.lock(signInModal);

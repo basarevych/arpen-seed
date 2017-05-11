@@ -59,6 +59,9 @@ class LoginForm {
                 if (!validator.isLength(form.getField('password'), { min: 6 }))
                     form.addError('password', this._i18n.translate('form_min_length', { min: 6 }));
 
+                if (!form.success)
+                    form.setField('password', '');
+
                 return form;
             });
     }
