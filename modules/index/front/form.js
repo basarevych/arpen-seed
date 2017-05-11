@@ -1,10 +1,21 @@
 'use strict';
 
+/**
+ * Form helper
+ */
 export class Form {
+    /**
+     * Create a form
+     * @param {object} data                     Form fields
+     */
     constructor(data) {
         this.data = data;
     }
 
+    /**
+     * Remove error messages
+     * @param {object} el                       jQuery element
+     */
     static reset(el) {
         el.find('.messages').empty().hide();
         el.find('.form-group').removeClass('has-danger');
@@ -12,16 +23,28 @@ export class Form {
         el.find('.errors').empty();
     }
 
+    /**
+     * Prevent user interaction
+     * @param {object} el                       jQuery element
+     */
     static lock(el) {
         el.find('.form-control').prop('disabled', true);
         el.find('[type="submit"]').prop('disabled', true);
     }
 
+    /**
+     * Allow user interaction
+     * @param {object} el                       jQuery element
+     */
     static unlock(el) {
         el.find('.form-control').prop('disabled', false);
         el.find('[type="submit"]').prop('disabled', false);
     }
 
+    /**
+     * Focus first available input
+     * @param {object} el                       jQuery element
+     */
     static focus(el) {
         el.find('[name]').each((index, item) => {
             let input = $(item);
@@ -32,6 +55,10 @@ export class Form {
         });
     }
 
+    /**
+     * Update form values and errors, set focus to first error
+     * @param {object} el                       jQuery element
+     */
     update(el) {
         let messagesEl = el.find('.messages');
         for (let msg of this.data.messages) {

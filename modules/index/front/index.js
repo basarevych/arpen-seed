@@ -7,7 +7,7 @@ import { Cookie } from 'cookie';
 
 let signInModal;
 
-$(() => {
+$(() => { // Document loaded - find elements, set event handlers
     signInModal = $('#signInModal');
     signInModal.on('show.bs.modal', () => {
         Form.reset(signInModal);
@@ -18,6 +18,10 @@ $(() => {
     });
 });
 
+/**
+ * Sign in modal handler
+ * @return {boolean}
+ */
 export function loginSubmit() {
     $.post('/login', signInModal.find('form').serialize(), data => {
         Form.reset(signInModal);

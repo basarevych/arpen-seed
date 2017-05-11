@@ -40,7 +40,7 @@ class LoginForm {
      * @return {Promise}                    Resolves to Fieldset
      */
     create(vars) {
-        let form = this._app.get('fieldset');
+        let form = this._app.get('form');
         form.addField('email', vars.email, { required: true });
         form.addField('password', vars.password, { required: true });
         return Promise.resolve(form);
@@ -49,7 +49,7 @@ class LoginForm {
     /**
      * Validate the form
      * @param {object} vars                 Fields of the form
-     * @return {Promise}                    Resolves to Fieldset
+     * @return {Promise}                    Resolves to Form
      */
     validate(vars) {
         return this.create(vars)

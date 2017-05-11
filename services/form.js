@@ -1,12 +1,12 @@
 /**
- * Form fieldset
- * @module services/fieldset
+ * Form
+ * @module services/form
  */
 
 /**
- * Form fieldset class
+ * Form class
  */
-class Fieldset {
+class Form {
     /**
      * Create service
      * @param {Util} util                   Util service
@@ -22,11 +22,11 @@ class Fieldset {
     }
 
     /**
-     * Service name is 'fieldset'
+     * Service name is 'form'
      * @type {string}
      */
     static get provides() {
-        return 'fieldset';
+        return 'form';
     }
 
     /**
@@ -104,7 +104,7 @@ class Fieldset {
     }
 
     /**
-     * Add field to the form
+     * Mark field as invalid
      * @param {string} name                             Field name
      * @param {string} error                            Field error
      */
@@ -154,4 +154,4 @@ class Fieldset {
     }
 }
 
-module.exports = Fieldset;
+module.exports = Form;
