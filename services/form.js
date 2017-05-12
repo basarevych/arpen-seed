@@ -74,7 +74,7 @@ class Form {
         };
         this.fields.set(name, field);
 
-        if (required && !value.length)
+        if (required && !field.value.length)
             this.addError(name, this._i18n.translate('form_field_required'));
     }
 

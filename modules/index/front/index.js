@@ -16,6 +16,12 @@ $(() => { // Document loaded - find elements, set event handlers
     signInModal.on('shown.bs.modal', () => {
         Form.focus(signInModal);
     });
+    signInModal.find('[validate]').on('focusout', event => {
+        $.post('/login', Object.assign({ _validate: true }, Form.extract(signInModal)), data => {
+            let form = new Form(data);
+            form.check($(event.target).prop('name'), signInModal);
+        });
+    });
 });
 
 /**
@@ -23,7 +29,7 @@ $(() => { // Document loaded - find elements, set event handlers
  * @return {boolean}
  */
 export function loginSubmit() {
-    $.post('/login', signInModal.find('form').serialize(), data => {
+    $.post('/login', Form.extract(signInModal), data => {
         Form.reset(signInModal);
         if (data.success) {
             Cookie.set(data.cookie.name, data.cookie.value, data.cookie.lifetime);

@@ -65,7 +65,7 @@ class LoginRoute {
     postLogin(req, res, next) {
         this._loginForm.validate(req.body)
             .then(form => {
-                if (!form.success)
+                if (!form.success || req.body._validate)
                     return res.json(form.toJson());
 
                 let password = form.getField('password');

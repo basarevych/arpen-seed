@@ -13,6 +13,20 @@ export class Form {
     }
 
     /**
+     * Extract field values
+     * @param {object} el                       jQuery element
+     * @return {object}
+     */
+    static extract(el) {
+        let result = {};
+        el.find('[name]').each((index, item) => {
+            let input = $(item);
+            result[input.prop('name')] = input.val();
+        });
+        return result;
+    }
+
+    /**
      * Remove error messages
      * @param {object} el                       jQuery element
      */
@@ -53,6 +67,24 @@ export class Form {
                 return false;
             }
         });
+    }
+
+    /**
+     * Check field
+     * @param {string} name                     Field name
+     * @param {object} el                       jQuery element
+     */
+    check(name, el) {
+        let groupEl = el.find(`[name="${name}"]`).parents('.form-group');
+        let errorsEl = groupEl.find('.errors');
+        groupEl.removeClass('has-danger');
+        groupEl.find('.form-control').removeClass('form-control-danger');
+        errorsEl.empty();
+        if (!this.data.form[name].valid) {
+            groupEl.addClass('has-danger');
+            for (let error of this.data.form[name].errors)
+                errorsEl.append($('<div class="form-control-feedback"></div>').text(error))
+        }
     }
 
     /**
