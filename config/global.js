@@ -7,10 +7,10 @@ module.exports = {
 
     // Load base classes and services, path names
     autoload: [
-        '!src/servers',
         '!src/services',
         'services',
         'commands',
+        'servers',
         'middleware',
         'models',
         'repositories',
