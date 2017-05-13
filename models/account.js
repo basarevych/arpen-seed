@@ -2,17 +2,20 @@
  * Account model
  * @module models/account
  */
-const Model = require('./base');
+const moment = require('moment-timezone');
+const BaseModel = require('./base');
 
 /**
  * Account model class
  */
-class AccountModel extends Model {
+class AccountModel extends BaseModel {
     /**
      * Create model
+     * @param {Postgres} postgres       Postgres service
+     * @param {Util} util               Util service
      */
-    constructor() {
-        super();
+    constructor(postgres, util) {
+        super(postgres, util);
 
         this.id = undefined;
         this.userId = undefined;
@@ -30,11 +33,19 @@ class AccountModel extends Model {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * ID setter
      * @type {undefined|number}
      */
     set id(id) {
-        this._setField('id', id);
+        return this._setField('id', id);
     }
 
     /**
@@ -50,7 +61,7 @@ class AccountModel extends Model {
      * @type {undefined|number}
      */
     set userId(id) {
-        this._setField('user_id', id);
+        return this._setField('user_id', id);
     }
 
     /**
@@ -66,7 +77,7 @@ class AccountModel extends Model {
      * @type {undefined|string}
      */
     set source(source) {
-        this._setField('source', source);
+        return this._setField('source', source);
     }
 
     /**
@@ -82,7 +93,7 @@ class AccountModel extends Model {
      * @type {undefined|string}
      */
     set identifier(identifier) {
-        this._setField('identifier', identifier);
+        return this._setField('identifier', identifier);
     }
 
     /**
@@ -98,7 +109,7 @@ class AccountModel extends Model {
      * @type {undefined|object}
      */
     set createdAt(createdAt) {
-        this._setField('created_at', createdAt);
+        return this._setField('created_at', createdAt && moment(createdAt));
     }
 
     /**

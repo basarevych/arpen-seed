@@ -2,17 +2,20 @@
  * User model
  * @module models/user
  */
-const Model = require('./base');
+const moment = require('moment-timezone');
+const BaseModel = require('./base');
 
 /**
  * User model class
  */
-class UserModel extends Model {
+class UserModel extends BaseModel {
     /**
      * Create model
+     * @param {Postgres} postgres       Postgres service
+     * @param {Util} util               Util service
      */
-    constructor() {
-        super();
+    constructor(postgres, util) {
+        super(postgres, util);
 
         this.id = undefined;
         this.email = undefined;
@@ -33,11 +36,19 @@ class UserModel extends Model {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * ID setter
      * @type {undefined|number}
      */
     set id(id) {
-        this._setField('id', id);
+        return this._setField('id', id);
     }
 
     /**
@@ -53,7 +64,7 @@ class UserModel extends Model {
      * @type {undefined|string}
      */
     set email(email) {
-        this._setField('email', email);
+        return this._setField('email', email);
     }
 
     /**
@@ -69,7 +80,7 @@ class UserModel extends Model {
      * @type {undefined|string|null}
      */
     set displayName(name) {
-        this._setField('display_name', name);
+        return this._setField('display_name', name);
     }
 
     /**
@@ -85,7 +96,7 @@ class UserModel extends Model {
      * @type {undefined|string|null}
      */
     set password(password) {
-        this._setField('password', password);
+        return this._setField('password', password);
     }
 
     /**
@@ -101,7 +112,7 @@ class UserModel extends Model {
      * @type {undefined|string}
      */
     set secret(secret) {
-        this._setField('secret', secret);
+        return this._setField('secret', secret);
     }
 
     /**
@@ -117,7 +128,7 @@ class UserModel extends Model {
      * @type {undefined|object}
      */
     set createdAt(createdAt) {
-        this._setField('created_at', createdAt);
+        return this._setField('created_at', createdAt && moment(createdAt));
     }
 
     /**
@@ -133,7 +144,7 @@ class UserModel extends Model {
      * @type {undefined|object|null}
      */
     set confirmedAt(confirmedAt) {
-        this._setField('confirmed_at', confirmedAt);
+        return this._setField('confirmed_at', confirmedAt && moment(confirmedAt));
     }
 
     /**
@@ -149,7 +160,7 @@ class UserModel extends Model {
      * @type {undefined|object|null}
      */
     set blockedAt(blockedAt) {
-        this._setField('blocked_at', blockedAt);
+        return this._setField('blocked_at', blockedAt && moment(blockedAt));
     }
 
     /**

@@ -2,17 +2,20 @@
  * Session model
  * @module models/session
  */
-const Model = require('./base');
+const moment = require('moment-timezone');
+const BaseModel = require('./base');
 
 /**
  * Session model class
  */
-class SessionModel extends Model {
+class SessionModel extends BaseModel {
     /**
      * Create model
+     * @param {Postgres} postgres       Postgres service
+     * @param {Util} util               Util service
      */
-    constructor() {
-        super();
+    constructor(postgres, util) {
+        super(postgres, util);
 
         this.id = undefined;
         this.token = undefined;
@@ -32,11 +35,19 @@ class SessionModel extends Model {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * ID setter
      * @type {undefined|number}
      */
     set id(id) {
-        this._setField('id', id);
+        return this._setField('id', id);
     }
 
     /**
@@ -52,7 +63,7 @@ class SessionModel extends Model {
      * @type {undefined|string}
      */
     set token(token) {
-        this._setField('token', token);
+        return this._setField('token', token);
     }
 
     /**
@@ -68,7 +79,7 @@ class SessionModel extends Model {
      * @type {undefined|number|null}
      */
     set userId(id) {
-        this._setField('user_id', id);
+        return this._setField('user_id', id);
     }
 
     /**
@@ -84,7 +95,7 @@ class SessionModel extends Model {
      * @type {undefined|object}
      */
     set payload(payload) {
-        this._setField('payload', payload);
+        return this._setField('payload', payload);
     }
 
     /**
@@ -100,7 +111,7 @@ class SessionModel extends Model {
      * @type {undefined|object}
      */
     set info(info) {
-        this._setField('info', info);
+        return this._setField('info', info);
     }
 
     /**
@@ -116,7 +127,7 @@ class SessionModel extends Model {
      * @type {undefined|object}
      */
     set createdAt(createdAt) {
-        this._setField('created_at', createdAt);
+        return this._setField('created_at', createdAt && moment(createdAt));
     }
 
     /**
@@ -132,7 +143,7 @@ class SessionModel extends Model {
      * @type {undefined|object}
      */
     set updatedAt(updatedAt) {
-        this._setField('updated_at', updatedAt);
+        return this._setField('updated_at', updatedAt && moment(updatedAt));
     }
 
     /**

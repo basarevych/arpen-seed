@@ -2,17 +2,19 @@
  * Role model
  * @module models/role
  */
-const Model = require('./base');
+const BaseModel = require('./base');
 
 /**
  * Role model class
  */
-class RoleModel extends Model {
+class RoleModel extends BaseModel {
     /**
      * Create model
+     * @param {Postgres} postgres       Postgres service
+     * @param {Util} util               Util service
      */
-    constructor() {
-        super();
+    constructor(postgres, util) {
+        super(postgres, util);
 
         this.id = undefined;
         this.parentId = undefined;
@@ -28,11 +30,19 @@ class RoleModel extends Model {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * ID setter
      * @type {undefined|number}
      */
     set id(id) {
-        this._setField('id', id);
+        return this._setField('id', id);
     }
 
     /**
@@ -48,7 +58,7 @@ class RoleModel extends Model {
      * @type {undefined|number|null}
      */
     set parentId(id) {
-        this._setField('parent_id', id);
+        return this._setField('parent_id', id);
     }
 
     /**
@@ -64,7 +74,7 @@ class RoleModel extends Model {
      * @type {undefined|string}
      */
     set title(name) {
-        this._setField('title', name);
+        return this._setField('title', name);
     }
 
     /**

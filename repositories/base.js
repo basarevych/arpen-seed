@@ -9,19 +9,33 @@ const WError = require('verror').WError;
 /**
  * Repository base class
  */
-class Repository {
+class BaseRepository {
     /**
      * Create repository
      * @param {App} app                             The application
      * @param {Postgres} postgres                   Postgres service
      * @param {Util} util                           Util service
-     * @param {Model} model                         Model instance
      */
-    constructor(app, postgres, util, model) {
+    constructor(app, postgres, util) {
         this._app = app;
         this._postgres = postgres;
         this._util = util;
-        this._model = model;
+    }
+
+    /**
+     * Service name is 'repositories.base'
+     * @type {string}
+     */
+    static get provides() {
+        return 'repositories.base';
+    }
+
+    /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'app', 'postgres', 'util' ];
     }
 
     /**
@@ -34,12 +48,12 @@ class Repository {
     }
 
     /**
-     * Create new instance of the model
+     * Get model
+     * @param {string} name                         Model service name
      * @return {Object}
      */
-    create() {
-        let className = this._model.constructor;
-        return new className();
+    getModel(name) {
+        return this._app.get(name);
     }
 
     /**
@@ -165,4 +179,4 @@ class Repository {
     }
 }
 
-module.exports = Repository;
+module.exports = BaseRepository;

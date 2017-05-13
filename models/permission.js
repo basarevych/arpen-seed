@@ -2,17 +2,19 @@
  * Permission model
  * @module models/permission
  */
-const Model = require('./base');
+const BaseModel = require('./base');
 
 /**
  * Permission model class
  */
-class PermissionModel extends Model {
+class PermissionModel extends BaseModel {
     /**
      * Create model
+     * @param {Postgres} postgres       Postgres service
+     * @param {Util} util               Util service
      */
-    constructor() {
-        super();
+    constructor(postgres, util) {
+        super(postgres, util);
 
         this.id = undefined;
         this.roleId = undefined;
@@ -29,11 +31,19 @@ class PermissionModel extends Model {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * ID setter
      * @type {undefined|number}
      */
     set id(id) {
-        this._setField('id', id);
+        return this._setField('id', id);
     }
 
     /**
@@ -49,7 +59,7 @@ class PermissionModel extends Model {
      * @type {undefined|number}
      */
     set roleId(id) {
-        this._setField('role_id', id);
+        return this._setField('role_id', id);
     }
 
     /**
@@ -65,7 +75,7 @@ class PermissionModel extends Model {
      * @type {undefined|string|null}
      */
     set resource(resource) {
-        this._setField('resource', resource);
+        return this._setField('resource', resource);
     }
 
     /**
@@ -81,7 +91,7 @@ class PermissionModel extends Model {
      * @type {undefined|string|null}
      */
     set action(action) {
-        this._setField('action', action);
+        return this._setField('action', action);
     }
 
     /**

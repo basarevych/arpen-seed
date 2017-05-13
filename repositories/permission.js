@@ -3,12 +3,12 @@
  * @module repositories/permission
  */
 const path = require('path');
-const Repository = require('./base');
+const BaseRepository = require('./base');
 
 /**
  * Permission repository class
  */
-class PermissionRepository extends Repository {
+class PermissionRepository extends BaseRepository {
     /**
      * Create repository
      * @param {App} app                             The application
@@ -16,10 +16,9 @@ class PermissionRepository extends Repository {
      * @param {Postgres} postgres                   Postgres service
      * @param {Cacher} cacher                       Cacher service
      * @param {Util} util                           Util service
-     * @param {PermissionModel} model               Permission model
      */
-    constructor(app, config, postgres, cacher, util, model) {
-        super(app, postgres, util, model);
+    constructor(app, config, postgres, cacher, util) {
+        super(app, postgres, util);
         this._config = config;
         this._cacher = cacher;
 
@@ -39,7 +38,7 @@ class PermissionRepository extends Repository {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'postgres', 'cacher', 'util', 'models.permission' ];
+        return [ 'app', 'config', 'postgres', 'cacher', 'util' ];
     }
 }
 

@@ -3,12 +3,12 @@
  * @module repositories/role
  */
 const path = require('path');
-const Repository = require('./base');
+const BaseRepository = require('./base');
 
 /**
  * Role repository class
  */
-class RoleRepository extends Repository {
+class RoleRepository extends BaseRepository {
     /**
      * Create repository
      * @param {App} app                             The application
@@ -16,10 +16,9 @@ class RoleRepository extends Repository {
      * @param {Postgres} postgres                   Postgres service
      * @param {Cacher} cacher                       Cacher service
      * @param {Util} util                           Util service
-     * @param {RoleModel} model                     Role model
      */
-    constructor(app, config, postgres, cacher, util, model) {
-        super(app, postgres, util, model);
+    constructor(app, config, postgres, cacher, util) {
+        super(app, postgres, util);
         this._config = config;
         this._cacher = cacher;
 
@@ -39,7 +38,7 @@ class RoleRepository extends Repository {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'postgres', 'cacher', 'util', 'models.role' ];
+        return [ 'app', 'config', 'postgres', 'cacher', 'util' ];
     }
 }
 
