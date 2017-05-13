@@ -17,7 +17,7 @@ class Session {
      * @param {UserRepository} userRepo         User repository
      */
     constructor(app, config, logger, util, sessionRepo, userRepo) {
-        this.sessions = new Map();
+        this.cache = new Map();
 
         this._app = app;
         this._config = config;
@@ -127,7 +127,7 @@ class Session {
                         if (!session)
                             return null;
 
-                        let cached = this.sessions.get(session.id);
+                        let cached = this.cache.get(session.id);
                         if (cached && cached.updatedAt.isAfter(session.updatedAt))
                             return cached;
 
@@ -159,17 +159,16 @@ class Session {
      */
     update(session) {
         let id = session.id;
-        if (!this.sessions.has(id)) {
+        if (!this.cache.has(id)) {
             let schedule = session.updatedAt.add(this.constructor.saveInterval, 'milliseconds').valueOf() - moment().valueOf();
             setTimeout(
                 () => {
-                    let session = this.sessions.get(id);
+                    let session = this.cache.get(id);
                     if (!session)
                         return;
 
-                    this.sessions.delete(id);
+                    this.cache.delete(id);
 
-                    session.updatedAt = moment();
                     this._sessionRepo.save(session)
                         .catch(error => {
                             this._logger.error(new WError(error, 'Session._update()'));
@@ -180,7 +179,8 @@ class Session {
             console.log(`scheduled for ${schedule / 1000}`)
         }
 
-        this.sessions.set(id, session);
+        session.updatedAt = moment();
+        this.cache.set(id, session);
     }
 
     /**
