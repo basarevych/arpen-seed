@@ -283,12 +283,14 @@ CREATE TRIGGER invalidate_cache
 
 CREATE TABLE sessions (
     id bigserial NOT NULL,
+    token varchar(255) NOT NULL,
     user_id bigint NULL,
     payload jsonb NOT NULL,
     info jsonb NOT NULL,
     created_at timestamp NOT NULL,
     updated_at timestamp NOT NULL,
     CONSTRAINT sessions_pk PRIMARY KEY (id),
+    CONSTRAINT sessions_token UNIQUE(token),
     CONSTRAINT sessions_user_fk FOREIGN KEY(user_id)
         REFERENCES users(id)
         ON DELETE CASCADE ON UPDATE CASCADE
@@ -302,7 +304,8 @@ BEGIN
         cache_keys = array_cat(
             cache_keys,
             array[
-                'sessions-by-id:' || NEW.id
+                'sessions-by-id:' || NEW.id,
+                'sessions-by-token:' || NEW.token
             ]
         );
     END IF;
@@ -310,7 +313,8 @@ BEGIN
         cache_keys = array_cat(
             cache_keys,
             array[
-                'sessions-by-id:' || OLD.id
+                'sessions-by-id:' || OLD.id,
+                'sessions-by-token:' || OLD.token
             ]
         );
     END IF;

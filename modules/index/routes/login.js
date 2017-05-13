@@ -88,7 +88,7 @@ class LoginRoute {
                                 res.json({
                                     success: true,
                                     cookie: {
-                                        name: `${this._config.project}sid`,
+                                        name: this._session.cookieName,
                                         value: this._session.encodeJwt(session),
                                         lifetime: lifetime || null,
                                     }

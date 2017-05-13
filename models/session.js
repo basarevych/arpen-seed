@@ -15,6 +15,7 @@ class SessionModel extends Model {
         super();
 
         this.id = undefined;
+        this.token = undefined;
         this.userId = undefined;
         this.payload = undefined;
         this.info = undefined;
@@ -44,6 +45,22 @@ class SessionModel extends Model {
      */
     get id() {
         return this._getField('id');
+    }
+
+    /**
+     * Token setter
+     * @type {undefined|string}
+     */
+    set token(token) {
+        this._setField('token', token);
+    }
+
+    /**
+     * Token getter
+     * @type {undefined|string}
+     */
+    get token() {
+        return this._getField('token');
     }
 
     /**

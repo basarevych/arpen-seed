@@ -12,15 +12,19 @@ class Session {
      * @param {App} app                         The application
      * @param {object} config                   Configuration
      * @param {Logger} logger                   Logger service
+     * @param {Util} util                       Util service
      * @param {SessionRepository} sessionRepo   Session repository
+     * @param {UserRepository} userRepo         User repository
      */
-    constructor(app, config, logger, sessionRepo) {
+    constructor(app, config, logger, util, sessionRepo, userRepo) {
         this.sessions = new Map();
 
         this._app = app;
         this._config = config;
         this._logger = logger;
+        this._util = util;
         this._sessionRepo = sessionRepo;
+        this._userRepo = userRepo;
     }
 
     /**
@@ -36,7 +40,7 @@ class Session {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'logger', 'repositories.session' ];
+        return [ 'app', 'config', 'logger', 'util', 'repositories.session', 'repositories.user' ];
     }
 
     /**
@@ -48,12 +52,27 @@ class Session {
     }
 
     /**
+     * Update session in the DB interval
+     */
+    static get saveInterval() {
+        return 60 * 1000; // ms
+    }
+
+    /**
+     * Cookie name
+     * @return {string}
+     */
+    get cookieName() {
+        return `${this._config.project}sid`;
+    }
+
+    /**
      * Encode JWT
      * @param {SessionModel} session            Session model
      * @return {string}                         Returns JWT
      */
     encodeJwt(session) {
-        return jwt.sign({ sid: session.id }, this._config.get('session.secret'));
+        return jwt.sign({ token: session.token }, this._config.get('session.secret'));
     }
 
     /**
@@ -64,6 +83,7 @@ class Session {
      */
     start(user, req) {
         let session = this._app.get('models.session');
+        session.token = this._util.getRandomString(32, { lower: true, upper: true, digits: true, special: true });
         session.userId = user.id;
         session.payload = {};
         session.info = this._getInfo(req);
@@ -72,9 +92,95 @@ class Session {
 
         return this._sessionRepo.save(session)
             .then(() => {
-                this.sessions.set(session.id, session);
                 return session;
             });
+    }
+
+    /**
+     * Load session by JWT
+     * @param {string} token                    JWT
+     * @param {object} req                      Request data
+     * @return {Promise}                        Resolves to session model
+     */
+    load(token, req) {
+        if (typeof token !== 'string' || !token.length)
+            return Promise.resolve(null);
+
+        return new Promise(resolve => {
+                jwt.verify(token, this._config.get('session.secret'), (error, payload) => {
+                    if (error)
+                        this._logger.debug('session', error.message);
+
+                    if (error || !payload || !payload.token)
+                        return resolve(null);
+
+                    resolve(payload);
+                });
+            })
+            .then(payload => {
+                if (!payload)
+                    return [ null, null ];
+
+                return this._sessionRepo.findByToken(payload.token)
+                    .then(sessions => {
+                        let session = sessions.length && sessions[0];
+                        if (!session)
+                            return null;
+
+                        let cached = this.sessions.get(session.id);
+                        if (cached && cached.updatedAt.isAfter(session.updatedAt))
+                            return cached;
+
+                        return session;
+                    })
+                    .then(session => {
+                        if (!session)
+                            return [ null, null ];
+
+                        session.info = this._getInfo(req);
+                        this.update(session);
+
+                        if (!session.userId)
+                            return [ session, null ];
+
+                        return this._userRepo.find(session.userId)
+                            .then(users => {
+                                let user = users.length && users[0];
+                                return [ session, user || null ];
+                            });
+                    });
+            });
+    }
+
+
+    /**
+     * Update session in the DB
+     * @param {SessionModel} session            The session
+     */
+    update(session) {
+        let id = session.id;
+        if (!this.sessions.has(id)) {
+            let schedule = session.updatedAt.add(this.constructor.saveInterval, 'milliseconds').valueOf() - moment().valueOf();
+            setTimeout(
+                () => {
+                    let session = this.sessions.get(id);
+                    if (!session)
+                        return;
+
+                    this.sessions.delete(id);
+
+                    session.updatedAt = moment();
+                    this._sessionRepo.save(session)
+                        .catch(error => {
+                            this._logger.error(new WError(error, 'Session._update()'));
+                        });
+                },
+                schedule > 0 ? schedule : 0
+            );
+            console.log(`scheduled for ${schedule / 1000}`)
+        }
+
+        this.sessions.set(id, session);
     }
 
     /**
