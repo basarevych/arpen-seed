@@ -176,7 +176,6 @@ class Session {
                 },
                 schedule > 0 ? schedule : 0
             );
-            console.log(`scheduled for ${schedule / 1000}`)
         }
 
         session.updatedAt = moment();
