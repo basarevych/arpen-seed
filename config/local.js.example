@@ -141,6 +141,7 @@ module.exports = {
             path: path.join(__dirname, '..', 'logs'),
             interval: '1d',
             mode: 0o640,
+            maxFiles: 3,
         },
         access: {
             level: 'info',
@@ -148,6 +149,7 @@ module.exports = {
             path: path.join(__dirname, '..', 'logs'),
             interval: '1d',
             mode: 0o640,
+            maxFiles: 3,
         },
     },
 
