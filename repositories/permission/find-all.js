@@ -46,7 +46,7 @@ module.exports = function (pg) {
         .then(rows => {
             let models = [];
             for (let row of rows) {
-                let model = this.getModel('models.permission');
+                let model = this.getModel('permission');
                 model._unserialize(row);
                 models.push(model);
             }

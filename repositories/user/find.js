@@ -63,7 +63,7 @@ module.exports = function (id, pg) {
         .then(rows => {
             let models = [];
             for (let row of rows) {
-                let model = this.getModel('models.user');
+                let model = this.getModel('user');
                 model._unserialize(row);
                 models.push(model);
             }

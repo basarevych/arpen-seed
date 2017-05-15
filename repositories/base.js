@@ -44,7 +44,7 @@ class BaseRepository {
      * @return {object}
      */
     getRepository(name) {
-        return this._app.get(name);
+        return this._app.get(`repositories.${name}`);
     }
 
     /**
@@ -53,7 +53,7 @@ class BaseRepository {
      * @return {Object}
      */
     getModel(name) {
-        return this._app.get(name);
+        return this._app.get(`models.${name}`);
     }
 
     /**
@@ -82,19 +82,16 @@ class BaseRepository {
      * }
      * </code>
      */
-    search(
-        table,
-        fields,
-        {
+    search(table, fields, options = {}, pg = undefined) {
+        let {
             where = [],
             params = [],
             sortKey = null,
             sortOrder = 'asc',
             pageSize = 0,
             pageNumber = 1
-        } = {},
-        pg = undefined
-    ) {
+        } = options;
+
         return Promise.resolve()
             .then(() => {
                 if (typeof pg === 'object')
