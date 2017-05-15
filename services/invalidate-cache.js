@@ -6,11 +6,13 @@
 class InvalidateCache {
     /**
      * Create the service
+     * @param {object} config                   Configuration
      * @param {PubSub} pubsub                   PubSub service
      * @param {Cacher} cacher                   Cacher service
      * @param {Logger} logger                   Logger service
      */
-    constructor(pubsub, cacher, logger) {
+    constructor(config, pubsub, cacher, logger) {
+        this._config = config;
         this._started = false;
         this._pubsub = pubsub;
         this._cacher = cacher;
@@ -30,7 +32,7 @@ class InvalidateCache {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'pubsub', 'cacher', 'logger' ];
+        return [ 'config', 'pubsub', 'cacher', 'logger' ];
     }
 
     /**
@@ -46,7 +48,7 @@ class InvalidateCache {
      * @return {Promise}
      */
     register() {
-        if (this._started)
+        if (this._started || !this._config.get('cache.enable'))
             return Promise.resolve();
 
         this._started = true;
