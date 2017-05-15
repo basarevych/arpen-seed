@@ -57,7 +57,7 @@ class Express {
 
         return new Promise((resolve, reject) => {
                 try {
-                    this._logger.debug('express', 'Initializing express');
+                    this._logger.debug('express', `${this.name}: Initializing express`);
                     this.express.set('env', this._config.get('env'));
                     let options = this._config.get(`servers.${name}.express`);
                     for (let option of Object.keys(options)) {
@@ -120,7 +120,7 @@ class Express {
                 server.on('listening', this.onListening.bind(this));
             })
             .then(() => {
-                this._logger.debug('express', 'Loading middleware');
+                this._logger.debug('express', `${this.name}: Loading middleware`);
                 let middleware;
                 if (this._app.has('middleware')) {
                     middleware = this._app.get('middleware');
@@ -144,7 +144,7 @@ class Express {
                                 middleware.set(cur, obj);
                             }
 
-                            this._logger.debug('express', `Registering middleware ${cur}`);
+                            this._logger.debug('express', `${this.name}: Registering middleware ${cur}`);
                             return obj.register(this);
                         });
                     },
@@ -164,7 +164,7 @@ class Express {
 
         return Promise.resolve()
             .then(() => {
-                this._logger.debug('express', 'Starting the server');
+                this._logger.debug('express', `${this.name}: Starting the server`);
                 let port = this._normalizePort(this._config.get(`servers.${name}.port`));
                 let http = this.http || this.https;
 
@@ -194,7 +194,7 @@ class Express {
                 try {
                     let port = this._normalizePort(this._config.get(`servers.${this.name}.port`));
                     this._logger.info(
-                        'Server is no longer listening on ' +
+                        this.name + ': Server is no longer listening on ' +
                         (typeof port === 'string' ?
                             port :
                             this._config.get(`servers.${this.name}.host`) + ':' + port),
@@ -219,10 +219,10 @@ class Express {
         let msg;
         switch (error.code) {
             case 'EACCES':
-                msg = 'Could not bind to web server port';
+                msg = `${this.name}: Could not bind to web server port`;
                 break;
             case 'EADDRINUSE':
-                msg = 'Web server port is already in use';
+                msg = `${this.name}: Web server port is already in use`;
                 break;
             default:
                 msg = error;
@@ -236,6 +236,7 @@ class Express {
     onListening() {
         let port = this._normalizePort(this._config.get(`servers.${this.name}.port`));
         this._logger.info(
+            this.name + ': ' +
             (this._config.get(`servers.${this.name}.ssl.enable`) ? 'HTTPS' : 'HTTP') +
             ' server listening on ' +
             (typeof port === 'string' ?

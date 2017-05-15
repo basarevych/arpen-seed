@@ -12,12 +12,10 @@ class Index {
      * Create the module
      * @param {App} app                             The application
      * @param {object} config                       Configuration
-     * @param {InvalidateCache} invalidateCache     InvalidateCache service
      */
-    constructor(app, config, invalidateCache) {
+    constructor(app, config) {
         this._app = app;
         this._config = config;
-        this._invalidateCache = invalidateCache;
     }
 
     /**
@@ -33,7 +31,7 @@ class Index {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'invalidateCache' ];
+        return [ 'app', 'config' ];
     }
 
     /**
@@ -41,7 +39,7 @@ class Index {
      * @return {Promise}
      */
     bootstrap() {
-        return this._invalidateCache.register();
+        return this._app.get('invalidateCache').register();
     }
 
     /**
