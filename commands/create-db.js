@@ -96,25 +96,25 @@ class CreateDb {
                 });
             })
             .then(() => {
-                member = this._roleRepo.create();
+                member = this._roleRepo.getModel('role');
                 member.parentId = null;
                 member.title = 'Member';
                 return this._roleRepo.save(member);
             })
             .then(() => {
-                admin = this._roleRepo.create();
+                admin = this._roleRepo.getModel('role');
                 admin.parentId = member.id;
                 admin.title = 'Admin';
                 return this._roleRepo.save(admin);
             })
             .then(() => {
-                user = this._roleRepo.create();
+                user = this._roleRepo.getModel('role');
                 user.parentId = member.id;
                 user.title = 'User';
                 return this._roleRepo.save(user);
             })
             .then(() => {
-                let perm = this._permRepo.create();
+                let perm = this._permRepo.getModel('permission');
                 perm.roleId = admin.id;
                 perm.resource = null;
                 perm.action = null;
