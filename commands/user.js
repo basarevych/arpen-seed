@@ -89,7 +89,7 @@ class User {
             .then(users => {
                 user = users.length && users[0];
                 if (!user) {
-                    user = this._userRepo.create();
+                    user = this._userRepo.getModel('user');
                     user.email = email;
                     user.displayName = null;
                     user.password = null;
