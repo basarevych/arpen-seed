@@ -11,7 +11,7 @@ html
 
         #signInModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true")
             .modal-dialog(role="document")
-                form(onsubmit="return index.loginSubmit()")
+                form(onsubmit="return false")
                     .modal-content
                         .modal-header
                             h5.modal-title #{i18n('sign_in_title')}
@@ -47,13 +47,24 @@ html
                             a.nav-link(href="/") Home
                         li.nav-item
                             a.nav-link(href="/test") Test
-                        li.nav-item.hidden-md-up
-                            a.nav-link(href="javascript:$('#signInModal').modal()") #{i18n('sign_in_button')}
-                        li.nav-item.hidden-md-up
-                            a.nav-link(href="javascript:$('#signUpModal').modal()") #{i18n('sign_up_button')}
-                    form.form-inline.hidden-sm-down
-                        button.btn.btn-link(type="button" data-toggle="modal" data-target="#signInModal") #{i18n('sign_in_button')}
-                        span #{i18n('sign_buttons_divider')}
-                        button.btn.btn-link(type="button" data-toggle="modal" data-target="#signUpModal") #{i18n('sign_up_button')}
+                        if user
+                            li.nav-item.hidden-md-up
+                                a.btn-sign-out.nav-link(href="javascript:void(0)") #{i18n('sign_out_button')}
+                        else
+                            li.nav-item.hidden-md-up
+                                a.btn-sign-in.nav-link(href="javascript:void(0)") #{i18n('sign_in_button')}
+                            li.nav-item.hidden-md-up
+                                a.btn-sign-up.nav-link(href="javascript:void(0)") #{i18n('sign_up_button')}
+                    if user
+                        ul.navbar-nav.hidden-sm-down
+                            li.nav-item.dropdown
+                                a#authMenuButton.nav-link.dropdown-toggle(href="javascript:void(0)" data-toggle="dropdown") #{user.name || user.email}
+                                .dropdown-menu(aria-labelledby="authMenuButton")
+                                    a.btn-sign-out.dropdown-item(href="javascript:void(0)") #{i18n('sign_out_button')}
+                    else
+                        .hidden-sm-down
+                            button.btn.btn-link(type="button" data-toggle="modal" data-target="#signInModal") #{i18n('sign_in_button')}
+                            span #{i18n('sign_buttons_divider')}
+                            button.btn.btn-link(type="button" data-toggle="modal" data-target="#signUpModal") #{i18n('sign_up_button')}
 
     block content

@@ -4,17 +4,17 @@
 
 # Major version of Bootstrap: 3 or 4
 bootstrapVersion: 4
-bootstrapCustomizations: ./front/styles/bootstrap.scss
 
 # If Bootstrap version 4 is used - turn on/off flexbox model
 useFlexbox: true
 
+
 # Webpack loaders, order matters
 styleLoaders:
-  - style-loader
-  - css-loader
-  - postcss-loader
-  - sass-loader
+  - style-loader?sourceMap
+  - css-loader?sourceMap
+  - postcss-loader?sourceMap
+  - sass-loader?sourceMap
 
 # Extract styles to stand-alone css file
 # Different settings for different environments can be used,
@@ -37,8 +37,7 @@ extractStyles: false
 # For example, _variables.scss contains:
 # $input-color: $gray !default;
 # This means you can define $input-color before we load _variables.scss
-
-# preBootstrapCustomizations: ./app/styles/bootstrap/pre-customizations.scss
+#preBootstrapCustomizations: ./app/styles/bootstrap/pre-customizations.scss
 
 # This gets loaded after bootstrap/variables is loaded and before bootstrap is loaded.
 # A good example of this is when you want to override a bootstrap variable to be based
@@ -52,13 +51,12 @@ extractStyles: false
 # this in bootstrapCustomizations to make the input height 10% bigger than the default calculation.
 # Thus you can leverage the default calculations.
 # $input-height: $input-height * 1.10;
-
-# bootstrapCustomizations: ./app/styles/bootstrap/customizations.scss
+bootstrapCustomizations: ./front/styles/bootstrap.scss
 
 # Import your custom styles here. You have access to all the bootstrap variables. If you require
 # your sass files separately, you will not have access to the bootstrap variables, mixins, clases, etc.
 # Usually this endpoint-file contains list of @imports of your application styles.
-# appStyles: ./app/styles/app.scss
+#appStyles: ./app/styles/app.scss
 
 ### Bootstrap styles
 styles:
@@ -71,40 +69,40 @@ styles:
   print: true
 
   # Core CSS
-  reboot: true
-  type: true
-  images: true
-  code: true
-  grid: true
-  tables: true
-  forms: true
   buttons: true
+  code: true
+  forms: true
+  grid: true
+  images: true
+  reboot: true
+  tables: true
+  type: true
 
   # Components
-  transitions: true
-  dropdown: true
+  alert: true
+  badge: true
+  breadcrumb: true
   button-group: true
-  input-group: true
+  card: true
+  close: true
   custom-forms: true
+  dropdown: true
+  input-group: true
+  jumbotron: true
+  list-group: true
+  media: true
   nav: true
   navbar: true
-  card: true
-  breadcrumb: true
   pagination: true
-  jumbotron: true
-  alert: true
   progress: true
-  media: true
-  list-group: true
   responsive-embed: true
-  close: true
-  badge: false
+  transitions: true
 
   # Components w/ JavaScript
-  modal: true
-  tooltip: true
-  popover: true
   carousel: true
+  modal: true
+  popover: true
+  tooltip: true
 
   # Utility classes
   utilities: true

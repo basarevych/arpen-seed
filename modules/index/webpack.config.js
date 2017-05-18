@@ -1,6 +1,3 @@
-/**
- * @author: @AngularClass
- */
 const path = require('path');
 const root = path.join.bind(path, path.resolve(__dirname));
 
@@ -102,13 +99,6 @@ module.exports = {
          * See: http://webpack.github.io/docs/configuration.html#output-chunkfilename
          */
         chunkFilename: '[id].chunk.js',
-
-        /**
-         * Export code to the browser
-         *
-         * See: http://webpack.github.io/docs/configuration.html#output-library
-         */
-        library: '[name]',
     },
 
     /**
@@ -122,8 +112,10 @@ module.exports = {
 
             {
                 test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
-                use: [ 'babel-loader' ],
+                exclude: /node_modules/,
+                use: [
+                    { loader: 'babel-loader', options: { sourceMap: true } },
+                ],
             },
 
             /**
@@ -131,19 +123,26 @@ module.exports = {
              */
             {
                 test: /\.css$/,
-                use: [ 'style-loader', 'css-loader' ],
+                use: [
+                    { loader: 'style-loader', options: { sourceMap: true } },
+                    { loader: 'css-loader', options: { sourceMap: true } },
+                ],
             },
 
             {
                 test: /\.scss$/,
-                use: [ 'style-loader', 'css-loader', 'sass-loader' ]
+                use: [
+                    { loader: 'style-loader', options: { sourceMap: true } },
+                    { loader: 'css-loader', options: { sourceMap: true } },
+                    { loader: 'sass-loader', options: { sourceMap: true } },
+                ]
             },
 
             /**
              * Bootstrap 4 loader
              */
             {
-                test: /bootstrap\/dist\/js\/umd\//,
+                test: /bootstrap\/dist\/js\//,
                 use: 'imports-loader?jQuery=jquery'
             },
 
@@ -200,9 +199,11 @@ module.exports = {
          *
          * See: https://github.com/vigneshshanmugam/optimize-js-plugin
          */
+        /*
         new OptimizeJsPlugin({
-            sourceMap: false
+            sourceMap: true,
         }),
+        */
 
         /**
          * Plugin: UglifyJsPlugin
@@ -212,29 +213,34 @@ module.exports = {
          * See: https://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
          */
         // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
+        /*
         new UglifyJsPlugin({
-            // beautify: true, //debug
-            // mangle: false, //debug
-            // dead_code: false, //debug
-            // unused: false, //debug
-            // deadCode: false, //debug
-            // compress: {
-            //   screw_ie8: true,
-            //   keep_fnames: true,
-            //   drop_debugger: false,
-            //   dead_code: false,
-            //   unused: false
-            // }, // debug
-            // comments: true, //debug
+            // debug
+            /*
+            beautify: true,
+            output: {
+                comments: true,
+            }
+            mangle: false,
+            compress: {
+                screw_ie8: true,
+                keep_fnames: true,
+                drop_debugger: false,
+                dead_code: false,
+                unused: false
+            },
+            sourceMap: true,
+            */
 
-
-            beautify: false, //prod
+            // prod
+        /*
+            beautify: false,
             output: {
                 comments: false
-            }, //prod
+            },
             mangle: {
                 screw_ie8: true
-            }, //prod
+            },
             compress: {
                 screw_ie8: true,
                 warnings: false,
@@ -248,7 +254,9 @@ module.exports = {
                 join_vars: true,
                 negate_iife: false // we need this for lazy v8
             },
+            sourceMap: true,
         }),
+        */
 
         /**
          * jQuery for Bootstrap
