@@ -117,9 +117,6 @@ module.exports = {
                 ],
             },
 
-            /**
-             * Sass loader (required for Bootstrap 4)
-             */
             {
                 test: /\.css$/,
                 use: [
@@ -137,21 +134,30 @@ module.exports = {
                 ]
             },
 
-            /**
-             * Bootstrap 4 loader
-             */
             {
                 test: /bootstrap\/dist\/js\//,
-                use: 'imports-loader?jQuery=jquery'
+                use: [
+                    'imports-loader?jQuery=jquery',
+                    'imports-loader?Tether=tether',
+                    "imports-loader?Tooltip=bootstrap/js/dist/tooltip",
+                    "imports-loader?Alert=bootstrap/js/dist/alert",
+                    "imports-loader?Button=bootstrap/js/dist/button",
+                    "imports-loader?Carousel=bootstrap/js/dist/carousel",
+                    "imports-loader?Collapse=bootstrap/js/dist/collapse",
+                    "imports-loader?Dropdown=bootstrap/js/dist/dropdown",
+                    "imports-loader?Modal=bootstrap/js/dist/modal",
+                    "imports-loader?Popover=bootstrap/js/dist/popover",
+                    "imports-loader?Scrollspy=bootstrap/js/dist/scrollspy",
+                    "imports-loader?Tab=bootstrap/js/dist/tab",
+                    "imports-loader?Util=bootstrap/js/dist/util",
+                ]
             },
 
-            /**
-             * Font loaders, required for font-awesome-sass-loader and bootstrap-loader
-             */
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: "url-loader?limit=10000&mimetype=application/font-woff"
             },
+
             {
                 test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: "file-loader"

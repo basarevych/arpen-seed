@@ -56,6 +56,14 @@ export class Form {
     }
 
     /**
+     * Is the form locked
+     * @param {object} el                       jQuery element
+     */
+    static isLocked(el) {
+        return el.find('[type="submit"]').prop('disabled');
+    }
+
+    /**
      * Focus first available input
      * @param {object} el                       jQuery element
      */

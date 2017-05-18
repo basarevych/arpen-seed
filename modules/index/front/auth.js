@@ -16,13 +16,14 @@ function signIn() {
         if (data.success) {
             localStorage.setItem('sidName', data.cookie.name);
             Cookie.set(data.cookie.name, data.cookie.value, data.cookie.lifetime);
-            signInModal.find('[data-dismiss="modal"]').click();
             window.location.reload();
-        } else if (signInForm.timestamp < timestamp) {
+        } else {
             Form.unlock(signInModal);
-            signInForm.update(signInModal, data, true);
-            signInForm.checkForm(signInModal);
-            signInForm.timestamp = timestamp;
+            if (signInForm.timestamp < timestamp) {
+                signInForm.update(signInModal, data, true);
+                signInForm.checkForm(signInModal);
+                signInForm.timestamp = timestamp;
+            }
         }
     });
     Form.lock(signInModal);
@@ -51,11 +52,14 @@ $(() => {
     });
 
     signInModal.find('[validate]').on('focusout', event => {
+        if (Form.isLocked(signInModal))
+            return;
+
         let timestamp = Date.now();
         setTimeout(() => {
-            if (signInForm.timestamp < timestamp) {
+            if (!Form.isLocked(signInModal) && signInForm.timestamp < timestamp) {
                 $.post('/login', Object.assign({_validate: true}, Form.extract(signInModal)), data => {
-                    if (signInForm.timestamp < timestamp) {
+                    if (!Form.isLocked(signInModal) && signInForm.timestamp < timestamp) {
                         signInForm.update(signInModal, data, false);
                         signInForm.checkField(signInModal, $(event.target).prop('name'));
                         signInForm.timestamp = timestamp;
