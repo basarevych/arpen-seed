@@ -6,10 +6,10 @@
 export class Form {
     /**
      * Create a form
-     * @param {object} data                     Form fields
      */
-    constructor(data) {
-        this.data = data;
+    constructor() {
+        this.data = { success: true, messages: [], form: {} };
+        this.timestamp = Date.now();
     }
 
     /**
@@ -70,17 +70,35 @@ export class Form {
     }
 
     /**
-     * Check field
-     * @param {string} name                     Field name
+     * Update data
      * @param {object} el                       jQuery element
+     * @param {object} data                     The data
+     * @param {boolean} [updateValues=false]    Update field values
      */
-    check(name, el) {
+    update(el, data, updateValues = false) {
+        this.data = data;
+
+        if (updateValues) {
+            for (let field of Object.keys(this.data.form)) {
+                let fieldEl = el.find(`[name="${field}"]`);
+                fieldEl.val(this.data.form[field].value);
+            }
+        }
+    }
+
+    /**
+     * Check field
+     * @param {object} el                       jQuery element
+     * @param {string} name                     Field name
+     */
+    checkField(el, name) {
         let groupEl = el.find(`[name="${name}"]`).parents('.form-group');
         let errorsEl = groupEl.find('.errors');
         groupEl.removeClass('has-danger');
         groupEl.find('.form-control').removeClass('form-control-danger');
         errorsEl.empty();
-        if (!this.data.form[name].valid) {
+
+        if (this.data.form[name] && !this.data.form[name].valid) {
             groupEl.addClass('has-danger');
             for (let error of this.data.form[name].errors)
                 errorsEl.append($('<div class="form-control-feedback"></div>').text(error))
@@ -88,27 +106,26 @@ export class Form {
     }
 
     /**
-     * Update form values and errors, set focus to first error
+     * Check form field errors, set focus to first error
      * @param {object} el                       jQuery element
      */
-    update(el) {
+    checkForm(el) {
         let messagesEl = el.find('.messages');
-        for (let msg of this.data.messages) {
+        for (let msg of this.data.messages || []) {
             let msgEl = $(`<div class="alert ${msg.type === 'error' ? 'alert-danger' : 'alert-success'}"></div>`).html(msg.message);
             let colEl = $('<div class="col-sm-12"></div>').append(msgEl);
             let rowEl = $('<div class="row"></div>').append(colEl);
             messagesEl.append(rowEl);
         }
-        if (this.data.messages.length)
+        if (this.data.messages && this.data.messages.length)
             messagesEl.show('slow');
 
         let first, focused = false;
-        for (let field of Object.keys(this.data.form)) {
+        for (let field of Object.keys(this.data.form) || {}) {
             let fieldEl = el.find(`[name="${field}"]`);
             if (!fieldEl.length)
                 continue;
 
-            fieldEl.val(this.data.form[field].value);
             if (!first && !fieldEl.prop('readonly') && !fieldEl.prop('disabled'))
                 first = fieldEl;
 

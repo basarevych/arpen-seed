@@ -4,11 +4,10 @@ const root = path.join.bind(path, path.resolve(__dirname));
 /**
  * Webpack Plugins
  */
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const OptimizeJsPlugin = require('optimize-js-plugin');
-const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
-const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ProvidePlugin = require('webpack/lib/ProvidePlugin');
+const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 
 const dist = 'public';
 
@@ -193,17 +192,33 @@ module.exports = {
             { from: 'assets/img', to: 'img' },
         ]),
 
+
         /**
-         * Webpack plugin to optimize a JavaScript file for faster initial load
-         * by wrapping eagerly-invoked functions.
+         * Plugin: ProvidePlugin
+         * Description: Autoload modules
          *
-         * See: https://github.com/vigneshshanmugam/optimize-js-plugin
+         * Whenever the identifier is encountered as free variable in a module, its module is loaded automatically
+         *
+         * See: https://webpack.github.io/docs/list-of-plugins.html#provideplugin
          */
-        /*
-        new OptimizeJsPlugin({
-            sourceMap: true,
+        new ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "window.jQuery": "jquery",
+            Tether: "tether",
+            "window.Tether": "tether",
+            Tooltip: "exports-loader?Tooltip!bootstrap/js/dist/tooltip",
+            Alert: "exports-loader?Alert!bootstrap/js/dist/alert",
+            Button: "exports-loader?Button!bootstrap/js/dist/button",
+            Carousel: "exports-loader?Carousel!bootstrap/js/dist/carousel",
+            Collapse: "exports-loader?Collapse!bootstrap/js/dist/collapse",
+            Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
+            Modal: "exports-loader?Modal!bootstrap/js/dist/modal",
+            Popover: "exports-loader?Popover!bootstrap/js/dist/popover",
+            Scrollspy: "exports-loader?Scrollspy!bootstrap/js/dist/scrollspy",
+            Tab: "exports-loader?Tab!bootstrap/js/dist/tab",
+            Util: "exports-loader?Util!bootstrap/js/dist/util"
         }),
-        */
 
         /**
          * Plugin: UglifyJsPlugin
@@ -213,7 +228,6 @@ module.exports = {
          * See: https://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
          */
         // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
-        /*
         new UglifyJsPlugin({
             // debug
             /*
@@ -233,7 +247,6 @@ module.exports = {
             */
 
             // prod
-        /*
             beautify: false,
             output: {
                 comments: false
@@ -255,29 +268,6 @@ module.exports = {
                 negate_iife: false // we need this for lazy v8
             },
             sourceMap: true,
-        }),
-        */
-
-        /**
-         * jQuery for Bootstrap
-         */
-        new ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.jQuery": "jquery",
-            Tether: "tether",
-            "window.Tether": "tether",
-            Tooltip: "exports-loader?Tooltip!bootstrap/js/dist/tooltip",
-            Alert: "exports-loader?Alert!bootstrap/js/dist/alert",
-            Button: "exports-loader?Button!bootstrap/js/dist/button",
-            Carousel: "exports-loader?Carousel!bootstrap/js/dist/carousel",
-            Collapse: "exports-loader?Collapse!bootstrap/js/dist/collapse",
-            Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
-            Modal: "exports-loader?Modal!bootstrap/js/dist/modal",
-            Popover: "exports-loader?Popover!bootstrap/js/dist/popover",
-            Scrollspy: "exports-loader?Scrollspy!bootstrap/js/dist/scrollspy",
-            Tab: "exports-loader?Tab!bootstrap/js/dist/tab",
-            Util: "exports-loader?Util!bootstrap/js/dist/util"
         }),
 
     ],

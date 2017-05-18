@@ -58,7 +58,9 @@ html
                     if user
                         ul.navbar-nav.hidden-sm-down
                             li.nav-item.dropdown
-                                a#authMenuButton.nav-link.dropdown-toggle(href="javascript:void(0)" data-toggle="dropdown") #{user.name || user.email}
+                                a#authMenuButton.nav-link.dropdown-toggle(href="javascript:void(0)" data-toggle="dropdown")
+                                    i.fa.fa-user.fa-margin-right
+                                    | #{user.name || user.email || "anonymous"}
                                 .dropdown-menu(aria-labelledby="authMenuButton")
                                     a.btn-sign-out.dropdown-item(href="javascript:void(0)") #{i18n('sign_out_button')}
                     else
