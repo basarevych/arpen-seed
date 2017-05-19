@@ -37,10 +37,11 @@ html
 
         nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
             .container
-                button.navbar-toggler.navbar-toggler-right(type="button" data-toggle="collapse" data-target="#navbarText"
+                a.navbar-brand.hidden-sm-down(href="javascript:void(0)") #{i18n('project_title')}
+                button.navbar-toggler.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarText"
                     aria-controls="navbarText" aria-expanded="false" aria-label="#{i18n('navbar_menu_button')")
                     span.navbar-toggler-icon
-                a.navbar-brand(href="javascript:void(0)") #{i18n('project_title')}
+                a.navbar-brand.float-right.hidden-md-up(href="javascript:void(0)") #{i18n('project_title')}
                 #navbarText.collapse.navbar-collapse.justify-content-between
                     ul.navbar-nav
                         li.nav-item.active
@@ -69,4 +70,4 @@ html
                             span #{i18n('sign_buttons_divider')}
                             button.btn.btn-link(type="button" data-toggle="modal" data-target="#signUpModal") #{i18n('sign_up_button')}
 
-        block content
+    block content
