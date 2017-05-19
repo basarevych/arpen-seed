@@ -50,6 +50,7 @@ html
                             a.nav-link(href="/test") Test
                         if user
                             li.nav-item.hidden-md-up
+                                a.nav-link(href="/account/profile") #{i18n('profile_button')}
                                 a.btn-sign-out.nav-link(href="javascript:void(0)") #{i18n('sign_out_button')}
                         else
                             li.nav-item.hidden-md-up
@@ -63,6 +64,8 @@ html
                                     i.fa.fa-user.fa-margin-right
                                     | #{user.name || user.email || "anonymous"}
                                 .dropdown-menu(aria-labelledby="authMenuButton")
+                                    a.dropdown-item(href="/account/profile") #{i18n('profile_button')}
+                                    .dropdown-divider
                                     a.btn-sign-out.dropdown-item(href="javascript:void(0)") #{i18n('sign_out_button')}
                     else
                         .hidden-sm-down

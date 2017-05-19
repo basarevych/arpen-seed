@@ -76,6 +76,13 @@ module.exports = {
         path: root(dist),
 
         /**
+         * Public URL base of the files.
+         *
+         * See: http://webpack.github.io/docs/configuration.html#output-publicpath
+         */
+        publicPath: '/',
+
+        /**
          * Specifies the name of each output file on disk.
          * IMPORTANT: You must not specify an absolute path here!
          *

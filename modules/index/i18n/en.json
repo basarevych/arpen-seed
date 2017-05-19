@@ -23,6 +23,10 @@
     "message": "or",
     "description": "Text between sign in and sign up buttons"
   },
+  "profile_button": {
+    "message": "Profile",
+    "description": "Title of profile button"
+  },
   "navbar_menu_button": {
     "message": "Menu",
     "description": "Label for menu button of navbar"
