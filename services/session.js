@@ -83,7 +83,7 @@ class Session {
      */
     start(user, req) {
         let session = this._app.get('models.session');
-        session.token = this._util.getRandomString(32, { lower: true, upper: true, digits: true, special: true });
+        session.token = this._util.getRandomString(32, { lower: true, upper: true, digits: true, special: false });
         session.userId = user.id;
         session.payload = {};
         session.info = this._getInfo(req);
