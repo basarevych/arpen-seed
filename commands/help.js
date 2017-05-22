@@ -12,11 +12,13 @@ class Help {
      * Create the service
      * @param {App} app                 The application
      * @param {object} config           Configuration
+     * @param {ErrorHelper} error       Error service
      * @param {Util} util               Utility service
      */
-    constructor(app, config, util) {
+    constructor(app, config, error, util) {
         this._app = app;
         this._config = config;
+        this._error = error;
         this._util = util;
     }
 
@@ -33,7 +35,7 @@ class Help {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'util' ];
+        return [ 'app', 'config', 'error', 'util' ];
     }
 
     /**
@@ -151,10 +153,17 @@ class Help {
 
     /**
      * Log error and terminate
-     * @param {...*} args
+     * @param {Array} args
      */
-    error(...args) {
-        return this._app.error(...args)
+    error(args) {
+        return args.reduce(
+            (prev, cur) => {
+                return prev.then(() => {
+                    return this._app.error(cur.stack || cur.message || cur);
+                });
+            },
+            Promise.resolve()
+            )
             .then(
                 () => {
                     process.exit(1);

@@ -15,12 +15,14 @@ class CreateCert {
      * Create the service
      * @param {App} app                 The application
      * @param {object} config           Configuration
+     * @param {ErrorHelper} error       Error service
      * @param {Runner} runner           Runner service
      * @param {Help} help               Help command
      */
-    constructor(app, config, runner, help) {
+    constructor(app, config, error, runner, help) {
         this._app = app;
         this._config = config;
+        this._error = error;
         this._runner = runner;
         this._help = help;
     }
@@ -38,7 +40,7 @@ class CreateCert {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'runner', 'commands.help' ];
+        return [ 'app', 'config', 'error', 'runner', 'commands.help' ];
     }
 
     /**
@@ -105,16 +107,23 @@ class CreateCert {
                     });
             })
             .catch(error => {
-                return this.error(error.message);
+                return this.error(this._error.flatten(error));
             });
     }
 
     /**
      * Log error and terminate
-     * @param {...*} args
+     * @param {Array} args
      */
-    error(...args) {
-        return this._app.error(...args)
+    error(args) {
+        return args.reduce(
+            (prev, cur) => {
+                return prev.then(() => {
+                    return this._app.error(cur.stack || cur.message || cur);
+                });
+            },
+            Promise.resolve()
+            )
             .then(
                 () => {
                     process.exit(1);
