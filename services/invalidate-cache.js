@@ -2,8 +2,9 @@
  * Invalidate cache service
  * @module services/invalidate-cache
  */
+const EventEmmiter = require('events');
 
-class InvalidateCache {
+class InvalidateCache extends EventEmmiter {
     /**
      * Create the service
      * @param {object} config                   Configuration
@@ -12,6 +13,8 @@ class InvalidateCache {
      * @param {Logger} logger                   Logger service
      */
     constructor(config, pubsub, cacher, logger) {
+        super();
+
         this._config = config;
         this._started = false;
         this._pubsub = pubsub;
@@ -67,6 +70,11 @@ class InvalidateCache {
             this._logger.error('Received invalid cache invalidation message', message);
 
         this._cacher.unset('sql:' + message.key)
+            .then(() => {
+                let parts = message.key.split(':');
+                let name = parts.shift();
+                this.emit(name, parts.join(':'));
+            })
             .catch(error => {
                 this._logger.error('Invalidation of the cache failed', error);
             });

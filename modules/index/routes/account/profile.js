@@ -91,7 +91,7 @@ class ProfileRoute {
                 if (!form.success || req.body._validate)
                     return res.json(form.toJSON());
 
-                res.locals.user.name = form.getField('name') || null;
+                res.locals.user.displayName = form.getField('name') || null;
                 if (newPassword)
                     res.locals.password = this._util.encryptPassword(newPassword);
 

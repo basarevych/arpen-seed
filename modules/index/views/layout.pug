@@ -62,7 +62,7 @@ html
                             li.nav-item.dropdown
                                 a#authMenuButton.nav-link.dropdown-toggle(href="javascript:void(0)" data-toggle="dropdown")
                                     i.fa.fa-user.fa-margin-right
-                                    | #{user.name || user.email || "anonymous"}
+                                    | #{user.displayName || user.email || "anonymous"}
                                 .dropdown-menu(aria-labelledby="authMenuButton")
                                     a.dropdown-item(href="/account/profile") #{i18n('profile_button')}
                                     .dropdown-divider
