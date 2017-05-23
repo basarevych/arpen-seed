@@ -57,7 +57,7 @@ class LoginRoute {
     }
 
     /**
-     * Main route
+     * Authorize a user
      * @param {object} req          Express request
      * @param {object} res          Express response
      * @param {function} next       Express next middleware function
@@ -65,18 +65,18 @@ class LoginRoute {
     postLogin(req, res, next) {
         this._loginForm.validate(req.body)
             .then(form => {
-                if (!form.success || req.body._validate)
-                    return res.json(form.toJson());
-
                 let password = form.getField('password');
                 form.setField('password', '');
+
+                if (!form.success || req.body._validate)
+                    return res.json(form.toJSON());
 
                 return this._userRepo.findByEmail(form.getField('email'))
                     .then(users => {
                         let user = users.length && users[0];
                         if (!user || !user.confirmedAt || !this._util.checkPassword(password, user.password)) {
                             form.addMessage('error', this._i18n.translate('sign_in_invalid_credentials'));
-                            return res.json(form.toJson());
+                            return res.json(form.toJSON());
                         }
 
                         return this._session.start(user, req)
@@ -94,7 +94,7 @@ class LoginRoute {
                                     }
                                 });
                             });
-                    })
+                    });
             })
             .catch(error => {
                 next(new WError(error, 'postLogin()'));

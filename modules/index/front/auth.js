@@ -6,8 +6,7 @@ import { Cookie } from 'cookie';
 let signInModal, signInForm = new Form();
 
 /**
- * Sign in modal handler
- * @return {boolean}
+ * Sign in
  */
 function signIn() {
     let timestamp = Date.now();
@@ -51,6 +50,9 @@ $(() => {
         Form.focus(signInModal);
     });
 
+    signInModal.find('[name]').on('input', event => {
+        Form.reset(signInModal, $(event.currentTarget));
+    });
     signInModal.find('[validate]').on('focusout', event => {
         if (Form.isLocked(signInModal))
             return;

@@ -39,6 +39,18 @@
     "message": "Required field",
     "description": "Label for controls that must have input"
   },
+  "form_field_required": {
+    "message": "This field is required",
+    "description": "Message when the field is empty"
+  },
+  "form_min_length": {
+    "message": "Minimum length of the field is {min} {min, plural, =1 {character} other {characters}}",
+    "description": "Message when value is too short"
+  },
+  "form_email_invalid": {
+    "message": "Please enter valid email address",
+    "description": "Message when email is not valid"
+  },
   "sign_in_title": {
     "message": "Sign in",
     "description": "Title of sign in modal"
@@ -63,16 +75,52 @@
     "message": "Invalid email or password",
     "description": "Message for wrong email or password in sign in modal"
   },
-  "form_field_required": {
-    "message": "This field is required",
-    "description": "Message when the field is empty"
+  "profile_title": {
+    "message": "Profile",
+    "description": "Title of profile page"
   },
-  "form_min_length": {
-    "message": "Minimum length of the field is {min} {min, plural, =1 {character} other {characters}}",
-    "description": "Message when value is too short"
+  "profile_email_label": {
+    "message": "Email:",
+    "description": "Label of email input of profile form"
   },
-  "form_email_invalid": {
-    "message": "Please enter valid email address",
-    "description": "Message when email is not valid"
+  "profile_name_label": {
+    "message": "Display name:",
+    "description": "Label of display name input of profile form"
+  },
+  "profile_cur_password_label": {
+    "message": "Current password:",
+    "description": "Label of current password input of profile form"
+  },
+  "profile_cur_password_help": {
+    "message": "Required when changing the password",
+    "description": "Contents of current password help of profile form"
+  },
+  "profile_new_password1_label": {
+    "message": "New password:",
+    "description": "Label of new password input of profile form"
+  },
+  "profile_new_password1_help": {
+    "message": "Leave empty to not change the password",
+    "description": "Contents of new password help of profile form"
+  },
+  "profile_new_password2_label": {
+    "message": "Retype new password:",
+    "description": "Label of retyped password input of profile form"
+  },
+  "profile_submit_button": {
+    "message": "Save changes",
+    "description": "Title of submit button of profile form"
+  },
+  "profile_passwords_mismatch": {
+    "message": "Retyped password is not the same",
+    "description": "Message when new and retyped passwords do not match in profile form"
+  },
+  "profile_password_invalid": {
+    "message": "This is not the current password",
+    "description": "Message when current password is wrong in profile form"
+  },
+  "profile_success": {
+    "message": "Changes saved",
+    "description": "Message when profile is updated in profile form"
   }
 }

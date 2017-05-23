@@ -43,7 +43,7 @@ class IndexRoute {
      * @param {function} next       Express next middleware function
      */
     getIndex(req, res, next) {
-        res.render('index', { title: 'Express' });
+        res.render('index');
     }
 }
 

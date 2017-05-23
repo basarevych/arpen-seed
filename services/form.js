@@ -135,7 +135,7 @@ class Form {
      * Convert this instance to an object
      * @return {object}
      */
-    toJson() {
+    toJSON() {
         let json = {
             success: this.success,
             messages: this.messages,

@@ -29,12 +29,19 @@ export class Form {
     /**
      * Remove error messages
      * @param {object} el                       jQuery element
+     * @param {object} [input]                  Reset this input or all inputs if not set
      */
-    static reset(el) {
+    static reset(el, input) {
         el.find('.messages').empty().hide();
-        el.find('.form-group').removeClass('has-danger');
-        el.find('.form-control').removeClass('form-control-danger');
-        el.find('.errors').empty();
+        if (input) {
+            input.removeClass('form-control-danger');
+            let groupEl = el.parents('.form-group');
+            groupEl.removeClass('has-danger').find('.errors').empty();
+        } else {
+            el.find('.form-group').removeClass('has-danger');
+            el.find('.form-control').removeClass('form-control-danger');
+            el.find('.errors').empty();
+        }
     }
 
     /**
