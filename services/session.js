@@ -100,11 +100,11 @@ class Session {
      * Load session by JWT
      * @param {string} token                    JWT
      * @param {object} req                      Request data
-     * @return {Promise}                        Resolves to session model
+     * @return {Promise}                        Resolves to [ session, user ]
      */
     load(token, req) {
         if (typeof token !== 'string' || !token.length)
-            return Promise.resolve(null);
+            return Promise.resolve([ null, null ]);
 
         return new Promise(resolve => {
                 jwt.verify(token, this._config.get('session.secret'), (error, payload) => {

@@ -13,15 +13,13 @@ class ProfileRoute {
      * Create service
      * @param {Util} util                       Util service
      * @param {ErrorHelper} error               Error helper service
-     * @param {Map} middleware                  Middleware store
      * @param {SessionRepository} sessionRepo   Session repository
      * @param {UserRepository} userRepo         User repository
      * @param {ProfileForm} profileForm         Profile form
      */
-    constructor(util, error, middleware, sessionRepo, userRepo, profileForm) {
+    constructor(util, error, sessionRepo, userRepo, profileForm) {
         this._util = util;
         this._error = error;
-        this._i18n = middleware.get('middleware.i18n');
         this._sessionRepo = sessionRepo;
         this._userRepo = userRepo;
         this._profileForm = profileForm;
@@ -47,7 +45,6 @@ class ProfileRoute {
         return [
             'util',
             'error',
-            'middleware',
             'repositories.session',
             'repositories.user',
             'modules.index.forms.profile'
@@ -86,7 +83,7 @@ class ProfileRoute {
                 form.setField('new_password2', '');
 
                 if (curPassword && !this._util.checkPassword(curPassword, res.locals.user.password))
-                    form.addError('cur_password', this._i18n.translate('profile_password_invalid'));
+                    form.addError('cur_password', 'profile_password_invalid');
 
                 if (!form.success || req.body._validate)
                     return res.json(form.toJSON());
@@ -97,7 +94,7 @@ class ProfileRoute {
 
                 return this._userRepo.save(res.locals.user)
                     .then(() => {
-                        form.addMessage('info', this._i18n.translate('profile_success'));
+                        form.addMessage('info', 'profile_success');
                         res.json(form.toJSON());
                     });
             })

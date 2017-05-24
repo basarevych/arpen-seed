@@ -15,16 +15,14 @@ class LoginRoute {
      * @param {Session} session             Session service
      * @param {Util} util                   Util service
      * @param {ErrorHelper} error           Error helper service
-     * @param {Map} middleware              Middleware store
      * @param {UserRepository} userRepo     User repository
      * @param {LoginForm} loginForm         Login form
      */
-    constructor(config, session, util, error, middleware, userRepo, loginForm) {
+    constructor(config, session, util, error, userRepo, loginForm) {
         this._config = config;
         this._session = session;
         this._util = util;
         this._error = error;
-        this._i18n = middleware.get('middleware.i18n');
         this._userRepo = userRepo;
         this._loginForm = loginForm;
 
@@ -50,7 +48,6 @@ class LoginRoute {
             'session',
             'util',
             'error',
-            'middleware',
             'repositories.user',
             'modules.index.forms.login'
         ];
@@ -75,7 +72,7 @@ class LoginRoute {
                     .then(users => {
                         let user = users.length && users[0];
                         if (!user || !user.confirmedAt || !this._util.checkPassword(password, user.password)) {
-                            form.addMessage('error', this._i18n.translate('sign_in_invalid_credentials'));
+                            form.addMessage('error', 'sign_in_invalid_credentials');
                             return res.json(form.toJSON());
                         }
 

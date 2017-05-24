@@ -11,11 +11,9 @@ class LoginForm {
     /**
      * Create service
      * @param {App} app                     The application
-     * @param {Map} middleware              Middleware store
      */
-    constructor(app, middleware) {
+    constructor(app) {
         this._app = app;
-        this._i18n = middleware.get('middleware.i18n');
     }
 
     /**
@@ -31,7 +29,7 @@ class LoginForm {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'middleware' ];
+        return [ 'app' ];
     }
 
     /**
@@ -55,9 +53,9 @@ class LoginForm {
         return this.create(vars)
             .then(form => {
                 if (!validator.isEmail(form.getField('email')))
-                    form.addError('email', this._i18n.translate('form_email_invalid'));
+                    form.addError('email', 'form_email_invalid');
                 if (!validator.isLength(form.getField('password'), { min: 6 }))
-                    form.addError('password', this._i18n.translate('form_min_length', { min: 6 }));
+                    form.addError('password', 'form_min_length', { min: 6 });
 
                 return form;
             });

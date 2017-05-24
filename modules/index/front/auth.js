@@ -51,7 +51,7 @@ $(() => {
     });
 
     signInModal.find('[name]').on('input', event => {
-        Form.reset(signInModal, $(event.currentTarget));
+        Form.reset(signInModal, $(event.target));
     });
     signInModal.find('[validate]').on('focusout', event => {
         if (Form.isLocked(signInModal))

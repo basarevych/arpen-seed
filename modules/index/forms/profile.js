@@ -11,11 +11,9 @@ class ProfileForm {
     /**
      * Create service
      * @param {App} app                     The application
-     * @param {Map} middleware              Middleware store
      */
-    constructor(app, middleware) {
+    constructor(app) {
         this._app = app;
-        this._i18n = middleware.get('middleware.i18n');
     }
 
     /**
@@ -31,7 +29,7 @@ class ProfileForm {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'middleware' ];
+        return [ 'app' ];
     }
 
     /**
@@ -58,19 +56,19 @@ class ProfileForm {
             .then(form => {
                 let curPassword = form.getField('cur_password');
                 if (curPassword && !validator.isLength(curPassword, { min: 6 }))
-                    form.addError('cur_password', this._i18n.translate('form_min_length', { min: 6 }));
+                    form.addError('cur_password', 'form_min_length', { min: 6 });
 
                 let newPassword1 = form.getField('new_password1');
                 if (newPassword1 && !validator.isLength(newPassword1, { min: 6 }))
-                    form.addError('new_password1', this._i18n.translate('form_min_length', { min: 6 }));
+                    form.addError('new_password1', 'form_min_length', { min: 6 });
                 if (newPassword1 && !curPassword)
-                    form.addError('cur_password', this._i18n.translate('form_field_required'));
+                    form.addError('cur_password', 'form_field_required');
 
                 let newPassword2 = form.getField('new_password2');
                 if (newPassword2 && !validator.isLength(newPassword2, { min: 6 }))
-                    form.addError('new_password2', this._i18n.translate('form_min_length', { min: 6 }));
+                    form.addError('new_password2', 'form_min_length', { min: 6 });
                 if (newPassword2 && newPassword2 !== newPassword1)
-                    form.addError('new_password2', this._i18n.translate('profile_passwords_mismatch'));
+                    form.addError('new_password2', 'profile_passwords_mismatch');
 
                 return form;
             });

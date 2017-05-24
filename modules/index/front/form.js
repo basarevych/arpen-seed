@@ -8,7 +8,7 @@ export class Form {
      * Create a form
      */
     constructor() {
-        this.data = { success: true, messages: [], form: {} };
+        this.data = { success: true, messages: {}, form: {} };
         this.timestamp = Date.now();
     }
 
@@ -115,8 +115,8 @@ export class Form {
 
         if (this.data.form[name] && !this.data.form[name].valid) {
             groupEl.addClass('has-danger');
-            for (let error of this.data.form[name].errors)
-                errorsEl.append($('<div class="form-control-feedback"></div>').text(error))
+            for (let key of Object.keys(this.data.form[name].errors))
+                errorsEl.append($('<div class="form-control-feedback"></div>').text(this.data.form[name].errors[key].message))
         }
     }
 
@@ -125,14 +125,16 @@ export class Form {
      * @param {object} el                       jQuery element
      */
     checkForm(el) {
-        let messagesEl = el.find('.messages');
-        for (let msg of this.data.messages || []) {
+        let messagesEl = el.find('.messages'), hasMessages = false;
+        for (let key of Object.keys(this.data.messages || {})) {
+            hasMessages = true;
+            let msg = this.data.messages[key];
             let msgEl = $(`<div class="alert ${msg.type === 'error' ? 'alert-danger' : 'alert-success'}"></div>`).html(msg.message);
             let colEl = $('<div class="col-sm-12"></div>').append(msgEl);
             let rowEl = $('<div class="row"></div>').append(colEl);
             messagesEl.append(rowEl);
         }
-        if (this.data.messages && this.data.messages.length)
+        if (hasMessages)
             messagesEl.show('slow');
 
         let first, focused = false;
@@ -151,8 +153,8 @@ export class Form {
                 groupEl.addClass('has-danger');
 
                 let errorsEl = groupEl.find('.errors');
-                for (let error of this.data.form[field].errors)
-                    errorsEl.append($('<div class="form-control-feedback"></div>').text(error))
+                for (let key of Object.keys(this.data.form[field].errors))
+                    errorsEl.append($('<div class="form-control-feedback"></div>').text(this.data.form[field].errors[key].message))
 
                 if (!focused && !fieldEl.prop('readonly') && !fieldEl.prop('disabled')) {
                     fieldEl.focus();

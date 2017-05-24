@@ -29,7 +29,7 @@ $(() => {
     Form.focus(profileWrapper);
 
     profileWrapper.find('[name]').on('input', event => {
-        Form.reset(profileWrapper, $(event.currentTarget));
+        Form.reset(profileWrapper, $(event.target));
     });
     profileWrapper.find('[validate]').on('focusout', event => {
         if (Form.isLocked(profileWrapper))
