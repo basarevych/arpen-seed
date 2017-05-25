@@ -13,13 +13,15 @@ class ProfileRoute {
      * Create service
      * @param {Util} util                       Util service
      * @param {ErrorHelper} error               Error helper service
+     * @param {Acl} acl                         ACL service
      * @param {SessionRepository} sessionRepo   Session repository
      * @param {UserRepository} userRepo         User repository
      * @param {ProfileForm} profileForm         Profile form
      */
-    constructor(util, error, sessionRepo, userRepo, profileForm) {
+    constructor(util, error, acl, sessionRepo, userRepo, profileForm) {
         this._util = util;
         this._error = error;
+        this._acl = acl;
         this._sessionRepo = sessionRepo;
         this._userRepo = userRepo;
         this._profileForm = profileForm;
@@ -45,6 +47,7 @@ class ProfileRoute {
         return [
             'util',
             'error',
+            'acl',
             'repositories.session',
             'repositories.user',
             'modules.index.forms.profile'
@@ -58,10 +61,13 @@ class ProfileRoute {
      * @param {function} next       Express next middleware function
      */
     getProfile(req, res, next) {
-        if (!res.locals.user)
-            return next(this._error.newUnauthorized());
-
-        res.render('account/profile');
+        this._acl.check(res.locals.user, 'account.profile', 'list')
+            .then(() => {
+                res.render('account/profile');
+            })
+            .catch(error => {
+                next(new WError(error, 'getProfile()'));
+            });
     }
 
     /**
@@ -71,10 +77,10 @@ class ProfileRoute {
      * @param {function} next       Express next middleware function
      */
     postProfile(req, res, next) {
-        if (!res.locals.user)
-            return next(this._error.newUnauthorized());
-
-        this._profileForm.validate(req.body)
+        this._acl.check(res.locals.user, 'account.profile', 'post')
+            .then(() => {
+                return this._profileForm.validate(req.body);
+            })
             .then(form => {
                 let curPassword = form.getField('cur_password');
                 form.setField('cur_password', '');
