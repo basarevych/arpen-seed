@@ -61,14 +61,19 @@ class ProfileForm {
                 let newPassword1 = form.getField('new_password1');
                 if (newPassword1 && !validator.isLength(newPassword1, { min: 6 }))
                     form.addError('new_password1', 'form_min_length', { min: 6 });
-                if (newPassword1 && !curPassword)
-                    form.addError('cur_password', 'form_field_required');
 
                 let newPassword2 = form.getField('new_password2');
                 if (newPassword2 && !validator.isLength(newPassword2, { min: 6 }))
                     form.addError('new_password2', 'form_min_length', { min: 6 });
                 if (newPassword2 && newPassword2 !== newPassword1)
                     form.addError('new_password2', 'profile_passwords_mismatch');
+
+                if ((newPassword1 || newPassword2) && !curPassword)
+                    form.addError('cur_password', 'form_field_required');
+                if (newPassword1 && !newPassword2)
+                    form.addError('new_password2', 'form_field_required');
+                if (newPassword2 && !newPassword1)
+                    form.addError('new_password1', 'form_field_required');
 
                 return form;
             });
