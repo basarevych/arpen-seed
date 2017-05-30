@@ -3,7 +3,6 @@
  * @module index/routes/index
  */
 const express = require('express');
-const WError = require('verror').WError;
 
 /**
  * Index route class

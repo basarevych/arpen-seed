@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Find sessions by token
@@ -71,6 +71,6 @@ module.exports = function (token, pg) {
             return models;
         })
         .catch(error => {
-            throw new WError(error, 'SessionRepository.findByToken()');
+            throw new NError(error, 'SessionRepository.findByToken()');
         });
 };

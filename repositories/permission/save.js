@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Save permission
@@ -81,6 +81,6 @@ module.exports = function (permission, pg) {
                 );
         })
         .catch(error => {
-            throw new WError(error, 'PermissionRepository.save()');
+            throw new NError(error, 'PermissionRepository.save()');
         });
 };

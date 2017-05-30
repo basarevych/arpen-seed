@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Save role
@@ -81,6 +81,6 @@ module.exports = function (role, pg) {
                 );
         })
         .catch(error => {
-            throw new WError(error, 'RoleRepository.save()');
+            throw new NError(error, 'RoleRepository.save()');
         });
 };

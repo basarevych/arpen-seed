@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Find permissions by role
@@ -71,6 +71,6 @@ module.exports = function (role, pg) {
                 });
         })
         .catch(error => {
-            throw new WError(error, 'PermissionRepository.findByRole()');
+            throw new NError(error, 'PermissionRepository.findByRole()');
         });
 };

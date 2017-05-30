@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Find roles by title
@@ -56,6 +56,6 @@ module.exports = function (title, pg) {
             return models;
         })
         .catch(error => {
-            throw new WError(error, 'RoleRepository.findByTitle()');
+            throw new NError(error, 'RoleRepository.findByTitle()');
         });
 };

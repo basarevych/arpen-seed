@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Delete a session
@@ -46,6 +46,6 @@ module.exports = function (session, pg) {
                 );
         })
         .catch(error => {
-            throw new WError(error, 'SessionRepository.delete()');
+            throw new NError(error, 'SessionRepository.delete()');
         });
 };

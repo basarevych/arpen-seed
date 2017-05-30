@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Delete a role
@@ -46,6 +46,6 @@ module.exports = function (role, pg) {
                 );
         })
         .catch(error => {
-            throw new WError(error, 'RoleRepository.delete()');
+            throw new NError(error, 'RoleRepository.delete()');
         });
 };

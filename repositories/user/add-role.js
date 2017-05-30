@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Add role to the user
@@ -67,6 +67,6 @@ module.exports = function (user, role, pg) {
                 );
         })
         .catch(error => {
-            throw new WError(error, 'UserRepository.addRole()');
+            throw new NError(error, 'UserRepository.addRole()');
         });
 };

@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Remove role from a user
@@ -51,6 +51,6 @@ module.exports = function (user, role, pg) {
                 );
         })
         .catch(error => {
-            throw new WError(error, 'UserRepository.removeRole()');
+            throw new NError(error, 'UserRepository.removeRole()');
         });
 };

@@ -3,7 +3,7 @@
  * @module index/routes/login
  */
 const express = require('express');
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Login route class
@@ -94,7 +94,7 @@ class LoginRoute {
                     });
             })
             .catch(error => {
-                next(new WError(error, 'postLogin()'));
+                next(new NError(error, 'postLogin()'));
             });
     }
 }

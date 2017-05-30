@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Delete a permission
@@ -46,6 +46,6 @@ module.exports = function (permission, pg) {
                 );
         })
         .catch(error => {
-            throw new WError(error, 'PermissionRepository.delete()');
+            throw new NError(error, 'PermissionRepository.delete()');
         });
 };

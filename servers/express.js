@@ -6,7 +6,7 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const path = require('path');
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Server class
@@ -76,7 +76,7 @@ class Express {
                     this.express.set('views', views);
                     resolve();
                 } catch (error) {
-                    reject(new WError(error, 'Express.init()'));
+                    reject(new NError(error, 'Express.init()'));
                 }
             })
             .then(() => {
@@ -171,7 +171,7 @@ class Express {
                 try {
                     http.listen(port, typeof port === 'string' ? undefined : this._config.get(`servers.${name}.host`));
                 } catch (error) {
-                    throw new WError(error, 'Express.start()');
+                    throw new NError(error, 'Express.start()');
                 }
             });
     }
@@ -214,7 +214,7 @@ class Express {
      */
     onError(error) {
         if (error.syscall !== 'listen')
-            return this._logger.error(new WError(error, 'Express.onError()'));
+            return this._logger.error(new NError(error, 'Express.onError()'));
 
         let msg;
         switch (error.code) {

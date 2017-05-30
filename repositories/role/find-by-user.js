@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Find roles by user
@@ -73,6 +73,6 @@ module.exports = function (user, pg) {
                 });
         })
         .catch(error => {
-            throw new WError(error, 'RoleRepository.findByUser()');
+            throw new NError(error, 'RoleRepository.findByUser()');
         });
 };

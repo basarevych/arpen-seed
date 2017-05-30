@@ -2,9 +2,9 @@
  * Invalidate cache service
  * @module services/invalidate-cache
  */
-const EventEmmiter = require('events');
+const EventEmitter = require('events');
 
-class InvalidateCache extends EventEmmiter {
+class InvalidateCache extends EventEmitter {
     /**
      * Create the service
      * @param {object} config                   Configuration

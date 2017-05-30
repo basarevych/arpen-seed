@@ -3,7 +3,7 @@
  * @module index/routes/index/account/profile
  */
 const express = require('express');
-const WError = require('verror').WError;
+const NError = require('nerror');
 
 /**
  * Profile route class
@@ -66,7 +66,7 @@ class ProfileRoute {
                 res.render('account/profile');
             })
             .catch(error => {
-                next(new WError(error, 'getProfile()'));
+                next(new NError(error, 'getProfile()'));
             });
     }
 
@@ -105,7 +105,7 @@ class ProfileRoute {
                     });
             })
             .catch(error => {
-                next(new WError(error, 'postProfile()'));
+                next(new NError(error, 'postProfile()'));
             });
     }
 }
