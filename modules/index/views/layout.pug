@@ -9,33 +9,72 @@ html
         script(src="/index.bundle.js")
 
     body
-        #signInModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true")
+        #signInModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="signInModalLabel" aria-hidden="true")
             .modal-dialog(role="document")
                 form(onsubmit="return false")
                     input(type="text" style="display: none")
                     input(type="password" style="display: none")
                     .modal-content
                         .modal-header
-                            h5.modal-title #{i18n('sign_in_title')}
+                            h5.modal-title#signInModalLabel #{i18n('sign_in_title')}
                             button.close(type="button" data-dismiss="modal" aria-label="#{i18n('modal_close_button')}")
                                 span(aria-hidden="true") &times;
                         .modal-body
                             .form-group.messages
                             .form-group.row
-                                label.col-sm-4.col-form-label.text-sm-right(for="inputEmail") #{i18n('sign_in_email_label')}
-                                    span.control-required #{i18n('modal_control_required')}
+                                label.col-sm-4.col-form-label.text-sm-right(for="signInModalEmail") #{i18n('sign_in_email_label')}
+                                    span.control-required #{i18n('form_control_required')}
                                 .col-sm-8
-                                    input#inputEmail.form-control(type="email" name="email" validate)
+                                    input#signInModalEmail.form-control(type="email" name="email" validate)
                                     .errors
                             .form-group.row
-                                label.col-sm-4.col-form-label.text-sm-right(for="inputPassword") #{i18n('sign_in_password_label')}
-                                    span.control-required #{i18n('modal_control_required')}
+                                label.col-sm-4.col-form-label.text-sm-right(for="signInModalPassword") #{i18n('sign_in_password_label')}
+                                    span.control-required #{i18n('form_control_required')}
                                 .col-sm-8
-                                    input#inputPassword.form-control(type="password" name="password")
+                                    input#signInModalPassword.form-control(type="password" name="password")
                                     .errors
                         .modal-footer
                             button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_in_cancel_button')}
                             button.btn.btn-primary(type="submit") #{i18n('sign_in_submit_button')}
+
+        #signUpModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="signUpModalLabel" aria-hidden="true")
+            .modal-dialog(role="document")
+                form(onsubmit="return false")
+                    input(type="text" style="display: none")
+                    input(type="password" style="display: none")
+                    .modal-content
+                        .modal-header
+                            h5.modal-title#signUpModalLabel #{i18n('sign_up_title')}
+                            button.close(type="button" data-dismiss="modal" aria-label="#{i18n('modal_close_button')}")
+                                span(aria-hidden="true") &times;
+                        .modal-body
+                            .form-group.messages
+                            .form-group.row
+                                label.col-sm-4.col-form-label.text-sm-right(for="signUpModalName") #{i18n('sign_up_name_label')}
+                                .col-sm-8
+                                    input#signUpModalName.form-control(type="text" name="name")
+                                    .errors
+                            .form-group.row
+                                label.col-sm-4.col-form-label.text-sm-right(for="signUpModalEmail") #{i18n('sign_up_email_label')}
+                                    span.control-required #{i18n('form_control_required')}
+                                .col-sm-8
+                                    input#signUpModalEmail.form-control(type="email" name="email" validate)
+                                    .errors
+                            .form-group.row
+                                label.col-sm-4.col-form-label.text-sm-right(for="signUpModalPassword1") #{i18n('sign_up_password1_label')}
+                                    span.control-required #{i18n('form_control_required')}
+                                .col-sm-8
+                                    input#signUpModalPassword1.form-control(type="password" name="password1" validate)
+                                    .errors
+                            .form-group.row
+                                label.col-sm-4.col-form-label.text-sm-right(for="signUpModalPassword2") #{i18n('sign_up_password2_label')}
+                                    span.control-required #{i18n('form_control_required')}
+                                .col-sm-8
+                                    input#signUpModalPassword2.form-control(type="password" name="password2")
+                                    .errors
+                        .modal-footer
+                            button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_up_cancel_button')}
+                            button.btn.btn-primary(type="submit") #{i18n('sign_up_submit_button')}
 
         nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
             .container

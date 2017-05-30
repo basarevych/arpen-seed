@@ -35,7 +35,7 @@
     "message": "Close",
     "description": "Label for X button of modals"
   },
-  "modal_control_required": {
+  "form_control_required": {
     "message": "Required field",
     "description": "Label for controls that must have input"
   },
@@ -74,6 +74,34 @@
   "sign_in_invalid_credentials": {
     "message": "Invalid email or password",
     "description": "Message for wrong email or password in sign in modal"
+  },
+  "sign_up_title": {
+    "message": "Sign up",
+    "description": "Title of sign up modal"
+  },
+  "sign_up_name_label": {
+    "message": "Display name:",
+    "description": "Label of display name input of sign up modal"
+  },
+  "sign_up_email_label": {
+    "message": "Email:",
+    "description": "Label of email input of sign up modal"
+  },
+  "sign_up_password1_label": {
+    "message": "Password:",
+    "description": "Label of first password input of sign up modal"
+  },
+  "sign_up_password2_label": {
+    "message": "Retype password:",
+    "description": "Label of second password input of sign up modal"
+  },
+  "sign_up_cancel_button": {
+    "message": "Cancel",
+    "description": "Title of cancel button of sign up modal"
+  },
+  "sign_up_submit_button": {
+    "message": "Sign up",
+    "description": "Title of submit button of sign up modal"
   },
   "profile_title": {
     "message": "Profile",
