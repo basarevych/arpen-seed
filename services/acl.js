@@ -2,6 +2,7 @@
  * ACL
  * @module services/acl
  */
+const NError = require('nerror');
 
 /**
  * ACL class
@@ -9,12 +10,10 @@
 class Acl {
     /**
      * Create service
-     * @param {ErrorHelper} error                       Error service
      * @param {RoleRepository} roleRepo                 Role repository
      * @param {PermissionRepository} permRepo           Permission repository
      */
-    constructor(error, roleRepo, permRepo) {
-        this._error = error;
+    constructor(roleRepo, permRepo) {
         this._roleRepo = roleRepo;
         this._permRepo = permRepo;
     }
@@ -32,7 +31,7 @@ class Acl {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'error', 'repositories.role', 'repositories.permission' ];
+        return [ 'repositories.role', 'repositories.permission' ];
     }
 
     /**
@@ -44,7 +43,7 @@ class Acl {
      */
     check(user, resource, action) {
         if (!user || !user.id)
-            return Promise.reject(this._error.newUnauthorized());
+            return Promise.reject(new NError({ httpStatus: 401 }, 'Not Authorized'));
 
         // All user permissions
         let allPermissions = [];
@@ -74,7 +73,7 @@ class Acl {
         return this._roleRepo.findByUser(user)
             .then(roles => {
                 if (!roles.length)
-                    throw this._error.newForbidden();
+                    throw new NError({ httpStatus: 403 }, 'Forbidden');
 
                 let promises = [];
                 for (let role of roles)
@@ -83,7 +82,7 @@ class Acl {
                 return Promise.all(promises)
                     .then(() => {
                         if (!allPermissions.length)
-                            throw this._error.newForbidden();
+                            throw new NError({ httpStatus: 403 }, 'Forbidden');
 
                         let allowed = allPermissions.some(permission => {
                             let resourceAllowed = (permission.resource === null) || (permission.resource === resource);
@@ -92,7 +91,7 @@ class Acl {
                         });
 
                         if (!allowed)
-                            throw this._error.newForbidden();
+                            throw new NError({ httpStatus: 403 }, 'Forbidden');
                     });
             });
     }

@@ -14,13 +14,11 @@ class ClearCache {
      * Create the service
      * @param {App} app                 The application
      * @param {object} config           Configuration
-     * @param {ErrorHelper} error       Error service
      * @param {Redis} redis             Redis service
      */
-    constructor(app, config, error, redis) {
+    constructor(app, config, redis) {
         this._app = app;
         this._config = config;
-        this._error = error;
         this._redis = redis;
     }
 
@@ -37,7 +35,7 @@ class ClearCache {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'error', 'redis' ];
+        return [ 'app', 'config', 'redis' ];
     }
 
     /**
@@ -65,7 +63,7 @@ class ClearCache {
                 process.exit(0);
             })
             .catch(error => {
-                return this.error(this._error.flatten(error));
+                return this.error(error);
             });
     }
 
@@ -77,7 +75,7 @@ class ClearCache {
         return args.reduce(
             (prev, cur) => {
                 return prev.then(() => {
-                    return this._app.error(cur.stack || cur.message || cur);
+                    return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
                 });
             },
             Promise.resolve()

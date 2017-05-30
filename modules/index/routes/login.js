@@ -14,15 +14,13 @@ class LoginRoute {
      * @param {object} config               Config service
      * @param {Session} session             Session service
      * @param {Util} util                   Util service
-     * @param {ErrorHelper} error           Error helper service
      * @param {UserRepository} userRepo     User repository
      * @param {LoginForm} loginForm         Login form
      */
-    constructor(config, session, util, error, userRepo, loginForm) {
+    constructor(config, session, util, userRepo, loginForm) {
         this._config = config;
         this._session = session;
         this._util = util;
-        this._error = error;
         this._userRepo = userRepo;
         this._loginForm = loginForm;
 
@@ -47,7 +45,6 @@ class LoginRoute {
             'config',
             'session',
             'util',
-            'error',
             'repositories.user',
             'modules.index.forms.login'
         ];

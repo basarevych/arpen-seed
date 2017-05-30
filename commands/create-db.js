@@ -15,15 +15,13 @@ class CreateDb {
      * Create the service
      * @param {App} app                         The application
      * @param {object} config                   Configuration
-     * @param {ErrorHelper} error               Error service
      * @param {Runner} runner                   Runner service
      * @param {RoleRepository} roleRepo         Role repository
      * @param {PermissionRepository} permRepo   Permission repository
      */
-    constructor(app, config, error, runner, roleRepo, permRepo) {
+    constructor(app, config, runner, roleRepo, permRepo) {
         this._app = app;
         this._config = config;
-        this._error = error;
         this._runner = runner;
         this._roleRepo = roleRepo;
         this._permRepo = permRepo;
@@ -42,7 +40,7 @@ class CreateDb {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'error', 'runner', 'repositories.role', 'repositories.permission' ];
+        return [ 'app', 'config', 'runner', 'repositories.role', 'repositories.permission' ];
     }
 
     /**
@@ -126,7 +124,7 @@ class CreateDb {
                 process.exit(0);
             })
             .catch(error => {
-                return this.error(this._error.flatten(error));
+                return this.error(error);
             });
     }
 
@@ -138,7 +136,7 @@ class CreateDb {
         return args.reduce(
             (prev, cur) => {
                 return prev.then(() => {
-                    return this._app.error(cur.stack || cur.message || cur);
+                    return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
                 });
             },
             Promise.resolve()

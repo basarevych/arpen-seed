@@ -12,15 +12,13 @@ class ProfileRoute {
     /**
      * Create service
      * @param {Util} util                       Util service
-     * @param {ErrorHelper} error               Error helper service
      * @param {Acl} acl                         ACL service
      * @param {SessionRepository} sessionRepo   Session repository
      * @param {UserRepository} userRepo         User repository
      * @param {ProfileForm} profileForm         Profile form
      */
-    constructor(util, error, acl, sessionRepo, userRepo, profileForm) {
+    constructor(util, acl, sessionRepo, userRepo, profileForm) {
         this._util = util;
-        this._error = error;
         this._acl = acl;
         this._sessionRepo = sessionRepo;
         this._userRepo = userRepo;
@@ -46,7 +44,6 @@ class ProfileRoute {
     static get requires() {
         return [
             'util',
-            'error',
             'acl',
             'repositories.session',
             'repositories.user',

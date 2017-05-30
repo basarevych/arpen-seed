@@ -3,6 +3,7 @@
  * @module middleware/error
  */
 const http = require('http');
+const NError = require('nerror');
 
 /**
  * Error handler
@@ -11,12 +12,10 @@ class ErrorHandler {
     /**
      * Create the service
      * @param {object} config           Configuration
-     * @param {ErrorHelper} error       Error helper service
      * @param {Logger} logger           Logger service
      */
-    constructor(config, error, logger) {
+    constructor(config, logger) {
         this._config = config;
-        this._error = error;
         this._logger = logger;
     }
 
@@ -33,7 +32,7 @@ class ErrorHandler {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'config', 'error', 'logger' ];
+        return [ 'config', 'logger' ];
     }
 
     /**
@@ -43,11 +42,10 @@ class ErrorHandler {
      */
     register(server) {
         server.express.use((req, res, next) => {
-            next(this._error.newNotFound());
+            next(new NError({ httpStatus: 404 }, 'Not Found'));
         });
         server.express.use((err, req, res, next) => {
-            let info = this._error.info(err);
-            let status = (info && info.httpStatus) || 500;
+            let status = (err.info && err.info.httpStatus) || 500;
 
             if (status === 500)
                 this._logger.error(err);
@@ -60,8 +58,8 @@ class ErrorHandler {
             res.locals.data = null;
             res.locals.errors = [];
             if (this._config.get('env') === 'development' && status === 500) {
-                res.locals.data = JSON.stringify(info, undefined, 4);
-                res.locals.errors = this._error.flatten(err);
+                res.locals.data = JSON.stringify(err.info || {}, undefined, 4);
+                res.locals.errors = err.toArray ? err.toArray() : [ err ];
             }
 
             res.status(status);

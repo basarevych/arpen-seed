@@ -15,16 +15,14 @@ class User {
      * Create the service
      * @param {App} app                     The application
      * @param {object} config               Configuration
-     * @param {ErrorHelper} error           Error service
      * @param {Util} util                   Util service
      * @param {Help} help                   Help command
      * @param {UserRepository} userRepo     User repository
      * @param {RoleRepository} roleRepo     Role repository
      */
-    constructor(app, config, error, util, help, userRepo, roleRepo) {
+    constructor(app, config, util, help, userRepo, roleRepo) {
         this._app = app;
         this._config = config;
-        this._error = error;
         this._util = util;
         this._help = help;
         this._userRepo = userRepo;
@@ -44,7 +42,7 @@ class User {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'error', 'util', 'commands.help', 'repositories.user', 'repositories.role' ];
+        return [ 'app', 'config', 'util', 'commands.help', 'repositories.user', 'repositories.role' ];
     }
 
     /**
@@ -147,7 +145,7 @@ class User {
                 process.exit(0);
             })
             .catch(error => {
-                return this.error(this._error.flatten(error));
+                return this.error(error);
             });
     }
 
@@ -159,7 +157,7 @@ class User {
         return args.reduce(
             (prev, cur) => {
                 return prev.then(() => {
-                    return this._app.error(cur.stack || cur.message || cur);
+                    return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
                 });
             },
             Promise.resolve()
