@@ -12,14 +12,18 @@ const NError = require('nerror');
 class SignUpRoute {
     /**
      * Create service
-     * @param {Logger} logger                   Logger service
+     * @param {object} config                   Configuration
+     * @param {Emailer} emailer                 Emailer service
      * @param {Util} util                       Util service
+     * @param {Map} servers                     Running servers
      * @param {UserRepository} userRepo         User repository
      * @param {SignUpForm} signUpForm           Sign up form
      */
-    constructor(logger, util, userRepo, signUpForm) {
-        this._logger = logger;
+    constructor(config, emailer, util, servers, userRepo, signUpForm) {
+        this._config = config;
+        this._emailer = emailer;
         this._util = util;
+        this._express = servers.get(servers.has('https') ? 'https' : 'http').express;
         this._userRepo = userRepo;
         this._signUpForm = signUpForm;
 
@@ -42,8 +46,10 @@ class SignUpRoute {
      */
     static get requires() {
         return [
-            'logger',
+            'config',
+            'emailer',
             'util',
+            'servers',
             'repositories.user',
             'modules.index.forms.signUp'
         ];
@@ -89,17 +95,65 @@ class SignUpRoute {
                         user.confirmedAt = null;
                         user.blockedAt = null;
 
+                        let project = this._config.get('project');
+                        let link = this._config.get('official_url') + '/account/confirm?secret=' + user.secret;
+
                         return this._userRepo.save(user)
                             .then(
                                 () => {
-                                    form.addMessage('info', 'sign_up_success');
-                                    res.json(form.toJSON());
+                                    return new Promise((resolve, reject) => {
+                                            let calls = 0, text, html;
+                                            let commit = () => {
+                                                if (++calls >= 2)
+                                                    resolve([ text, html ]);
+                                            };
+                                            try {
+                                                this._express.render('email/sign-up-html.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
+                                                    if (error)
+                                                        return reject(error);
+
+                                                    html = view;
+                                                    commit();
+                                                });
+                                                this._express.render('email/sign-up-text.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
+                                                    if (error)
+                                                        return reject(error);
+
+                                                    text = view;
+                                                    commit();
+                                                });
+                                            } catch (error) {
+                                                reject(error);
+                                            }
+                                        })
+                                        .then(([ text, html ]) => {
+                                            return this._emailer.send({
+                                                    from: this._config.get('email.from'),
+                                                    to: form.getField('email'),
+                                                    subject: res.locals.i18n('account_activation_subject', { project }),
+                                                    text: text,
+                                                    html: html
+                                                })
+                                                .then(
+                                                    () => {
+                                                        form.addMessage('info', 'sign_up_success');
+                                                        res.json(form.toJSON());
+                                                    },
+                                                    error => {
+                                                        return this._userRepo.delete(user)
+                                                            .then(() => {
+                                                                form.addMessage('error', 'sign_up_email_failure');
+                                                                res.json(form.toJSON());
+                                                            });
+                                                    }
+                                                );
+                                        });
                                 },
                                 error => {
                                     if (!error.info || error.info.sql_state !== '23505')
-                                        this._logger.error(new NError(error, 'postSignUp()'));
+                                        throw error;
 
-                                    form.addMessage('error', 'sign_up_failure');
+                                    form.addMessage('error', 'sign_up_user_failure');
                                     res.json(form.toJSON());
                                 }
                             );

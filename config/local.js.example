@@ -7,6 +7,9 @@ module.exports = {
     // Server instance name (alphanumeric)
     instance: 'server1',
 
+    // Official URL
+    official_url: 'http://localhost:3000',
+
     // Environment
     env: process.env.NODE_ENV || 'production',
 

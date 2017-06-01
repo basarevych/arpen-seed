@@ -111,9 +111,13 @@
     "message": "Confirmation link has been sent to your email — please open it",
     "description": "Message when successfully registered in sign up form"
   },
-  "sign_up_failure": {
+  "sign_up_user_failure": {
     "message": "Could not create account. Please try again later",
-    "description": "Message when registration failed in sign up form"
+    "description": "Message when user creation failed in sign up form"
+  },
+  "sign_up_email_failure": {
+    "message": "Could not send email. Please try again later",
+    "description": "Message when emailing failed in sign up form"
   },
   "profile_title": {
     "message": "Profile",
@@ -162,5 +166,17 @@
   "profile_success": {
     "message": "Changes saved",
     "description": "Message when profile is updated in profile form"
+  },
+  "account_activation_subject": {
+    "message": "Account activation ({project})",
+    "description": "Subject line of account activation email"
+  },
+  "account_activation_text": {
+    "message": "Welcome to {project}!\n\nIn order to activate your account please open this link: {link}",
+    "description": "Text version of account activation email"
+  },
+  "account_activation_html": {
+    "message": "<p>Welcome to {project}!</p><p>In order to activate your account please open this link: <a href=\"{link}\">{link}</a></p>",
+    "description": "Html version of account activation email"
   }
 }
