@@ -50,6 +50,7 @@ class Index {
         return [
             this._app.get('modules.index.routes.index').router,
             this._app.get('modules.index.routes.login').router,
+            this._app.get('modules.index.routes.account.create').router,
             this._app.get('modules.index.routes.account.profile').router,
         ];
     }

@@ -77,35 +77,47 @@
   },
   "sign_up_title": {
     "message": "Sign up",
-    "description": "Title of sign up modal"
+    "description": "Title of sign up form"
   },
   "sign_up_name_label": {
     "message": "Display name:",
-    "description": "Label of display name input of sign up modal"
+    "description": "Label of display name input of sign up form"
   },
   "sign_up_email_label": {
     "message": "Email:",
-    "description": "Label of email input of sign up modal"
+    "description": "Label of email input of sign up form"
   },
   "sign_up_password1_label": {
     "message": "Password:",
-    "description": "Label of first password input of sign up modal"
+    "description": "Label of first password input of sign up form"
   },
   "sign_up_password2_label": {
     "message": "Retype password:",
-    "description": "Label of second password input of sign up modal"
-  },
-  "sign_up_cancel_button": {
-    "message": "Cancel",
-    "description": "Title of cancel button of sign up modal"
+    "description": "Label of second password input of sign up form"
   },
   "sign_up_submit_button": {
     "message": "Sign up",
-    "description": "Title of submit button of sign up modal"
+    "description": "Title of submit button of sign up form"
+  },
+  "sign_up_email_exists": {
+    "message": "This email is already registered",
+    "description": "Message when email is already registered in sign up form"
+  },
+  "sign_up_passwords_mismatch": {
+    "message": "Retyped password is not the same",
+    "description": "Message when new and retyped passwords do not match in sign up form"
+  },
+  "sign_up_success": {
+    "message": "Confirmation link has been sent to your email — please open it",
+    "description": "Message when successfully registered in sign up form"
+  },
+  "sign_up_failure": {
+    "message": "Could not create account. Please try again later",
+    "description": "Message when registration failed in sign up form"
   },
   "profile_title": {
     "message": "Profile",
-    "description": "Title of profile page"
+    "description": "Title of profile form"
   },
   "profile_email_label": {
     "message": "Email:",

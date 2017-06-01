@@ -1,6 +1,6 @@
 /**
  * Profile route
- * @module index/routes/index/account/profile
+ * @module index/routes/account/profile
  */
 const express = require('express');
 const NError = require('nerror');
@@ -93,7 +93,7 @@ class ProfileRoute {
 
                 res.locals.user.displayName = form.getField('name') || null;
                 if (newPassword)
-                    res.locals.password = this._util.encryptPassword(newPassword);
+                    res.locals.user.password = this._util.encryptPassword(newPassword);
 
                 return this._userRepo.save(res.locals.user)
                     .then(() => {

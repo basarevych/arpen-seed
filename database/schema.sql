@@ -140,7 +140,8 @@ CREATE TABLE users (
     created_at timestamp NOT NULL,
     confirmed_at timestamp NULL,
     blocked_at timestamp NULL,
-    CONSTRAINT users_pk PRIMARY KEY (id)
+    CONSTRAINT users_pk PRIMARY KEY (id),
+    CONSTRAINT users_unique_email UNIQUE (email)
 );
 
 CREATE TABLE user_roles (
