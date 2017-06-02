@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+
+    #confirmWrapperSuccess(style="display: none")
+        .container
+            .row
+                .col
+                    h3 #{i18n('account_confirm_title_success')}
+                    p #{i18n('account_confirm_message_success', { project })}
+                    #confirmTimer
+                        p#second5(style="display: none") #{i18n('account_confirm_timer', {second: 5})}
+                        p#second4(style="display: none") #{i18n('account_confirm_timer', {second: 4})}
+                        p#second3(style="display: none") #{i18n('account_confirm_timer', {second: 3})}
+                        p#second2(style="display: none") #{i18n('account_confirm_timer', {second: 2})}
+                        p#second1(style="display: none") #{i18n('account_confirm_timer', {second: 1})}
+
+    #confirmWrapperFailure(style="display: none")
+        .container
+            .row
+                .col
+                    h3 #{i18n('account_confirm_title_failure')}
+                    p #{i18n('account_confirm_message_failure')}

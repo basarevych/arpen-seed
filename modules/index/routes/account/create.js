@@ -96,7 +96,7 @@ class SignUpRoute {
                         user.blockedAt = null;
 
                         let project = this._config.get('project');
-                        let link = this._config.get('official_url') + '/account/confirm?secret=' + user.secret;
+                        let link = this._config.get('official_url') + '/account/confirm#' + user.secret;
 
                         return this._userRepo.save(user)
                             .then(
@@ -152,7 +152,7 @@ class SignUpRoute {
                                         });
                                 },
                                 error => {
-                                    if (!error.info || error.info.sql_state !== '23505')
+                                    if (!error.info || error.info.sql_state !== '23505') // duplicate email
                                         throw error;
 
                                     form.addMessage('error', 'sign_up_user_failure');

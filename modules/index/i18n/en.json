@@ -119,6 +119,26 @@
     "message": "Could not send email. Please try again later",
     "description": "Message when emailing failed in sign up form"
   },
+  "account_confirm_title_success": {
+    "message": "Account activated",
+    "description": "Success title of account activation page"
+  },
+  "account_confirm_message_success": {
+    "message": "Welcome to {project}! Your account has been activated",
+    "description": "Success message of account activation page"
+  },
+  "account_confirm_title_failure": {
+    "message": "Link expired",
+    "description": "Failure title of account activation page"
+  },
+  "account_confirm_message_failure": {
+    "message": "This link is no longer valid",
+    "description": "Failure message of account activation page"
+  },
+  "account_confirm_timer": {
+    "message": "Redirecting in {second} {second, plural, =1 {second} other {seconds}}...",
+    "description": "Account activation redirect timer message"
+  },
   "profile_title": {
     "message": "Profile",
     "description": "Title of profile form"

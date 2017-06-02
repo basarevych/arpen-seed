@@ -5,6 +5,19 @@ import { Cookie } from 'cookie';
 
 let signInModal, signInForm = new Form();
 
+
+/**
+ * Start user session
+ * @param {object} cookie                   Cookie params
+ * @param {string} cookie.name
+ * @param {string} cookie.value
+ * @param {number} [cookie.lifetime]
+ */
+export function startSession(cookie) {
+    localStorage.setItem('sidName', cookie.name);
+    Cookie.set(cookie.name, cookie.value, cookie.lifetime);
+}
+
 /**
  * Sign in
  */
@@ -13,8 +26,7 @@ function signIn() {
     $.post('/login', Form.extract(signInModal), data => {
         Form.reset(signInModal);
         if (data.success) {
-            localStorage.setItem('sidName', data.cookie.name);
-            Cookie.set(data.cookie.name, data.cookie.value, data.cookie.lifetime);
+            startSession(data.cookie);
             window.location.reload();
         } else {
             Form.unlock(signInModal);

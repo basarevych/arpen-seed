@@ -50,6 +50,24 @@ class LoginRoute {
         ];
     }
 
+    startSession(user, req) {
+        return this._session.start(user, req)
+            .then(session => {
+                let lifetime = this._config.get('session.expire_timeout');
+                if (lifetime)
+                    lifetime *= 1000;
+
+                return {
+                    success: true,
+                    cookie: {
+                        name: this._session.cookieName,
+                        value: this._session.encodeJwt(session),
+                        lifetime: lifetime || null,
+                    }
+                };
+            });
+    }
+
     /**
      * Authorize a user
      * @param {object} req          Express request
@@ -73,20 +91,9 @@ class LoginRoute {
                             return res.json(form.toJSON());
                         }
 
-                        return this._session.start(user, req)
-                            .then(session => {
-                                let lifetime = this._config.get('session.expire_timeout');
-                                if (lifetime)
-                                    lifetime *= 1000;
-
-                                res.json({
-                                    success: true,
-                                    cookie: {
-                                        name: this._session.cookieName,
-                                        value: this._session.encodeJwt(session),
-                                        lifetime: lifetime || null,
-                                    }
-                                });
+                        return this.startSession(user, req)
+                            .then(result => {
+                                res.json(result);
                             });
                     });
             })

@@ -1,6 +1,7 @@
 'use strict';
 
 import { Form } from 'form';
+import { startSession } from 'auth';
 
 let signUpWrapper, signUpForm = new Form();
 let profileWrapper, profileForm = new Form();
@@ -43,53 +44,81 @@ function updateProfile() {
  * Install handlers
  */
 $(() => {
-    signUpWrapper = $('#signUpWrapper');
-    Form.focus(signUpWrapper);
+    if (window.location.pathname === '/account/create') {
+        signUpWrapper = $('#signUpWrapper');
+        Form.focus(signUpWrapper);
 
-    signUpWrapper.find('[name]').on('input', event => {
-        Form.reset(signUpWrapper, $(event.target));
-    });
-    signUpWrapper.find('[validate]').on('focusout', event => {
-        if (Form.isLocked(signUpWrapper))
-            return;
+        signUpWrapper.find('[name]').on('input', event => {
+            Form.reset(signUpWrapper, $(event.target));
+        });
+        signUpWrapper.find('[validate]').on('focusout', event => {
+            if (Form.isLocked(signUpWrapper))
+                return;
 
-        let timestamp = Date.now();
-        setTimeout(() => {
-            if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
-                $.post('/account/create', Object.assign({ _validate: true }, Form.extract(signUpWrapper)), data => {
-                    if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
-                        signUpForm.update(signUpWrapper, data, false);
-                        signUpForm.checkField(signUpWrapper, $(event.target).prop('name'));
-                        signUpForm.timestamp = timestamp;
-                    }
-                });
-            }
-        }, 250);
-    });
-    signUpWrapper.find('[type="submit"]').on('click', signUp);
+            let timestamp = Date.now();
+            setTimeout(() => {
+                if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
+                    $.post('/account/create', Object.assign({_validate: true}, Form.extract(signUpWrapper)), data => {
+                        if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
+                            signUpForm.update(signUpWrapper, data, false);
+                            signUpForm.checkField(signUpWrapper, $(event.target).prop('name'));
+                            signUpForm.timestamp = timestamp;
+                        }
+                    });
+                }
+            }, 250);
+        });
+        signUpWrapper.find('[type="submit"]').on('click', signUp);
+    }
 
-    profileWrapper = $('#profileWrapper');
-    Form.focus(profileWrapper);
+    if (window.location.pathname === '/account/profile') {
+        profileWrapper = $('#profileWrapper');
+        Form.focus(profileWrapper);
 
-    profileWrapper.find('[name]').on('input', event => {
-        Form.reset(profileWrapper, $(event.target));
-    });
-    profileWrapper.find('[validate]').on('focusout', event => {
-        if (Form.isLocked(profileWrapper))
-            return;
+        profileWrapper.find('[name]').on('input', event => {
+            Form.reset(profileWrapper, $(event.target));
+        });
+        profileWrapper.find('[validate]').on('focusout', event => {
+            if (Form.isLocked(profileWrapper))
+                return;
 
-        let timestamp = Date.now();
-        setTimeout(() => {
-            if (!Form.isLocked(profileWrapper) && profileForm.timestamp < timestamp) {
-                $.post('/account/profile', Object.assign({ _validate: true }, Form.extract(profileWrapper)), data => {
-                    if (!Form.isLocked(profileWrapper) && profileForm.timestamp < timestamp) {
-                        profileForm.update(profileWrapper, data, false);
-                        profileForm.checkField(profileWrapper, $(event.target).prop('name'));
-                        profileForm.timestamp = timestamp;
-                    }
-                });
-            }
-        }, 250);
-    });
-    profileWrapper.find('[type="submit"]').on('click', updateProfile);
+            let timestamp = Date.now();
+            setTimeout(() => {
+                if (!Form.isLocked(profileWrapper) && profileForm.timestamp < timestamp) {
+                    $.post('/account/profile', Object.assign({_validate: true}, Form.extract(profileWrapper)), data => {
+                        if (!Form.isLocked(profileWrapper) && profileForm.timestamp < timestamp) {
+                            profileForm.update(profileWrapper, data, false);
+                            profileForm.checkField(profileWrapper, $(event.target).prop('name'));
+                            profileForm.timestamp = timestamp;
+                        }
+                    });
+                }
+            }, 250);
+        });
+        profileWrapper.find('[type="submit"]').on('click', updateProfile);
+    }
+
+    if (window.location.pathname === '/account/confirm') {
+        $.post('/account/confirm', { secret: window.location.hash.slice(1) }, data => {
+            $('#confirmWrapper' + (data.success ? 'Success' : 'Failure')).show();
+
+            if (!data.success)
+                return;
+
+            let seconds = 5, timerEl = $('#confirmTimer');
+            let update = () => {
+                if (--seconds <= 0) {
+                    startSession(data.cookie);
+                    window.location = '/';
+                    return;
+                }
+
+                timerEl.find('p').hide();
+                timerEl.find('#second' + seconds).show();
+                setTimeout(update, 1000);
+            };
+
+            update();
+        });
+    }
 });

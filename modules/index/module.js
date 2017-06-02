@@ -14,15 +14,17 @@ class Index {
      * @param {object} config                               Configuration
      * @param {IndexRoute} indexRoute                       Index route
      * @param {LoginRoute} loginRoute                       Login route
-     * @param {SignUpRoute} signUpRoute                     Create Account route
+     * @param {SignUpRoute} signUpRoute                     Create account route
+     * @param {ConfirmAccountRoute} confirmAccountRoute     Confirm account route
      * @param {ProfileRoute} profileRoute                   Profile route
      */
-    constructor(app, config, indexRoute, loginRoute, signUpRoute, profileRoute) {
+    constructor(app, config, indexRoute, loginRoute, signUpRoute, confirmAccountRoute, profileRoute) {
         this._app = app;
         this._config = config;
         this._indexRoute = indexRoute;
         this._loginRoute = loginRoute;
         this._signUpRoute = signUpRoute;
+        this._confirmAccountRoute = confirmAccountRoute;
         this._profileRoute = profileRoute;
     }
 
@@ -45,6 +47,7 @@ class Index {
             'modules.index.routes.index',
             'modules.index.routes.login',
             'modules.index.routes.account.create',
+            'modules.index.routes.account.confirm',
             'modules.index.routes.account.profile',
         ];
     }
@@ -66,6 +69,7 @@ class Index {
             this._indexRoute.router,
             this._loginRoute.router,
             this._signUpRoute.router,
+            this._confirmAccountRoute.router,
             this._profileRoute.router,
         ];
     }

@@ -1,0 +1,88 @@
+/**
+ * Confirm account route
+ * @module index/routes/account/confirm
+ */
+const express = require('express');
+const moment = require('moment-timezone');
+const NError = require('nerror');
+
+/**
+ * Confirm account route class
+ */
+class ConfirmAccountRoute {
+    /**
+     * Create service
+     * @param {object} config                   Configuration
+     * @param {UserRepository} userRepo         User repository
+     * @param {LoginRoute} loginRoute           Login route
+     */
+    constructor(config, userRepo, loginRoute) {
+        this._config = config;
+        this._userRepo = userRepo;
+        this._loginRoute = loginRoute;
+
+        this.router = express.Router();
+        this.router.get('/account/confirm', this.getConfirm.bind(this));
+        this.router.post('/account/confirm', this.postConfirm.bind(this));
+    }
+
+    /**
+     * Service name is 'modules.index.routes.account.confirm'
+     * @type {string}
+     */
+    static get provides() {
+        return 'modules.index.routes.account.confirm';
+    }
+
+    /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [
+            'config',
+            'repositories.user',
+            'modules.index.routes.login'
+        ];
+    }
+
+    /**
+     * Display confirm page
+     * @param {object} req          Express request
+     * @param {object} res          Express response
+     * @param {function} next       Express next middleware function
+     */
+    getConfirm(req, res, next) {
+        return res.render('account/confirm', { project: this._config.get('project') });
+    }
+
+    /**
+     * Confirm account
+     * @param {object} req          Express request
+     * @param {object} res          Express response
+     * @param {function} next       Express next middleware function
+     */
+    postConfirm(req, res, next) {
+        let token = String(req.body.secret);
+        return this._userRepo.findBySecret(token)
+            .then(users => {
+                let user = users.length && users[0];
+                if (!user || user.confirmedAt || user.blockedAt)
+                    return res.json({ success: false });
+
+                user.confirmedAt = moment();
+                return this._userRepo.save(user)
+                    .then(() => {
+                        return this._loginRoute.startSession(user, req)
+                            .then(result => {
+                                res.json(result);
+                            });
+                    });
+            })
+            .catch(error => {
+                next(new NError(error, 'postConfirm()'));
+            });
+    }
+}
+
+module.exports = ConfirmAccountRoute;
