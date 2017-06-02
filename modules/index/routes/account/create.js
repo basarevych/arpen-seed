@@ -13,13 +13,15 @@ class SignUpRoute {
     /**
      * Create service
      * @param {object} config                   Configuration
+     * @param {Logger} logger                   Logger service
      * @param {Emailer} emailer                 Emailer service
      * @param {Util} util                       Util service
      * @param {UserRepository} userRepo         User repository
      * @param {SignUpForm} signUpForm           Sign up form
      */
-    constructor(config, emailer, util, userRepo, signUpForm) {
+    constructor(config, logger, emailer, util, userRepo, signUpForm) {
         this._config = config;
+        this._logger = logger;
         this._emailer = emailer;
         this._util = util;
         this._userRepo = userRepo;
@@ -45,6 +47,7 @@ class SignUpRoute {
     static get requires() {
         return [
             'config',
+            'logger',
             'emailer',
             'util',
             'repositories.user',
@@ -137,6 +140,8 @@ class SignUpRoute {
                                                         res.json(form.toJSON());
                                                     },
                                                     error => {
+                                                        this._logger.error(error, 'postSignUp()');
+
                                                         return this._userRepo.delete(user)
                                                             .then(() => {
                                                                 form.addMessage('error', 'sign_up_email_failure');
