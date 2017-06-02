@@ -17,14 +17,16 @@ class SignUpRoute {
      * @param {Emailer} emailer                 Emailer service
      * @param {Util} util                       Util service
      * @param {UserRepository} userRepo         User repository
+     * @param {RoleRepository} roleRepo         Role repository
      * @param {SignUpForm} signUpForm           Sign up form
      */
-    constructor(config, logger, emailer, util, userRepo, signUpForm) {
+    constructor(config, logger, emailer, util, userRepo, roleRepo, signUpForm) {
         this._config = config;
         this._logger = logger;
         this._emailer = emailer;
         this._util = util;
         this._userRepo = userRepo;
+        this._roleRepo = roleRepo;
         this._signUpForm = signUpForm;
 
         this.router = express.Router();
@@ -51,6 +53,7 @@ class SignUpRoute {
             'emailer',
             'util',
             'repositories.user',
+            'repositories.role',
             'modules.index.forms.signUp'
         ];
     }
@@ -101,30 +104,40 @@ class SignUpRoute {
                         return this._userRepo.save(user)
                             .then(
                                 () => {
-                                    return new Promise((resolve, reject) => {
-                                            let calls = 0, text, html;
-                                            let commit = () => {
-                                                if (++calls >= 2)
-                                                    resolve([ text, html ]);
-                                            };
-                                            try {
-                                                req.app.render('email/sign-up-html.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
-                                                    if (error)
-                                                        return reject(error);
+                                    return this._roleRepo.findByTitle('User')
+                                        .then(roles => {
+                                            let role = roles.length && roles[0];
+                                            if (!role)
+                                                throw new Error('Role "User" not found');
 
-                                                    html = view;
-                                                    commit();
-                                                });
-                                                req.app.render('email/sign-up-text.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
-                                                    if (error)
-                                                        return reject(error);
+                                            return this._userRepo.addRole(user, role);
+                                        })
+                                        .then(() => {
+                                            return new Promise((resolve, reject) => {
+                                                let calls = 0, text, html;
+                                                let commit = () => {
+                                                    if (++calls >= 2)
+                                                        resolve([text, html]);
+                                                };
+                                                try {
+                                                    req.app.render('email/sign-up-html.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
+                                                        if (error)
+                                                            return reject(error);
 
-                                                    text = view;
-                                                    commit();
-                                                });
-                                            } catch (error) {
-                                                reject(error);
-                                            }
+                                                        html = view;
+                                                        commit();
+                                                    });
+                                                    req.app.render('email/sign-up-text.pug', {i18n: res.locals.i18n, project, link }, (error, view) => {
+                                                        if (error)
+                                                            return reject(error);
+
+                                                        text = view;
+                                                        commit();
+                                                    });
+                                                } catch (error) {
+                                                    reject(error);
+                                                }
+                                            })
                                         })
                                         .then(([ text, html ]) => {
                                             return this._emailer.send({

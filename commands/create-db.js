@@ -115,6 +115,13 @@ class CreateDb {
             })
             .then(() => {
                 let perm = this._permRepo.getModel('permission');
+                perm.roleId = member.id;
+                perm.resource = 'account.profile';
+                perm.action = null;
+                return this._permRepo.save(perm);
+            })
+            .then(() => {
+                let perm = this._permRepo.getModel('permission');
                 perm.roleId = admin.id;
                 perm.resource = null;
                 perm.action = null;
