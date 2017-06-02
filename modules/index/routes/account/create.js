@@ -15,15 +15,13 @@ class SignUpRoute {
      * @param {object} config                   Configuration
      * @param {Emailer} emailer                 Emailer service
      * @param {Util} util                       Util service
-     * @param {Map} servers                     Running servers
      * @param {UserRepository} userRepo         User repository
      * @param {SignUpForm} signUpForm           Sign up form
      */
-    constructor(config, emailer, util, servers, userRepo, signUpForm) {
+    constructor(config, emailer, util, userRepo, signUpForm) {
         this._config = config;
         this._emailer = emailer;
         this._util = util;
-        this._express = servers.get(servers.has('https') ? 'https' : 'http').express;
         this._userRepo = userRepo;
         this._signUpForm = signUpForm;
 
@@ -49,7 +47,6 @@ class SignUpRoute {
             'config',
             'emailer',
             'util',
-            'servers',
             'repositories.user',
             'modules.index.forms.signUp'
         ];
@@ -108,14 +105,14 @@ class SignUpRoute {
                                                     resolve([ text, html ]);
                                             };
                                             try {
-                                                this._express.render('email/sign-up-html.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
+                                                req.app.render('email/sign-up-html.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
                                                     if (error)
                                                         return reject(error);
 
                                                     html = view;
                                                     commit();
                                                 });
-                                                this._express.render('email/sign-up-text.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
+                                                req.app.render('email/sign-up-text.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
                                                     if (error)
                                                         return reject(error);
 

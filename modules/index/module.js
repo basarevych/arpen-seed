@@ -10,12 +10,20 @@
 class Index {
     /**
      * Create the module
-     * @param {App} app                             The application
-     * @param {object} config                       Configuration
+     * @param {App} app                                     The application
+     * @param {object} config                               Configuration
+     * @param {IndexRoute} indexRoute                       Index route
+     * @param {LoginRoute} loginRoute                       Login route
+     * @param {SignUpRoute} signUpRoute                     Create Account route
+     * @param {ProfileRoute} profileRoute                   Profile route
      */
-    constructor(app, config) {
+    constructor(app, config, indexRoute, loginRoute, signUpRoute, profileRoute) {
         this._app = app;
         this._config = config;
+        this._indexRoute = indexRoute;
+        this._loginRoute = loginRoute;
+        this._signUpRoute = signUpRoute;
+        this._profileRoute = profileRoute;
     }
 
     /**
@@ -31,7 +39,14 @@ class Index {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config' ];
+        return [
+            'app',
+            'config',
+            'modules.index.routes.index',
+            'modules.index.routes.login',
+            'modules.index.routes.account.create',
+            'modules.index.routes.account.profile',
+        ];
     }
 
     /**
@@ -48,10 +63,10 @@ class Index {
      */
     routers() {
         return [
-            this._app.get('modules.index.routes.index').router,
-            this._app.get('modules.index.routes.login').router,
-            this._app.get('modules.index.routes.account.create').router,
-            this._app.get('modules.index.routes.account.profile').router,
+            this._indexRoute.router,
+            this._loginRoute.router,
+            this._signUpRoute.router,
+            this._profileRoute.router,
         ];
     }
 }
