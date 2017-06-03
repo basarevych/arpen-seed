@@ -7,6 +7,14 @@
     "message": "ARPEN",
     "description": "Title of browser tab"
   },
+  "loader_alt": {
+    "message": "Processing...",
+    "description": "Alt message for loader images"
+  },
+  "error_noscript": {
+    "message": "JavaScript is required",
+    "description": "Message when JavaScript is disabled"
+  },
   "error_401_html": {
     "message": "<p>Access to this page requires authentication. Please <a class=\"btn-sign-in\" href=\"javascript:void(0)\">sign in</a>.</p>",
     "description": "Message for 401 Unauthorized error"

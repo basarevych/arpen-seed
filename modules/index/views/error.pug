@@ -1,24 +1,32 @@
-extends layout
+doctype html
+html
+    head
+        title= i18n('page_title')
+        meta(charset="utf-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+        script(src="/twbs.bundle.js")
+        script(src="/fa.bundle.js")
+        script(src="/index.bundle.js")
 
-block content
-    .container.mt-5
-        .row
-            h1 #{statusCode} #{statusPhrase}
-        .row
-            if data
-                pre= data
-            else
-                if statusCode == 401
-                    | !{i18n('error_401_html')}
-                else if statusCode == 403
-                    | !{i18n('error_403_html')}
-                else if statusCode == 404
-                    | !{i18n('error_404_html')}
-                else if statusCode == 500
-                    | !{i18n('error_500_html')}
-        .row
-            each error in errors
-                if error.stack
-                    pre= error.stack
+    body
+        .container.mt-5
+            .row
+                h1 #{statusCode} #{statusPhrase}
+            .row
+                if data
+                    pre= data
                 else
-                    pre= error
+                    if statusCode == 401
+                        | !{i18n('error_401_html')}
+                    else if statusCode == 403
+                        | !{i18n('error_403_html')}
+                    else if statusCode == 404
+                        | !{i18n('error_404_html')}
+                    else if statusCode == 500
+                        | !{i18n('error_500_html')}
+            .row
+                each error in errors
+                    if error.stack
+                        pre= error.stack
+                    else
+                        pre= error

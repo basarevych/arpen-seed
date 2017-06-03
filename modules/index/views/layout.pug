@@ -9,71 +9,77 @@ html
         script(src="/index.bundle.js")
 
     body
-        #signInModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="signInModalLabel" aria-hidden="true")
-            .modal-dialog(role="document")
-                form(onsubmit="return false")
-                    input(type="text" style="display: none")
-                    input(type="password" style="display: none")
-                    .modal-content
-                        .modal-header
-                            h5.modal-title#signInModalLabel #{i18n('sign_in_title')}
-                            button.close(type="button" data-dismiss="modal" aria-label="#{i18n('modal_close_button')}")
-                                span(aria-hidden="true") &times;
-                        .modal-body
-                            .form-group.messages.center
-                            .form-group.row
-                                label.col-sm-4.col-form-label.text-sm-right(for="signInModalEmail") #{i18n('sign_in_email_label')}
-                                    span.control-required #{i18n('form_control_required')}
-                                .col-sm-8
-                                    input#signInModalEmail.form-control(type="email" name="email" validate)
-                                    .errors
-                            .form-group.row
-                                label.col-sm-4.col-form-label.text-sm-right(for="signInModalPassword") #{i18n('sign_in_password_label')}
-                                    span.control-required #{i18n('form_control_required')}
-                                .col-sm-8
-                                    input#signInModalPassword.form-control(type="password" name="password")
-                                    .errors
-                        .modal-footer
-                            button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_in_cancel_button')}
-                            button.btn.btn-primary(type="submit") #{i18n('sign_in_submit_button')}
+        #loaderWrapper
+            noscript= i18n('error_noscript')
+            div(style="text-align: center; margin-top: 10em")
+                img(src="/img/loader-large.gif" alt=i18n('loader_alt'))
 
-        nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
-            .container
-                a.navbar-brand.hidden-sm-down(href="/") #{i18n('project_title')}
-                button.navbar-toggler.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarText"
-                    aria-controls="navbarText" aria-expanded="false" aria-label="#{i18n('navbar_menu_button')")
-                    span.navbar-toggler-icon
-                a.navbar-brand.float-right.hidden-md-up(href="/") #{i18n('project_title')}
-                #navbarText.collapse.navbar-collapse.justify-content-between
-                    ul.navbar-nav
-                        li.nav-item.active
-                            a.nav-link(href="/") Home
-                        li.nav-item
-                            a.nav-link(href="/test") Test
+        #contentWrapper(style="display: none")
+            #signInModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="signInModalLabel" aria-hidden="true")
+                .modal-dialog(role="document")
+                    form(onsubmit="return false")
+                        input(type="text" style="display: none")
+                        input(type="password" style="display: none")
+                        .modal-content
+                            .modal-header
+                                h5.modal-title#signInModalLabel #{i18n('sign_in_title')}
+                                button.close(type="button" data-dismiss="modal" aria-label="#{i18n('modal_close_button')}")
+                                    span(aria-hidden="true") &times;
+                            .modal-body
+                                .form-group.messages.center
+                                .form-group.row
+                                    label.col-sm-4.col-form-label.text-sm-right(for="signInModalEmail") #{i18n('sign_in_email_label')}
+                                        span.control-required #{i18n('form_control_required')}
+                                    .col-sm-8
+                                        input#signInModalEmail.form-control(type="email" name="email" validate)
+                                        .errors
+                                .form-group.row
+                                    label.col-sm-4.col-form-label.text-sm-right(for="signInModalPassword") #{i18n('sign_in_password_label')}
+                                        span.control-required #{i18n('form_control_required')}
+                                    .col-sm-8
+                                        input#signInModalPassword.form-control(type="password" name="password")
+                                        .errors
+                            .modal-footer
+                                button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_in_cancel_button')}
+                                button.btn.btn-primary(type="submit") #{i18n('sign_in_submit_button')}
+
+            nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
+                .container
+                    a.navbar-brand.hidden-sm-down(href="/") #{i18n('project_title')}
+                    button.navbar-toggler.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarText"
+                        aria-controls="navbarText" aria-expanded="false" aria-label="#{i18n('navbar_menu_button')")
+                        span.navbar-toggler-icon
+                    a.navbar-brand.float-right.hidden-md-up(href="/") #{i18n('project_title')}
+                    #navbarText.collapse.navbar-collapse.justify-content-between
+                        ul.navbar-nav
+                            li.nav-item.active
+                                a.nav-link(href="/") Home
+                            li.nav-item
+                                a.nav-link(href="/test") Test
+                            if user
+                                li.nav-item.hidden-md-up
+                                    a.nav-link(href="/account/profile") #{i18n('profile_button')}
+                                    a.btn-sign-out.nav-link(href="javascript:void(0)") #{i18n('sign_out_button')}
+                            else
+                                li.nav-item.hidden-md-up
+                                    a.btn-sign-in.nav-link(href="javascript:void(0)") #{i18n('sign_in_button')}
+                                li.nav-item.hidden-md-up
+                                    a.nav-link(href="/account/create") #{i18n('sign_up_button')}
                         if user
-                            li.nav-item.hidden-md-up
-                                a.nav-link(href="/account/profile") #{i18n('profile_button')}
-                                a.btn-sign-out.nav-link(href="javascript:void(0)") #{i18n('sign_out_button')}
+                            ul.navbar-nav.hidden-sm-down
+                                li.nav-item.dropdown
+                                    a#authMenuButton.nav-link.dropdown-toggle(href="javascript:void(0)" data-toggle="dropdown")
+                                        i.fa.fa-user.fa-margin-right
+                                        | #{user.displayName || user.email || "anonymous"}
+                                    .dropdown-menu(aria-labelledby="authMenuButton")
+                                        a.dropdown-item(href="/account/profile") #{i18n('profile_button')}
+                                        .dropdown-divider
+                                        a.btn-sign-out.dropdown-item(href="javascript:void(0)") #{i18n('sign_out_button')}
                         else
-                            li.nav-item.hidden-md-up
-                                a.btn-sign-in.nav-link(href="javascript:void(0)") #{i18n('sign_in_button')}
-                            li.nav-item.hidden-md-up
-                                a.btn-sign-up.nav-link(href="javascript:void(0)") #{i18n('sign_up_button')}
-                    if user
-                        ul.navbar-nav.hidden-sm-down
-                            li.nav-item.dropdown
-                                a#authMenuButton.nav-link.dropdown-toggle(href="javascript:void(0)" data-toggle="dropdown")
-                                    i.fa.fa-user.fa-margin-right
-                                    | #{user.displayName || user.email || "anonymous"}
-                                .dropdown-menu(aria-labelledby="authMenuButton")
-                                    a.dropdown-item(href="/account/profile") #{i18n('profile_button')}
-                                    .dropdown-divider
-                                    a.btn-sign-out.dropdown-item(href="javascript:void(0)") #{i18n('sign_out_button')}
-                    else
-                        .hidden-sm-down
-                            button.btn.btn-link(type="button" data-toggle="modal" data-target="#signInModal") #{i18n('sign_in_button')}
-                            span #{i18n('sign_buttons_divider')}
-                            a.btn.btn-link(href="/account/create") #{i18n('sign_up_button')}
+                            .hidden-sm-down
+                                button.btn.btn-link(type="button" data-toggle="modal" data-target="#signInModal") #{i18n('sign_in_button')}
+                                span #{i18n('sign_buttons_divider')}
+                                a.btn.btn-link(href="/account/create") #{i18n('sign_up_button')}
 
-        .mt-5
-            block content
+            .mt-5
+                block content
