@@ -7,19 +7,19 @@
     "message": "ARPEN",
     "description": "Title of browser tab"
   },
-  "error_401": {
+  "error_401_html": {
     "message": "<p>Access to this page requires authentication. Please <a class=\"btn-sign-in\" href=\"javascript:void(0)\">sign in</a>.</p>",
     "description": "Message for 401 Unauthorized error"
   },
-  "error_403": {
+  "error_403_html": {
     "message": "<p>You are not allowed to access this page, sorry.</p>",
     "description": "Message for 403 Forbidden error"
   },
-  "error_404": {
+  "error_404_html": {
     "message": "<p>Requested page or resource is not found on this server.</p>",
     "description": "Message for 404 Not Found error"
   },
-  "error_500": {
+  "error_500_html": {
     "message": "<p>Something went wrong while processing your request. Administration is notified.</p>",
     "description": "Message for 500 Internal Server Error error"
   },
