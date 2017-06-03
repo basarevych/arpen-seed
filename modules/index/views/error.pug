@@ -7,6 +7,13 @@ block content
         .row
             if data
                 pre= data
+            else
+                if statusCode == 401
+                    | !{i18n('error_401')}
+                else if statusCode == 403
+                    | !{i18n('error_403')}
+                else if statusCode == 404
+                    | !{i18n('error_404')}
         .row
             each error in errors
                 if error.stack

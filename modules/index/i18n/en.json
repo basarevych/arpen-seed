@@ -7,6 +7,18 @@
     "message": "ARPEN",
     "description": "Title of browser tab"
   },
+  "error_401": {
+    "message": "<p>Access to this page requires authentication. Please <a class=\"btn-sign-in\" href=\"javascript:void(0)\">sign in</a>.</p>",
+    "description": "Message for 401 Unauthorized error"
+  },
+  "error_403": {
+    "message": "<p>You are not allowed to access this page, sorry.</p>",
+    "description": "Message for 403 Forbidden error"
+  },
+  "error_404": {
+    "message": "<p>Requested page or resource is not found on this server</p>",
+    "description": "Message for 404 Not Found error"
+  },
   "sign_in_button": {
     "message": "Sign in",
     "description": "Title of sign in button"

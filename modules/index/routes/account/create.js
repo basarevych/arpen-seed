@@ -127,7 +127,7 @@ class SignUpRoute {
                                                         html = view;
                                                         commit();
                                                     });
-                                                    req.app.render('email/sign-up-text.pug', {i18n: res.locals.i18n, project, link }, (error, view) => {
+                                                    req.app.render('email/sign-up-text.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
                                                         if (error)
                                                             return reject(error);
 
