@@ -16,8 +16,12 @@
     "description": "Message for 403 Forbidden error"
   },
   "error_404": {
-    "message": "<p>Requested page or resource is not found on this server</p>",
+    "message": "<p>Requested page or resource is not found on this server.</p>",
     "description": "Message for 404 Not Found error"
+  },
+  "error_500": {
+    "message": "<p>Something went wrong while processing your request. Administration is notified.</p>",
+    "description": "Message for 500 Internal Server Error error"
   },
   "sign_in_button": {
     "message": "Sign in",

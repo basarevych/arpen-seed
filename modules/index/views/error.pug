@@ -14,15 +14,11 @@ block content
                     | !{i18n('error_403')}
                 else if statusCode == 404
                     | !{i18n('error_404')}
+                else if statusCode == 500
+                    | !{i18n('error_500')}
         .row
             each error in errors
                 if error.stack
                     pre= error.stack
-                else if Array.isArray(error)
-                    each sub in error
-                        if sub.stack
-                            pre= sub.stack
-                        else
-                            pre= sub
                 else
                     pre= error
