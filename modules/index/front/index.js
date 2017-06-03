@@ -10,5 +10,5 @@ import 'account';
  */
 $(() => {
     $('#loaderWrapper').hide();
-    $('#contentWrapper').show('slow');
+    $('#contentWrapper').show();
 });
