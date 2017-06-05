@@ -8,7 +8,7 @@ import 'account';
 /**
  * Hide loader
  */
-$(() => {
+$(window).on('load', () => {
     $('#loaderWrapper').hide();
     $('#contentWrapper').show();
 });
