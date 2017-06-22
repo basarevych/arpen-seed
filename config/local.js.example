@@ -145,6 +145,7 @@ module.exports = {
             interval: '1d',
             mode: 0o640,
             maxFiles: 3,
+            history: 'error.log.history',
         },
         access: {
             level: 'info',
@@ -153,6 +154,7 @@ module.exports = {
             interval: '1d',
             mode: 0o640,
             maxFiles: 3,
+            history: 'access.log.history',
         },
     },
 
