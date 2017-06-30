@@ -8,7 +8,7 @@ class InvalidateCache extends EventEmitter {
     /**
      * Create the service
      * @param {object} config                   Configuration
-     * @param {PubSub} pubsub                   PubSub service
+     * @param {PubSub} pubsub                   PostgresPubSub service
      * @param {Cacher} cacher                   Cacher service
      * @param {Logger} logger                   Logger service
      */
@@ -35,7 +35,7 @@ class InvalidateCache extends EventEmitter {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'config', 'pubsub', 'cacher', 'logger' ];
+        return [ 'config', 'postgresPubSub', 'cacher', 'logger' ];
     }
 
     /**
@@ -55,7 +55,7 @@ class InvalidateCache extends EventEmitter {
             return Promise.resolve();
 
         this._started = true;
-        return this._pubsub.connect('InvalidateCache', 'postgres.main')
+        return this._pubsub.connect('main', 'InvalidateCache')
             .then(client => {
                 return client.subscribe("invalidate_cache", this.onMessage.bind(this));
             });
