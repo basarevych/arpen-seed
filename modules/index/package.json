@@ -31,5 +31,16 @@
     "font-awesome": "~4.7.0",
     "jquery": "~3.2.1",
     "tether": "~1.4.0"
+  },
+  "jshintConfig": {
+    "esversion": 6,
+    "node": true,
+    "jquery": true,
+    "-W083": false,
+    "globals": {
+      "document": false,
+      "window": false,
+      "localStorage": false
+    }
   }
 }
