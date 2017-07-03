@@ -7,7 +7,7 @@ const fs = require('fs');
 const argvParser = require('argv');
 
 /**
- * Command class
+ * Command to create self-signed SSL certificates
  */
 class CreateCert {
     /**

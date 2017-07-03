@@ -5,7 +5,7 @@
 const argvParser = require('argv');
 
 /**
- * Command class
+ * Command to print usage
  */
 class Help {
     /**

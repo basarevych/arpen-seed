@@ -8,7 +8,7 @@ const read = require('read');
 const argvParser = require('argv');
 
 /**
- * Command class
+ * Command to create database schema and initialize the empty tables
  */
 class CreateDb {
     /**

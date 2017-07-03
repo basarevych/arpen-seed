@@ -7,7 +7,7 @@ const fs = require('fs');
 const argvParser = require('argv');
 
 /**
- * Command class
+ * Command to clear Redis cache
  */
 class ClearCache {
     /**
@@ -57,7 +57,7 @@ class ClearCache {
                 return client.query('FLUSHDB')
                     .then(() => {
                         client.done();
-                    })
+                    });
             })
             .then(() => {
                 process.exit(0);

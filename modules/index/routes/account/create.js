@@ -137,7 +137,7 @@ class SignUpRoute {
                                                 } catch (error) {
                                                     reject(error);
                                                 }
-                                            })
+                                            });
                                         })
                                         .then(([ text, html ]) => {
                                             return this._emailer.send({

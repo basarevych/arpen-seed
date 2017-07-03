@@ -8,7 +8,7 @@ const argvParser = require('argv');
 const moment = require('moment-timezone');
 
 /**
- * Command class
+ * Command to manage users
  */
 class User {
     /**
@@ -99,10 +99,10 @@ class User {
                     user.blockedAt = null;
                 }
                 
-                if (args.options['name'])
-                    user.displayName = args.options['name'];
-                if (args.options['password'])
-                    user.password = this._util.encryptPassword(args.options['password']);
+                if (args.options.name)
+                    user.displayName = args.options.name;
+                if (args.options.password)
+                    user.password = this._util.encryptPassword(args.options.password);
 
                 if (user._dirty)
                     return this._userRepo.save(user);
@@ -118,7 +118,7 @@ class User {
                                         return this._userRepo.addRole(user, role);
 
                                     return this._app.error(`Role ${cur} not found`);
-                                })
+                                });
                         });
                     },
                     Promise.resolve()
@@ -135,7 +135,7 @@ class User {
                                         return this._userRepo.removeRole(user, role);
 
                                     return this._app.error(`Role ${cur} not found`);
-                                })
+                                });
                         });
                     },
                     Promise.resolve()

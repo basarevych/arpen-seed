@@ -1,3 +1,7 @@
+/**
+ * Front account functionality module
+ * @module front/login
+ */
 'use strict';
 
 import { Form } from 'form';

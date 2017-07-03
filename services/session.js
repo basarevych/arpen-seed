@@ -6,6 +6,9 @@ const moment = require('moment-timezone');
 const jwt = require('jsonwebtoken');
 const geoip = require('geoip-lite');
 
+/**
+ * Connected user sessions registry service
+ */
 class Session {
     /**
      * Create the service
@@ -202,7 +205,7 @@ class Session {
             forwarded_for: forwarded || null,
             user_agent: agent || null,
             geoip: geoip.lookup(ip),
-        }
+        };
     }
 }
 

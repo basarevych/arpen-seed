@@ -1,3 +1,7 @@
+/**
+ * Front cookie module
+ * @module front/cookie
+ */
 'use strict';
 
 /**

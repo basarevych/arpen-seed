@@ -1,3 +1,7 @@
+/**
+ * Front form module
+ * @module front/form
+ */
 'use strict';
 
 /**
@@ -116,7 +120,7 @@ export class Form {
         if (this.data.form[name] && !this.data.form[name].valid) {
             groupEl.addClass('has-danger');
             for (let key of Object.keys(this.data.form[name].errors))
-                errorsEl.append($('<div class="form-control-feedback"></div>').text(this.data.form[name].errors[key].message))
+                errorsEl.append($('<div class="form-control-feedback"></div>').text(this.data.form[name].errors[key].message));
         }
     }
 
@@ -154,7 +158,7 @@ export class Form {
 
                 let errorsEl = groupEl.find('.errors');
                 for (let key of Object.keys(this.data.form[field].errors))
-                    errorsEl.append($('<div class="form-control-feedback"></div>').text(this.data.form[field].errors[key].message))
+                    errorsEl.append($('<div class="form-control-feedback"></div>').text(this.data.form[field].errors[key].message));
 
                 if (!focused && !fieldEl.prop('readonly') && !fieldEl.prop('disabled')) {
                     fieldEl.focus();

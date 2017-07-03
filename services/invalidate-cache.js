@@ -4,6 +4,9 @@
  */
 const EventEmitter = require('events');
 
+/**
+ * Postgres PUBSUB subscriber to invalidate local cache when needed
+ */
 class InvalidateCache extends EventEmitter {
     /**
      * Create the service

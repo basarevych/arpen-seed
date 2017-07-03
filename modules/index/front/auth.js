@@ -1,3 +1,7 @@
+/**
+ * Front authentication module
+ * @module front/auth
+ */
 'use strict';
 
 import { Form } from 'form';
