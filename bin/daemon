@@ -117,7 +117,10 @@ function restart() {
                 }
             }
 
-            if (result.code === 255 || !config.email.crash.enable)
+            if (result.code === 255)
+                return exit(255);
+
+            if (!config.email.crash.enable)
                 return setTimeout(() => { restart(); }, restartPause);
 
             return emailer.send({
