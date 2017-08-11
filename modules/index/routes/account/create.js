@@ -165,7 +165,7 @@ class SignUpRoute {
                                         });
                                 },
                                 error => {
-                                    if (!error.info || error.info.sql_state !== '23505') // duplicate email
+                                    if (!error.info || error.info.sqlState !== '23505') // duplicate email
                                         throw error;
 
                                     form.addMessage('error', 'sign_up_user_failure');
