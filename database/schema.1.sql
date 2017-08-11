@@ -25,8 +25,6 @@ CREATE TABLE _info (
     CONSTRAINT _info_unique_name UNIQUE (name)
 );
 
-INSERT INTO _info(name, value) VALUES('schema_version', '1'::json);
-
 
 --
 -- Roles
@@ -279,3 +277,34 @@ CREATE TRIGGER invalidate_cache
     ON sessions
     FOR EACH ROW
     EXECUTE PROCEDURE invalidate_sessions_cache();
+
+
+--
+-- Data
+--
+
+INSERT INTO _info(name, value)
+     VALUES ('schema_version', '1'::json);
+
+INSERT INTO roles(parent_id, title)
+     VALUES (NULL, 'Member');
+
+INSERT INTO roles(parent_id, title)
+     SELECT id, 'Admin'
+       FROM roles
+      WHERE title = 'Member';
+
+INSERT INTO permissions(role_id, resource, action)
+     SELECT id, NULL, NULL
+       FROM roles
+      WHERE title = 'Admin';
+
+INSERT INTO roles(parent_id, title)
+     SELECT id, 'User'
+       FROM roles
+      WHERE title = 'Member';
+
+INSERT INTO permissions(role_id, resource, action)
+     SELECT id, 'account.profile', NULL
+       FROM roles
+      WHERE title = 'User';

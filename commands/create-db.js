@@ -2,8 +2,6 @@
  * Create DB command
  * @module commands/create-db
  */
-const path = require('path');
-const fs = require('fs');
 const os = require('os');
 const argvParser = require('argv');
 
@@ -16,13 +14,11 @@ class CreateDb {
      * @param {App} app                 The application
      * @param {object} config           Configuration
      * @param {Runner} runner           Runner service
-     * @param {Ini} ini                 Ini service
      */
-    constructor(app, config, runner, ini) {
+    constructor(app, config, runner) {
         this._app = app;
         this._config = config;
         this._runner = runner;
-        this._ini = ini;
     }
 
     /**
@@ -38,7 +34,7 @@ class CreateDb {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'runner', 'ini' ];
+        return [ 'app', 'config', 'runner' ];
     }
 
     /**
@@ -68,46 +64,23 @@ class CreateDb {
                     throw new Error('Run this command as root');
             })
             .then(() => {
-                let configDir, config;
-                if (os.platform() === 'freebsd') {
-                    configDir = '/usr/local/etc/bhit';
-                    this._app.debug(`Platform: FreeBSD`);
-                } else {
-                    configDir = '/etc/bhit';
-                    this._app.debug(`Platform: Linux`);
-                }
-
-                try {
-                    config = this._ini.parse(fs.readFileSync(path.join(configDir, 'bhit.conf'), 'utf8'));
-                } catch (error) {
-                    throw new Error(`Could not read bhit.conf`);
-                }
-
-                function get(key) {
-                    return key.split('.').reduce((prev, cur) => {
-                        if (!prev)
-                            return prev;
-                        return prev[cur];
-                    }, config);
-                }
-
                 let suOptions;
                 if (os.platform() === 'freebsd') {
                     suOptions = [
                         '-m', args.options.user || 'pgsql',
-                        '-c', `psql -h ${get(`postgres.host`)} -d postgres -f -`
+                        '-c', `psql -h ${this._config.get(`postgres.${instance}.host`)} -d postgres -f -`
                     ];
                 } else {
                     suOptions = [
                         '-c',
-                        `psql -h ${get(`postgres.host`)} -d postgres -f -`,
+                        `psql -h ${this._config.get(`postgres.${instance}.host`)} -d postgres -f -`,
                         args.options.user || 'postgres'
                     ];
                 }
 
-                let sql = `create user ${get(`postgres.user`)} with password '${get(`postgres.password`)}';
-                           create database ${get(`postgres.db_name`)};
-                           grant all privileges on database ${get(`postgres.db_name`)} to ${get(`postgres.user`)};
+                let sql = `create user ${this._config.get(`postgres.${instance}.user`)} with password '${this._config.get(`postgres.${instance}.password`)}';
+                           create database ${this._config.get(`postgres.${instance}.db_name`)};
+                           grant all privileges on database ${this._config.get(`postgres.${instance}.db_name`)} to ${this._config.get(`postgres.${instance}.user`)};
                            \\q`;
 
                 let promise = this._runner.exec('su', suOptions, { pipe: process });
