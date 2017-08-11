@@ -15,9 +15,13 @@ const NError = require('nerror');
  * @return {Promise}                        Resolves to array of models
  */
 module.exports = function (token, pg) {
-    let key = `sql:sessions-by-token:${token}`;
+    let key = `sql:${this.constructor.table}-by-token:${token}`;
 
-    return this._cacher.get(key)
+    return Promise.resolve()
+        .then(() => {
+            if (this._enableCache)
+                return this._cacher.get(key);
+        })
         .then(value => {
             if (value)
                 return value;
@@ -31,14 +35,14 @@ module.exports = function (token, pg) {
                 })
                 .then(client => {
                     return client.query(
-                            'SELECT * ' +
-                            '  FROM sessions ' +
-                            ' WHERE token = $1 ',
+                            `SELECT *
+                               FROM sessions
+                              WHERE token = $1`,
                             [ token ]
                         )
                         .then(result => {
                             let rows = result.rowCount ? result.rows : [];
-                            if (!rows.length)
+                            if (!rows.length || !this._enableCache)
                                 return rows;
 
                             return this._cacher.set(key, rows)
@@ -63,7 +67,7 @@ module.exports = function (token, pg) {
         .then(rows => {
             let models = [];
             for (let row of rows) {
-                let model = this.getModel('session');
+                let model = this.getModel();
                 model._unserialize(row);
                 models.push(model);
             }

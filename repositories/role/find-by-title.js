@@ -24,9 +24,9 @@ module.exports = function (title, pg) {
         })
         .then(client => {
             return client.query(
-                    'SELECT * ' +
-                    '  FROM roles ' +
-                    ' WHERE title = $1 ',
+                    `SELECT *
+                       FROM roles
+                      WHERE title = $1`,
                     [ title ]
                 )
                 .then(result => {
@@ -48,7 +48,7 @@ module.exports = function (title, pg) {
         .then(rows => {
             let models = [];
             for (let row of rows) {
-                let model = this.getModel('role');
+                let model = this.getModel();
                 model._unserialize(row);
                 models.push(model);
             }

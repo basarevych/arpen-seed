@@ -15,9 +15,13 @@ const NError = require('nerror');
  * @return {Promise}                        Resolves to array of models
  */
 module.exports = function (user, pg) {
-    let key = `sql:roles-by-user-id:${typeof user === 'object' ? user.id : user}`;
+    let key = `sql:${this.constructor.table}-by-user-id:${typeof user === 'object' ? user.id : user}`;
 
-    return this._cacher.get(key)
+    return Promise.resolve()
+        .then(() => {
+            if (this._enableCache)
+                return this._cacher.get(key);
+        })
         .then(value => {
             if (value)
                 return value;
@@ -31,16 +35,16 @@ module.exports = function (user, pg) {
                 })
                 .then(client => {
                     return client.query(
-                            '    SELECT r.* ' +
-                            '      FROM roles r ' +
-                            'INNER JOIN user_roles ur ' +
-                            '        ON r.id = ur.role_id ' +
-                            '     WHERE ur.user_id = $1 ',
+                            `    SELECT r.*
+                                   FROM roles r
+                             INNER JOIN user_roles ur
+                                     ON r.id = ur.role_id
+                                  WHERE ur.user_id = $1`,
                             [ typeof user === 'object' ? user.id : user ]
                         )
                         .then(result => {
                             let rows = result.rowCount ? result.rows : [];
-                            if (!rows.length)
+                            if (!rows.length || !this._enableCache)
                                 return rows;
 
                             return this._cacher.set(key, rows)
@@ -64,7 +68,7 @@ module.exports = function (user, pg) {
                 .then(rows => {
                     let models = [];
                     for (let row of rows) {
-                        let model = this.getModel('role');
+                        let model = this.getModel();
                         model._unserialize(row);
                         models.push(model);
                     }

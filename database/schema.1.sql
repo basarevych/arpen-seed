@@ -1,18 +1,4 @@
 --
--- Prepare
---
-
-DROP TABLE IF EXISTS sessions CASCADE;
-DROP TABLE IF EXISTS accounts CASCADE;
-DROP TABLE IF EXISTS user_roles CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS permissions CASCADE;
-DROP TABLE IF EXISTS roles CASCADE;
-
-DROP TYPE IF EXISTS account_source;
-
-
---
 -- Common functions
 --
 
@@ -25,6 +11,21 @@ BEGIN
     END LOOP;
 END;
 $$ LANGUAGE plpgsql;
+
+
+--
+-- Info
+--
+
+CREATE TABLE _info (
+    id bigserial NOT NULL,
+    name varchar(255) NULL,
+    value json NULL,
+    CONSTRAINT _info_pk PRIMARY KEY (id),
+    CONSTRAINT _info_unique_name UNIQUE (name)
+);
+
+INSERT INTO _info(name, value) VALUES('schema_version', '1'::json);
 
 
 --

@@ -3,7 +3,7 @@
  * @module repositories/session
  */
 const path = require('path');
-const BaseRepository = require('./base');
+const BaseRepository = require('arpen/src/repositories/base');
 
 /**
  * Session repository class
@@ -12,16 +12,12 @@ class SessionRepository extends BaseRepository {
     /**
      * Create repository
      * @param {App} app                             The application
-     * @param {object} config                       Configuration service
      * @param {Postgres} postgres                   Postgres service
      * @param {Cacher} cacher                       Cacher service
      * @param {Util} util                           Util service
      */
-    constructor(app, config, postgres, cacher, util) {
-        super(app, postgres, util);
-        this._config = config;
-        this._cacher = cacher;
-
+    constructor(app, postgres, cacher, util) {
+        super(app, postgres, cacher, util);
         this._loadMethods(path.join(__dirname, 'session'));
     }
 
@@ -34,11 +30,19 @@ class SessionRepository extends BaseRepository {
     }
 
     /**
-     * Dependencies as constructor arguments
-     * @type {string[]}
+     * DB table name
+     * @type {string}
      */
-    static get requires() {
-        return [ 'app', 'config', 'postgres', 'cacher', 'util' ];
+    static get table() {
+        return 'sessions';
+    }
+
+    /**
+     * Model name
+     * @type {string}
+     */
+    static get model() {
+        return 'session';
     }
 }
 

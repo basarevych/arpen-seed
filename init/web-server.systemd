@@ -1,0 +1,18 @@
+[Unit]
+Description=Arpen Seed Web Server
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/node /path/to/arpen-seed/bin/daemon /var/run/arpen-seed.pid http https
+ExecStopPost=-/bin/rm /var/run/arpen-seed.pid
+PIDFile=/var/run/arpen-seed.pid
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=arpen-seed
+User=root
+Group=root
+#PermissionsStartOnly=true
+
+[Install]
+WantedBy=multi-user.target

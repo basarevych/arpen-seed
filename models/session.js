@@ -3,7 +3,7 @@
  * @module models/session
  */
 const moment = require('moment-timezone');
-const BaseModel = require('./base');
+const BaseModel = require('arpen/src/models/base');
 
 /**
  * Session model class
@@ -32,14 +32,6 @@ class SessionModel extends BaseModel {
      */
     static get provides() {
         return 'models.session';
-    }
-
-    /**
-     * Dependencies as constructor arguments
-     * @type {string[]}
-     */
-    static get requires() {
-        return [ 'postgres', 'util' ];
     }
 
     /**

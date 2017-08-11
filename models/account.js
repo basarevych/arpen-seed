@@ -3,7 +3,7 @@
  * @module models/account
  */
 const moment = require('moment-timezone');
-const BaseModel = require('./base');
+const BaseModel = require('arpen/src/models/base');
 
 /**
  * Account model class
@@ -30,14 +30,6 @@ class AccountModel extends BaseModel {
      */
     static get provides() {
         return 'models.account';
-    }
-
-    /**
-     * Dependencies as constructor arguments
-     * @type {string[]}
-     */
-    static get requires() {
-        return [ 'postgres', 'util' ];
     }
 
     /**

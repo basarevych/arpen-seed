@@ -4,27 +4,25 @@
  */
 const path = require('path');
 const fs = require('fs');
-const read = require('read');
+const os = require('os');
 const argvParser = require('argv');
 
 /**
- * Command to create database schema and initialize the empty tables
+ * Command class
  */
 class CreateDb {
     /**
      * Create the service
-     * @param {App} app                         The application
-     * @param {object} config                   Configuration
-     * @param {Runner} runner                   Runner service
-     * @param {RoleRepository} roleRepo         Role repository
-     * @param {PermissionRepository} permRepo   Permission repository
+     * @param {App} app                 The application
+     * @param {object} config           Configuration
+     * @param {Runner} runner           Runner service
+     * @param {Ini} ini                 Ini service
      */
-    constructor(app, config, runner, roleRepo, permRepo) {
+    constructor(app, config, runner, ini) {
         this._app = app;
         this._config = config;
         this._runner = runner;
-        this._roleRepo = roleRepo;
-        this._permRepo = permRepo;
+        this._ini = ini;
     }
 
     /**
@@ -40,7 +38,7 @@ class CreateDb {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'runner', 'repositories.role', 'repositories.permission' ];
+        return [ 'app', 'config', 'runner', 'ini' ];
     }
 
     /**
@@ -55,80 +53,69 @@ class CreateDb {
                 short: 'h',
                 type: 'boolean',
             })
+            .option({
+                name: 'user',
+                short: 'u',
+                type: 'string',
+            })
             .run(argv);
 
-        let member, user, admin;
+        const instance = 'main';
 
-        return new Promise((resolve, reject) => {
-                read({ prompt: 'Destroy the data and recreate the schema? (yes/no): ' }, (error, answer) => {
-                    if (error)
-                        return this.error(error.message);
+        return Promise.resolve()
+            .then(() => {
+                if (process.getuid())
+                    throw new Error('Run this command as root');
+            })
+            .then(() => {
+                let configDir, config;
+                if (os.platform() === 'freebsd') {
+                    configDir = '/usr/local/etc/bhit';
+                    this._app.debug(`Platform: FreeBSD`);
+                } else {
+                    configDir = '/etc/bhit';
+                    this._app.debug(`Platform: Linux`);
+                }
 
-                    if (answer.toLowerCase() !== 'yes' && answer.toLowerCase() !== 'y')
-                        process.exit(0);
+                try {
+                    config = this._ini.parse(fs.readFileSync(path.join(configDir, 'bhit.conf'), 'utf8'));
+                } catch (error) {
+                    throw new Error(`Could not read bhit.conf`);
+                }
 
-                    let expect = new Map();
-                    expect.set(/assword.*:/, this._config.get('postgres.main.password'));
+                function get(key) {
+                    return key.split('.').reduce((prev, cur) => {
+                        if (!prev)
+                            return prev;
+                        return prev[cur];
+                    }, config);
+                }
 
-                    let proc = this._runner.spawn(
-                        'psql',
-                        [
-                            '-U', this._config.get('postgres.main.user'),
-                            '-d', this._config.get('postgres.main.db_name'),
-                            '-h', this._config.get('postgres.main.host'),
-                            '-p', this._config.get('postgres.main.port'),
-                            '-W',
-                            '-f', path.join(__dirname, '..', 'database', 'schema.sql'),
-                        ],
-                        {},
-                        expect
-                    );
-                    proc.cmd.on('data', data => {
-                        process.stdout.write(data);
-                    });
-                    proc.promise
-                        .then(() => {
-                            resolve();
-                        })
-                        .catch(error => {
-                            reject(error);
-                        });
-                });
+                let suOptions;
+                if (os.platform() === 'freebsd') {
+                    suOptions = [
+                        '-m', args.options.user || 'pgsql',
+                        '-c', `psql -h ${get(`postgres.host`)} -d postgres -f -`
+                    ];
+                } else {
+                    suOptions = [
+                        '-c',
+                        `psql -h ${get(`postgres.host`)} -d postgres -f -`,
+                        args.options.user || 'postgres'
+                    ];
+                }
+
+                let sql = `create user ${get(`postgres.user`)} with password '${get(`postgres.password`)}';
+                           create database ${get(`postgres.db_name`)};
+                           grant all privileges on database ${get(`postgres.db_name`)} to ${get(`postgres.user`)};
+                           \\q`;
+
+                let promise = this._runner.exec('su', suOptions, { pipe: process });
+                process.stdin.emit('data', sql + '\n');
+                return promise;
             })
-            .then(() => {
-                member = this._roleRepo.getModel('role');
-                member.parentId = null;
-                member.title = 'Member';
-                return this._roleRepo.save(member);
-            })
-            .then(() => {
-                admin = this._roleRepo.getModel('role');
-                admin.parentId = member.id;
-                admin.title = 'Admin';
-                return this._roleRepo.save(admin);
-            })
-            .then(() => {
-                user = this._roleRepo.getModel('role');
-                user.parentId = member.id;
-                user.title = 'User';
-                return this._roleRepo.save(user);
-            })
-            .then(() => {
-                let perm = this._permRepo.getModel('permission');
-                perm.roleId = member.id;
-                perm.resource = 'account.profile';
-                perm.action = null;
-                return this._permRepo.save(perm);
-            })
-            .then(() => {
-                let perm = this._permRepo.getModel('permission');
-                perm.roleId = admin.id;
-                perm.resource = null;
-                perm.action = null;
-                return this._permRepo.save(perm);
-            })
-            .then(() => {
-                process.exit(0);
+            .then(result => {
+                process.exit(result.code);
             })
             .catch(error => {
                 return this.error(error);
@@ -137,9 +124,9 @@ class CreateDb {
 
     /**
      * Log error and terminate
-     * @param {Array} args
+     * @param {...*} args
      */
-    error(args) {
+    error(...args) {
         return args.reduce(
             (prev, cur) => {
                 return prev.then(() => {

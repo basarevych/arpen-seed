@@ -24,9 +24,9 @@ module.exports = function (token, pg) {
         })
         .then(client => {
             return client.query(
-                    'SELECT * ' +
-                    '  FROM users ' +
-                    ' WHERE secret = $1 ',
+                    `SELECT *
+                       FROM users
+                      WHERE secret = $1`,
                     [ token ]
                 )
                 .then(result => {
@@ -48,7 +48,7 @@ module.exports = function (token, pg) {
         .then(rows => {
             let models = [];
             for (let row of rows) {
-                let model = this.getModel('user');
+                let model = this.getModel();
                 model._unserialize(row);
                 models.push(model);
             }

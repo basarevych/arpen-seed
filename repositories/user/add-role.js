@@ -26,10 +26,10 @@ module.exports = function (user, role, pg) {
         .then(client => {
             return client.transaction({ name: 'user_add_role' }, rollback => {
                     return client.query(
-                            'SELECT * ' +
-                            '  FROM user_roles ' +
-                            ' WHERE user_id = $1 ' +
-                            '   AND role_id = $2 ',
+                            `SELECT *
+                               FROM user_roles
+                              WHERE user_id = $1
+                                AND role_id = $2`,
                             [
                                 typeof user === 'object' ? user.id : user,
                                 typeof role === 'object' ? role.id : role,
@@ -40,9 +40,9 @@ module.exports = function (user, role, pg) {
                                 return 0;
 
                             return client.query(
-                                    'INSERT ' +
-                                    '  INTO user_roles(user_id, role_id) ' +
-                                    'VALUES ($1, $2) ',
+                                    `INSERT 
+                                       INTO user_roles(user_id, role_id)
+                                     VALUES ($1, $2)`,
                                     [
                                         typeof user === 'object' ? user.id : user,
                                         typeof role === 'object' ? role.id : role,

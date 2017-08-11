@@ -25,10 +25,10 @@ module.exports = function (user, role, pg) {
         })
         .then(client => {
             return client.query(
-                    'DELETE ' +
-                    '  FROM user_roles ' +
-                    ' WHERE user_id = $1 ' +
-                    '   AND role_id = $2 ',
+                    `DELETE
+                       FROM user_roles
+                      WHERE user_id = $1
+                        AND role_id = $2`,
                     [
                         typeof user === 'object' ? user.id : user,
                         typeof role === 'object' ? role.id : role

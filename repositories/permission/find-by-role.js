@@ -15,9 +15,13 @@ const NError = require('nerror');
  * @return {Promise}                        Resolves to array of models
  */
 module.exports = function (role, pg) {
-    let key = `sql:permissions-by-role-id:${typeof role === 'object' ? role.id : role}`;
+    let key = `sql:${this.constructor.table}-by-role-id:${typeof role === 'object' ? role.id : role}`;
 
-    return this._cacher.get(key)
+    return Promise.resolve()
+        .then(() => {
+            if (this._enableCache)
+                return this._cacher.get(key);
+        })
         .then(value => {
             if (value)
                 return value;
@@ -31,14 +35,14 @@ module.exports = function (role, pg) {
                 })
                 .then(client => {
                     return client.query(
-                            '    SELECT * ' +
-                            '      FROM permissions ' +
-                            '     WHERE role_id = $1 ',
+                            `    SELECT *
+                                   FROM permissions
+                                  WHERE role_id = $1`,
                             [ typeof role === 'object' ? role.id : role ]
                         )
                         .then(result => {
                             let rows = result.rowCount ? result.rows : [];
-                            if (!rows.length)
+                            if (!rows.length || !this._enableCache)
                                 return rows;
 
                             return this._cacher.set(key, rows)
@@ -62,7 +66,7 @@ module.exports = function (role, pg) {
                 .then(rows => {
                     let models = [];
                     for (let row of rows) {
-                        let model = this.getModel('permission');
+                        let model = this.getModel();
                         model._unserialize(row);
                         models.push(model);
                     }
