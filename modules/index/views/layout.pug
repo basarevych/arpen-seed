@@ -9,40 +9,14 @@ html
         script(src="/index.bundle.js")
 
     body
+        include header
+
         #loaderWrapper
             noscript= i18n('error_noscript')
             div(style="text-align: center; margin-top: 10em")
                 img(src="/img/loader-large.gif" alt=i18n('loader_alt'))
 
         #contentWrapper(style="display: none")
-            #signInModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="signInModalLabel" aria-hidden="true")
-                .modal-dialog(role="document")
-                    form(onsubmit="return false")
-                        input(type="text" style="display: none")
-                        input(type="password" style="display: none")
-                        .modal-content
-                            .modal-header
-                                h5.modal-title#signInModalLabel #{i18n('sign_in_title')}
-                                button.close(type="button" data-dismiss="modal" aria-label="#{i18n('modal_close_button')}")
-                                    span(aria-hidden="true") &times;
-                            .modal-body
-                                .form-group.messages.center
-                                .form-group.row
-                                    label.col-sm-4.col-form-label.text-sm-right(for="signInModalEmail") #{i18n('sign_in_email_label')}
-                                        span.control-required #{i18n('form_control_required')}
-                                    .col-sm-8
-                                        input#signInModalEmail.form-control(type="email" name="email" validate)
-                                        .errors
-                                .form-group.row
-                                    label.col-sm-4.col-form-label.text-sm-right(for="signInModalPassword") #{i18n('sign_in_password_label')}
-                                        span.control-required #{i18n('form_control_required')}
-                                    .col-sm-8
-                                        input#signInModalPassword.form-control(type="password" name="password")
-                                        .errors
-                            .modal-footer
-                                button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_in_cancel_button')}
-                                button.btn.btn-primary(type="submit") #{i18n('sign_in_submit_button')}
-
             nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
                 .container
                     a.navbar-brand.hidden-sm-down(href="/") #{i18n('project_title')}
