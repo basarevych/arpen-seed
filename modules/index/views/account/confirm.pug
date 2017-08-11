@@ -2,12 +2,21 @@ extends ../layout
 
 block content
 
+    #confirmWrapperStart
+        .container
+            .row
+                .col
+                    h3 #{i18n('account_confirm_title_start')}
+                    p #{i18n('account_confirm_message_start', { project })}
+                    p
+                        button#confirmAccountButton.btn.btn-primary #{i18n('account_confirm_button')}
+
     #confirmWrapperSuccess(style="display: none")
         .container
             .row
                 .col
                     h3 #{i18n('account_confirm_title_success')}
-                    p #{i18n('account_confirm_message_success', { project })}
+                    p #{i18n('account_confirm_message_success')}
                     #confirmTimer
                         p#second5(style="display: none") #{i18n('account_confirm_timer', {second: 5})}
                         p#second4(style="display: none") #{i18n('account_confirm_timer', {second: 4})}

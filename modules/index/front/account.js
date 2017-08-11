@@ -48,33 +48,6 @@ function updateProfile() {
  * Install handlers
  */
 $(() => {
-    if (window.location.pathname === '/account/create') {
-        signUpWrapper = $('#signUpWrapper');
-        Form.focus(signUpWrapper);
-
-        signUpWrapper.find('[name]').on('input', event => {
-            Form.reset(signUpWrapper, $(event.target));
-        });
-        signUpWrapper.find('[validate]').on('focusout', event => {
-            if (Form.isLocked(signUpWrapper))
-                return;
-
-            let timestamp = Date.now();
-            setTimeout(() => {
-                if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
-                    $.post('/account/create', Object.assign({_validate: true}, Form.extract(signUpWrapper)), data => {
-                        if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
-                            signUpForm.update(signUpWrapper, data, false);
-                            signUpForm.checkField(signUpWrapper, $(event.target).prop('name'));
-                            signUpForm.timestamp = timestamp;
-                        }
-                    });
-                }
-            }, 250);
-        });
-        signUpWrapper.find('[type="submit"]').on('click', signUp);
-    }
-
     if (window.location.pathname === '/account/profile') {
         profileWrapper = $('#profileWrapper');
         Form.focus(profileWrapper);
@@ -102,27 +75,58 @@ $(() => {
         profileWrapper.find('[type="submit"]').on('click', updateProfile);
     }
 
-    if (window.location.pathname === '/account/confirm') {
-        $.post('/account/confirm', { secret: window.location.hash.slice(1) }, data => {
-            $('#confirmWrapper' + (data.success ? 'Success' : 'Failure')).show();
+    if (window.location.pathname === '/account/create') {
+        signUpWrapper = $('#signUpWrapper');
+        Form.focus(signUpWrapper);
 
-            if (!data.success)
+        signUpWrapper.find('[name]').on('input', event => {
+            Form.reset(signUpWrapper, $(event.target));
+        });
+        signUpWrapper.find('[validate]').on('focusout', event => {
+            if (Form.isLocked(signUpWrapper))
                 return;
 
-            let seconds = 5, timerEl = $('#confirmTimer');
-            let update = () => {
-                if (--seconds <= 0) {
-                    startSession(data.cookie);
-                    window.location = '/';
-                    return;
+            let timestamp = Date.now();
+            setTimeout(() => {
+                if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
+                    $.post('/account/create', Object.assign({_validate: true}, Form.extract(signUpWrapper)), data => {
+                        if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
+                            signUpForm.update(signUpWrapper, data, false);
+                            signUpForm.checkField(signUpWrapper, $(event.target).prop('name'));
+                            signUpForm.timestamp = timestamp;
+                        }
+                    });
                 }
+            }, 250);
+        });
+        signUpWrapper.find('[type="submit"]').on('click', signUp);
+    }
 
-                timerEl.find('p').hide();
-                timerEl.find('#second' + seconds).show();
-                setTimeout(update, 1000);
-            };
+    if (window.location.pathname === '/account/confirm') {
+        $('#confirmAccountButton').on('click', () => {
+            $(this).prop('disabled', true);
+            $.post('/account/confirm', { secret: window.location.hash.slice(1) }, data => {
+                $('#confirmWrapperStart').hide();
+                $('#confirmWrapper' + (data.success ? 'Success' : 'Failure')).show();
 
-            update();
+                if (!data.success)
+                    return;
+
+                let seconds = 5, timerEl = $('#confirmTimer');
+                let update = () => {
+                    if (--seconds <= 0) {
+                        startSession(data.cookie);
+                        window.location = '/';
+                        return;
+                    }
+
+                    timerEl.find('p').hide();
+                    timerEl.find('#second' + seconds).show();
+                    setTimeout(update, 1000);
+                };
+
+                update();
+            });
         });
     }
 });

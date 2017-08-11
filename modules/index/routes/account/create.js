@@ -98,7 +98,7 @@ class SignUpRoute {
                         user.confirmedAt = null;
                         user.blockedAt = null;
 
-                        let project = this._config.get('project');
+                        let project = res.locals.i18n('project_title');
                         let link = this._config.get('official_url') + '/account/confirm#' + user.secret;
 
                         return this._userRepo.save(user)

@@ -53,7 +53,7 @@ class ConfirmAccountRoute {
      * @param {function} next       Express next middleware function
      */
     getConfirm(req, res, next) {
-        return res.render('account/confirm', { project: this._config.get('project') });
+        return res.render('account/confirm', { project: res.locals.i18n('project_title') });
     }
 
     /**
