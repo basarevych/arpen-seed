@@ -16,7 +16,6 @@ class RoleModel extends BaseModel {
     constructor(postgres, util) {
         super(postgres, util);
 
-        this.id = undefined;
         this.parentId = undefined;
         this.title = undefined;
     }
@@ -27,22 +26,6 @@ class RoleModel extends BaseModel {
      */
     static get provides() {
         return 'models.role';
-    }
-
-    /**
-     * ID setter
-     * @type {undefined|number}
-     */
-    set id(id) {
-        return this._setField('id', id);
-    }
-
-    /**
-     * ID getter
-     * @type {undefined|number}
-     */
-    get id() {
-        return this._getField('id');
     }
 
     /**

@@ -16,7 +16,6 @@ class PermissionModel extends BaseModel {
     constructor(postgres, util) {
         super(postgres, util);
 
-        this.id = undefined;
         this.roleId = undefined;
         this.resource = undefined;
         this.action = undefined;
@@ -28,22 +27,6 @@ class PermissionModel extends BaseModel {
      */
     static get provides() {
         return 'models.permission';
-    }
-
-    /**
-     * ID setter
-     * @type {undefined|number}
-     */
-    set id(id) {
-        return this._setField('id', id);
-    }
-
-    /**
-     * ID getter
-     * @type {undefined|number}
-     */
-    get id() {
-        return this._getField('id');
     }
 
     /**

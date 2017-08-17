@@ -17,7 +17,6 @@ class UserModel extends BaseModel {
     constructor(postgres, util) {
         super(postgres, util);
 
-        this.id = undefined;
         this.email = undefined;
         this.displayName = undefined;
         this.password = undefined;
@@ -33,22 +32,6 @@ class UserModel extends BaseModel {
      */
     static get provides() {
         return 'models.user';
-    }
-
-    /**
-     * ID setter
-     * @type {undefined|number}
-     */
-    set id(id) {
-        return this._setField('id', id);
-    }
-
-    /**
-     * ID getter
-     * @type {undefined|number}
-     */
-    get id() {
-        return this._getField('id');
     }
 
     /**
