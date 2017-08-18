@@ -37,11 +37,11 @@ class LoginForm {
      * @param {object} vars                 Fields of the form
      * @return {Promise}                    Resolves to Fieldset
      */
-    create(vars) {
+    async create(vars) {
         let form = this._app.get('form');
         form.addField('email', vars.email, { required: true });
         form.addField('password', vars.password, { required: true });
-        return Promise.resolve(form);
+        return form;
     }
 
     /**
@@ -49,16 +49,14 @@ class LoginForm {
      * @param {object} vars                 Fields of the form
      * @return {Promise}                    Resolves to Form
      */
-    validate(vars) {
-        return this.create(vars)
-            .then(form => {
-                if (!validator.isEmail(form.getField('email')))
-                    form.addError('email', 'form_email_invalid');
-                if (!validator.isLength(form.getField('password'), { min: 6 }))
-                    form.addError('password', 'form_min_length', { min: 6 });
+    async validate(vars) {
+        let form = await this.create(vars);
+        if (!validator.isEmail(form.getField('email')))
+            form.addError('email', 'form_email_invalid');
+        if (!validator.isLength(form.getField('password'), { min: 6 }))
+            form.addError('password', 'form_min_length', { min: 6 });
 
-                return form;
-            });
+        return form;
     }
 }
 

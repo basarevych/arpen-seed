@@ -7,8 +7,10 @@
 import { Form } from 'form';
 import { startSession } from 'auth';
 
-let signUpWrapper, signUpForm = new Form();
-let profileWrapper, profileForm = new Form();
+let signUpWrapper;
+let signUpForm = new Form();
+let profileWrapper;
+let profileForm = new Form();
 
 /**
  * Register user
@@ -112,7 +114,8 @@ $(() => {
                 if (!data.success)
                     return;
 
-                let seconds = 5, timerEl = $('#confirmTimer');
+                let seconds = 5;
+                let timerEl = $('#confirmTimer');
                 let update = () => {
                     if (--seconds <= 0) {
                         startSession(data.cookie);

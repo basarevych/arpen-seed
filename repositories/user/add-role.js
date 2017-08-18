@@ -7,6 +7,7 @@ const NError = require('nerror');
 
 /**
  * Add role to the user
+ * @instance
  * @method addRole
  * @memberOf module:repositories/user~UserRepository
  * @param {UserModel|number} user           User model or ID
@@ -15,58 +16,45 @@ const NError = require('nerror');
  *                                          this instance of Postgres.
  * @return {Promise}                        Resolves to a number of new records
  */
-module.exports = function (user, role, pg) {
-    return Promise.resolve()
-        .then(() => {
-            if (typeof pg === 'object')
-                return pg;
+module.exports = async function (user, role, pg) {
+    let client;
 
-            return this._postgres.connect(pg);
-        })
-        .then(client => {
-            return client.transaction({ name: 'user_add_role' }, rollback => {
-                    return client.query(
-                            `SELECT *
-                               FROM user_roles
-                              WHERE user_id = $1
-                                AND role_id = $2`,
-                            [
-                                typeof user === 'object' ? user.id : user,
-                                typeof role === 'object' ? role.id : role,
-                            ]
-                        )
-                        .then(result => {
-                            if (result.rowCount)
-                                return 0;
+    try {
+        client = typeof pg === 'object' ? pg : await this._postgres.connect(pg);
+        let value = await client.transaction({ name: 'user_add_role' }, async () => {
+            let result = await client.query(
+                `SELECT *
+                   FROM user_roles
+                  WHERE user_id = $1
+                    AND role_id = $2`,
+                [
+                    typeof user === 'object' ? user.id : user,
+                    typeof role === 'object' ? role.id : role,
+                ]
+            );
+            if (result.rowCount)
+                return 0;
 
-                            return client.query(
-                                    `INSERT 
-                                       INTO user_roles(user_id, role_id)
-                                     VALUES ($1, $2)`,
-                                    [
-                                        typeof user === 'object' ? user.id : user,
-                                        typeof role === 'object' ? role.id : role,
-                                    ]
-                                )
-                                .then(() => {
-                                    return 1;
-                                });
-                        });
-                })
-                .then(
-                    value => {
-                        if (typeof pg !== 'object')
-                            client.done();
-                        return value;
-                    },
-                    error => {
-                        if (typeof pg !== 'object')
-                            client.done();
-                        throw error;
-                    }
-                );
-        })
-        .catch(error => {
-            throw new NError(error, 'UserRepository.addRole()');
+            result = await client.query(
+                `INSERT 
+                   INTO user_roles(user_id, role_id)
+                 VALUES ($1, $2)`,
+                [
+                    typeof user === 'object' ? user.id : user,
+                    typeof role === 'object' ? role.id : role,
+                ]
+            );
+            return result.rowCount;
         });
+
+        if (typeof pg !== 'object')
+            client.done();
+
+        return value;
+    } catch (error) {
+        if (client && typeof pg !== 'object')
+            client.done();
+
+        throw new NError(error, { user, role }, 'UserRepository.addRole()');
+    }
 };

@@ -53,34 +53,32 @@ class InvalidateCache extends EventEmitter {
      * Initialize the subscriber
      * @return {Promise}
      */
-    register() {
+    async register() {
         if (this._started || !this._config.get('cache.enable'))
-            return Promise.resolve();
+            return;
 
         this._started = true;
-        return this._pubsub.connect('main', 'InvalidateCache')
-            .then(client => {
-                return client.subscribe("invalidate_cache", this.onMessage.bind(this));
-            });
+        let client = await this._pubsub.connect('main', 'InvalidateCache');
+        return client.subscribe('invalidate_cache', this.onMessage.bind(this));
     }
 
     /**
      * PUBSUB message handler
      * @param {*} message                       Body of the message
+     * @return {Promise}
      */
-    onMessage(message) {
+    async onMessage(message) {
         if (typeof message !== 'object' || typeof message.key !== 'string')
             this._logger.error('Received invalid cache invalidation message', message);
 
-        this._cacher.unset('sql:' + message.key)
-            .then(() => {
-                let parts = message.key.split(':');
-                let name = parts.shift();
-                this.emit(name, parts.join(':'));
-            })
-            .catch(error => {
-                this._logger.error('Invalidation of the cache failed', error);
-            });
+        try {
+            await this._cacher.unset('sql:' + message.key);
+            let parts = message.key.split(':');
+            let name = parts.shift();
+            this.emit(name, parts.join(':'));
+        } catch (error) {
+            this._logger.error('Invalidation of the cache failed', error);
+        }
     }
 }
 

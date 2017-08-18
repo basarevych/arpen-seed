@@ -7,6 +7,7 @@ const NError = require('nerror');
 
 /**
  * Find users by confirmation token
+ * @instance
  * @method findBySecret
  * @memberOf module:repositories/user~UserRepository
  * @param {string} token                    Token to search by
@@ -14,48 +15,34 @@ const NError = require('nerror');
  *                                          this instance of Postgres.
  * @return {Promise}                        Resolves to array of models
  */
-module.exports = function (token, pg) {
-    return Promise.resolve()
-        .then(() => {
-            if (typeof pg === 'object')
-                return pg;
+module.exports = async function (token, pg) {
+    let client;
 
-            return this._postgres.connect(pg);
-        })
-        .then(client => {
-            return client.query(
-                    `SELECT *
-                       FROM users
-                      WHERE secret = $1`,
-                    [ token ]
-                )
-                .then(result => {
-                    return result.rowCount ? result.rows : [];
-                })
-                .then(
-                    value => {
-                        if (typeof pg !== 'object')
-                            client.done();
-                        return value;
-                    },
-                    error => {
-                        if (typeof pg !== 'object')
-                            client.done();
-                        throw error;
-                    }
-                );
-        })
-        .then(rows => {
-            let models = [];
-            for (let row of rows) {
-                let model = this.getModel();
-                model._unserialize(row);
-                models.push(model);
-            }
+    try {
+        client = typeof pg === 'object' ? pg : await this._postgres.connect(pg);
+        let result = await client.query(
+            `SELECT *
+               FROM users
+              WHERE secret = $1`,
+            [ token ]
+        );
+        let rows = result.rowCount ? result.rows : [];
 
-            return models;
-        })
-        .catch(error => {
-            throw new NError(error, 'UserRepository.findBySecret()');
-        });
+        let models = [];
+        for (let row of rows) {
+            let model = this.getModel();
+            model._unserialize(row);
+            models.push(model);
+        }
+
+        if (typeof pg !== 'object')
+            client.done();
+
+        return models;
+    } catch (error) {
+        if (client && typeof pg !== 'object')
+            client.done();
+
+        throw new NError(error, { token }, 'UserRepository.findBySecret()');
+    }
 };

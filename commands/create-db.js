@@ -42,7 +42,7 @@ class CreateDb {
      * @param {string[]} argv           Arguments
      * @return {Promise}
      */
-    run(argv) {
+    async run(argv) {
         let args = argvParser
             .option({
                 name: 'help',
@@ -58,64 +58,56 @@ class CreateDb {
 
         const instance = 'main';
 
-        return Promise.resolve()
-            .then(() => {
-                if (process.getuid())
-                    throw new Error('Run this command as root');
-            })
-            .then(() => {
-                let suOptions;
-                if (os.platform() === 'freebsd') {
-                    suOptions = [
-                        '-m', args.options.user || 'pgsql',
-                        '-c', `psql -h ${this._config.get(`postgres.${instance}.host`)} -d postgres -f -`
-                    ];
-                } else {
-                    suOptions = [
-                        '-c',
-                        `psql -h ${this._config.get(`postgres.${instance}.host`)} -d postgres -f -`,
-                        args.options.user || 'postgres'
-                    ];
-                }
+        try {
+            if (process.getuid())
+                throw new Error('Run this command as root');
 
-                let sql = `create user ${this._config.get(`postgres.${instance}.user`)} with password '${this._config.get(`postgres.${instance}.password`)}';
-                           create database ${this._config.get(`postgres.${instance}.db_name`)};
-                           grant all privileges on database ${this._config.get(`postgres.${instance}.db_name`)} to ${this._config.get(`postgres.${instance}.user`)};
-                           \\q`;
+            let suOptions;
+            if (os.platform() === 'freebsd') {
+                suOptions = [
+                    '-m', args.options.user || 'pgsql',
+                    '-c', `psql -h ${this._config.get(`postgres.${instance}.host`)} -d postgres -f -`
+                ];
+            } else {
+                suOptions = [
+                    '-c',
+                    `psql -h ${this._config.get(`postgres.${instance}.host`)} -d postgres -f -`,
+                    args.options.user || 'postgres'
+                ];
+            }
 
-                let promise = this._runner.exec('su', suOptions, { pipe: process });
-                process.stdin.emit('data', sql + '\n');
-                return promise;
-            })
-            .then(result => {
-                process.exit(result.code);
-            })
-            .catch(error => {
-                return this.error(error);
-            });
+            let sql = `create user ${this._config.get(`postgres.${instance}.user`)} with password '${this._config.get(`postgres.${instance}.password`)}';
+                       create database ${this._config.get(`postgres.${instance}.db_name`)};
+                       grant all privileges on database ${this._config.get(`postgres.${instance}.db_name`)} to ${this._config.get(`postgres.${instance}.user`)};
+                       \\q`;
+
+            let promise = this._runner.exec('su', suOptions, {pipe: process});
+            process.stdin.emit('data', sql + '\n');
+            let result = await promise;
+            process.exit(result.code);
+        } catch (error) {
+            await this.error(error);
+        }
     }
 
     /**
      * Log error and terminate
-     * @param {...*} args
+     * @param {Array} args
+     * @return {Promise}
      */
-    error(...args) {
-        return args.reduce(
-            (prev, cur) => {
-                return prev.then(() => {
+    async error(args) {
+        try {
+            await args.reduce(
+                async (prev, cur) => {
+                    await prev;
                     return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
-                });
-            },
-            Promise.resolve()
-            )
-            .then(
-                () => {
-                    process.exit(1);
                 },
-                () => {
-                    process.exit(1);
-                }
+                Promise.resolve()
             );
+        } catch (error) {
+            // do nothing
+        }
+        process.exit(1);
     }
 }
 

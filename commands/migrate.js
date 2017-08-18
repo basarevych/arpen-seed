@@ -45,8 +45,8 @@ class Migrate {
      * @param {string[]} argv           Arguments
      * @return {Promise}
      */
-    run(argv) {
-        let args = argvParser
+    async run(argv) {
+        argvParser
             .option({
                 name: 'help',
                 short: 'h',
@@ -57,75 +57,66 @@ class Migrate {
         const instance = 'main';
         const latestVersion = 1;
 
-        return this._postgres.connect(instance)
-            .then(client => {
-                return client.query(
-                        `SELECT value 
-                           FROM _info
-                          WHERE name = 'schema_version'`
-                    )
-                    .then(
-                        result => {
-                            client.done();
-                            return result.rowCount ? parseInt(result.rows[0].value) : 0;
-                        },
-                        () => {
-                            client.done();
-                            return 0;
-                        }
-                    );
-            })
-            .then(currentVersion => {
-                let deltas = [];
-                for (let i = currentVersion; i < latestVersion; i++)
-                    deltas.push(i ? `schema.${i}-${i+1}.sql` : `schema.1.sql`);
-
-                return deltas.reduce(
-                    (prev, cur) => {
-                        let filename = path.join(__dirname, '..', 'database', cur);
-                        return prev.then(() => {
-                            try {
-                                fs.accessSync(filename, fs.constants.F_OK);
-                            } catch (error) {
-                                return; // skip
-                            }
-
-                            process.stdout.write(`==> ${path.basename(filename)}\n`);
-                            return this.psqlExec(filename, instance);
-                        });
-                    },
-                    Promise.resolve()
+        try {
+            let client = await this._postgres.connect(instance);
+            let currentVersion = 0;
+            try {
+                let result = await client.query(
+                    `SELECT value 
+                       FROM _info
+                      WHERE name = 'schema_version'`
                 );
-            })
-            .then(() => {
-                process.exit(0);
-            })
-            .catch(error => {
-                return this.error(error);
-            });
+                currentVersion = result.rowCount ? parseInt(result.rows[0].value) : 0;
+            } catch (error) {
+                // do nothing
+            }
+            client.done();
+
+            let deltas = [];
+            for (let i = currentVersion; i < latestVersion; i++)
+                deltas.push(i ? `schema.${i}-${i + 1}.sql` : `schema.1.sql`);
+
+            await deltas.reduce(
+                async (prev, cur) => {
+                    await prev;
+
+                    let filename = path.join(__dirname, '..', 'database', cur);
+                    try {
+                        fs.accessSync(filename, fs.constants.F_OK);
+                    } catch (error) {
+                        return; // skip
+                    }
+
+                    await this._app.info(`==> ${path.basename(filename)}\n`);
+                    return this.psqlExec(filename, instance);
+                },
+                Promise.resolve()
+            );
+
+            process.exit(0);
+        } catch (error) {
+            await this.error(error);
+        }
     }
 
     /**
      * Log error and terminate
-     * @param {...*} args
+     * @param {Array} args
+     * @return {Promise}
      */
-    error(...args) {
-        return args.reduce(
-                (prev, cur) => {
-                    return prev.then(() => {
-                        return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
-                    });
+    async error(args) {
+        try {
+            await args.reduce(
+                async (prev, cur) => {
+                    await prev;
+                    return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
                 },
                 Promise.resolve()
-            )
-            .then(
-                () => {
-                    process.exit(1);
-                },
-                () => {
-                    process.exit(1);
-                }
             );
+        } catch (error) {
+            // do nothing
+        }
+        process.exit(1);
     }
 
     /**
@@ -134,7 +125,7 @@ class Migrate {
      * @param {string} instance
      * @return {Promise}
      */
-    psqlExec(filename, instance) {
+    async psqlExec(filename, instance) {
         let expect = new Map();
         expect.set(/assword.*:/, this._config.get(`postgres.${instance}.password`));
 
@@ -150,10 +141,10 @@ class Migrate {
             ],
             {
                 env: {
-                    "LANGUAGE": "C",
-                    "LANG": "C",
-                    "LC_ALL": "C",
-                    "PATH": "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin",
+                    'LANGUAGE': 'C',
+                    'LANG': 'C',
+                    'LC_ALL': 'C',
+                    'PATH': '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
                 },
             },
             expect

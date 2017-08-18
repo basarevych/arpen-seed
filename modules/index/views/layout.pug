@@ -17,30 +17,29 @@ html
                 img(src="/img/loader-large.gif" alt=i18n('loader_alt'))
 
         #contentWrapper(style="display: none")
-            nav.navbar.navbar-toggleable-sm.sticky-top.navbar-light.bg-faded
+            nav.navbar.navbar-expand-sm.sticky-top.navbar-light.bg-faded
                 .container
-                    a.navbar-brand.hidden-sm-down(href="/") #{i18n('project_title')}
-                    button.navbar-toggler.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarText"
-                        aria-controls="navbarText" aria-expanded="false" aria-label="#{i18n('navbar_menu_button')")
+                    a.navbar-brand(href="/") #{i18n('project_title')}
+                    button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="#{i18n('navbar_menu_button')")
                         span.navbar-toggler-icon
-                    a.navbar-brand.float-right.hidden-md-up(href="/") #{i18n('project_title')}
-                    #navbarText.collapse.navbar-collapse.justify-content-between
+                    #navbarSupportedContent.collapse.navbar-collapse.justify-content-between
                         ul.navbar-nav
                             li.nav-item.active
                                 a.nav-link(href="/") Home
                             li.nav-item
                                 a.nav-link(href="/test") Test
                             if user
-                                li.nav-item.hidden-md-up
+                                li.nav-item.d-md-none
                                     a.nav-link(href="/account/profile") #{i18n('profile_button')}
                                     a.btn-sign-out.nav-link(href="javascript:void(0)") #{i18n('sign_out_button')}
                             else
-                                li.nav-item.hidden-md-up
+                                li.nav-item.d-md-none
                                     a.btn-sign-in.nav-link(href="javascript:void(0)") #{i18n('sign_in_button')}
-                                li.nav-item.hidden-md-up
+                                li.nav-item.d-md-none
                                     a.nav-link(href="/account/create") #{i18n('sign_up_button')}
                         if user
-                            ul.navbar-nav.hidden-sm-down
+                            ul.navbar-nav.d-none.d-md-block
                                 li.nav-item.dropdown
                                     a#authMenuButton.nav-link.dropdown-toggle(href="javascript:void(0)" data-toggle="dropdown")
                                         i.fa.fa-user.fa-margin-right
@@ -50,7 +49,7 @@ html
                                         .dropdown-divider
                                         a.btn-sign-out.dropdown-item(href="javascript:void(0)") #{i18n('sign_out_button')}
                         else
-                            .hidden-sm-down
+                            .d-none.d-md-block
                                 button.btn.btn-link(type="button" data-toggle="modal" data-target="#signInModal") #{i18n('sign_in_button')}
                                 span #{i18n('sign_buttons_divider')}
                                 a.btn.btn-link(href="/account/create") #{i18n('sign_up_button')}

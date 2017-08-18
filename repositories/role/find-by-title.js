@@ -7,6 +7,7 @@ const NError = require('nerror');
 
 /**
  * Find roles by title
+ * @instance
  * @method findByTitle
  * @memberOf module:repositories/role~RoleRepository
  * @param {string} title                    Title to search by
@@ -14,48 +15,34 @@ const NError = require('nerror');
  *                                          this instance of Postgres.
  * @return {Promise}                        Resolves to array of models
  */
-module.exports = function (title, pg) {
-    return Promise.resolve()
-        .then(() => {
-            if (typeof pg === 'object')
-                return pg;
+module.exports = async function (title, pg) {
+    let client;
 
-            return this._postgres.connect(pg);
-        })
-        .then(client => {
-            return client.query(
-                    `SELECT *
-                       FROM roles
-                      WHERE title = $1`,
-                    [ title ]
-                )
-                .then(result => {
-                    return result.rowCount ? result.rows : [];
-                })
-                .then(
-                    value => {
-                        if (typeof pg !== 'object')
-                            client.done();
-                        return value;
-                    },
-                    error => {
-                        if (typeof pg !== 'object')
-                            client.done();
-                        throw error;
-                    }
-                );
-        })
-        .then(rows => {
-            let models = [];
-            for (let row of rows) {
-                let model = this.getModel();
-                model._unserialize(row);
-                models.push(model);
-            }
+    try {
+        client = typeof pg === 'object' ? pg : await this._postgres.connect(pg);
+        let result = await client.query(
+            `SELECT *
+               FROM roles
+              WHERE title = $1`,
+            [ title ]
+        );
+        let rows = result.rowCount ? result.rows : [];
 
-            return models;
-        })
-        .catch(error => {
-            throw new NError(error, 'RoleRepository.findByTitle()');
-        });
+        let models = [];
+        for (let row of rows) {
+            let model = this.getModel();
+            model._unserialize(row);
+            models.push(model);
+        }
+
+        if (typeof pg !== 'object')
+            client.done();
+
+        return models;
+    } catch (error) {
+        if (client && typeof pg !== 'object')
+            client.done();
+
+        throw new NError(error, { title }, 'RoleRepository.findByTitle()');
+    }
 };

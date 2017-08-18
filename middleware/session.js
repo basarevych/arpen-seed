@@ -40,27 +40,24 @@ class Session {
      * @param {Express} server          The server
      * @return {Promise}
      */
-    register(server) {
-        server.express.use((req, res, next) => {
+    async register(server) {
+        server.express.use(async (req, res, next) => {
             res.locals.session = null;
             res.locals.user = null;
 
-            this._session.load(req.cookies && req.cookies[this._session.cookieName], req)
-                .then(([ session, user ]) => {
-                    if (session)
-                        res.locals.session = session;
-                    if (user)
-                        res.locals.user = user;
+            try {
+                let [session, user] = await this._session.load(req.cookies && req.cookies[this._session.cookieName], req);
+                if (session)
+                    res.locals.session = session;
+                if (user)
+                    res.locals.user = user;
 
-                    next();
-                })
-                .catch(error => {
-                    this._logger.error(error);
-                    next();
-                });
+                next();
+            } catch (error) {
+                this._logger.error(error);
+                next();
+            }
         });
-
-        return Promise.resolve();
     }
 }
 

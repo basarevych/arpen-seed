@@ -1,6 +1,3 @@
-@import '~bootstrap/scss/_variables';
-@import '~bootstrap/scss/mixins/_breakpoints';
-
 @include media-breakpoint-down(sm) {
   .navbar .container {
     margin-left: 0;
@@ -14,7 +11,7 @@
 
 .control-required {
   display: block;
-  color: $brand-danger;
+  color: theme-colors("danger");
   font-size: xx-small;
   text-transform: uppercase;
 }

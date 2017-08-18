@@ -7,6 +7,7 @@ const NError = require('nerror');
 
 /**
  * Find users by email
+ * @instance
  * @method findByEmail
  * @memberOf module:repositories/user~UserRepository
  * @param {string} email                    Email to search by
@@ -14,67 +15,44 @@ const NError = require('nerror');
  *                                          this instance of Postgres.
  * @return {Promise}                        Resolves to array of models
  */
-module.exports = function (email, pg) {
+module.exports = async function (email, pg) {
     let key = `sql:${this.constructor.table}-by-email:${email}`;
+    let client;
 
-    return Promise.resolve()
-        .then(() => {
-            if (this._enableCache)
-                return this._cacher.get(key);
-        })
-        .then(value => {
+    try {
+        if (this._enableCache) {
+            let value = await this._cacher.get(key);
             if (value)
                 return value;
+        }
 
-            return Promise.resolve()
-                .then(() => {
-                    if (typeof pg === 'object')
-                        return pg;
+        client = typeof pg === 'object' ? pg : await this._postgres.connect(pg);
+        let result = await client.query(
+            `SELECT *
+               FROM users
+              WHERE email = $1`,
+            [ email ]
+        );
+        let rows = result.rowCount ? result.rows : [];
 
-                    return this._postgres.connect(pg);
-                })
-                .then(client => {
-                    return client.query(
-                            `SELECT *
-                               FROM users
-                              WHERE email = $1`,
-                            [ email ]
-                        )
-                        .then(result => {
-                            let rows = result.rowCount ? result.rows : [];
-                            if (!rows.length || !this._enableCache)
-                                return rows;
+        if (this._enableCache)
+            await this._cacher.set(key, rows);
 
-                            return this._cacher.set(key, rows)
-                                .then(() => {
-                                    return rows;
-                                });
-                        })
-                        .then(
-                            value => {
-                                if (typeof pg !== 'object')
-                                    client.done();
-                                return value;
-                            },
-                            error => {
-                                if (typeof pg !== 'object')
-                                    client.done();
-                                throw error;
-                            }
-                        );
-                });
-        })
-        .then(rows => {
-            let models = [];
-            for (let row of rows) {
-                let model = this.getModel();
-                model._unserialize(row);
-                models.push(model);
-            }
+        let models = [];
+        for (let row of rows) {
+            let model = this.getModel();
+            model._unserialize(row);
+            models.push(model);
+        }
 
-            return models;
-        })
-        .catch(error => {
-            throw new NError(error, 'UserRepository.findByEmail()');
-        });
+        if (typeof pg !== 'object')
+            client.done();
+
+        return models;
+    } catch (error) {
+        if (client && typeof pg !== 'object')
+            client.done();
+
+        throw new NError(error, { email }, 'UserRepository.findByEmail()');
+    }
 };

@@ -3,7 +3,6 @@
  * @module index/module
  */
 
-
 /**
  * Module main class
  */
@@ -56,7 +55,7 @@ class Index {
      * Bootstrap the module
      * @return {Promise}
      */
-    bootstrap() {
+    async bootstrap() {
         return this._app.get('invalidateCache').register();
     }
 

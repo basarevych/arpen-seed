@@ -45,7 +45,7 @@ class CreateCert {
      * @param {string[]} argv           Arguments
      * @return {Promise}
      */
-    run(argv) {
+    async run(argv) {
         let args = argvParser
             .option({
                 name: 'help',
@@ -59,76 +59,67 @@ class CreateCert {
 
         let hostname = args.targets[1];
 
-        return Promise.resolve()
-            .then(() => {
-                this._app.debug('Creating temporary openssl config');
-                let type = (/^\d+\.\d+\.\d+\.\d+$/.test(hostname) ? 'IP' : 'DNS');
-                let sslConfig = fs.readFileSync('/etc/ssl/openssl.cnf', { encoding: 'utf8' });
-                sslConfig += `\n[SAN]\nsubjectAltName=${type}:${hostname}\n`;
-                fs.writeFileSync('/tmp/arpen.openssl.cnf', sslConfig, { mode: 0o644 });
+        try {
+            await this._app.debug('Creating temporary openssl config');
+            let type = (/^\d+\.\d+\.\d+\.\d+$/.test(hostname) ? 'IP' : 'DNS');
+            let sslConfig = fs.readFileSync('/etc/ssl/openssl.cnf', {encoding: 'utf8'});
+            sslConfig += `\n[SAN]\nsubjectAltName=${type}:${hostname}\n`;
+            fs.writeFileSync('/tmp/arpen.openssl.cnf', sslConfig, {mode: 0o644});
 
-                this._app.debug('Creating self-signed certificate');
-                return this._runner.exec(
-                        'openssl',
-                        [
-                            'req',
-                            '-new',
-                            '-newkey', 'rsa:2048',
-                            '-days', '3650',
-                            '-nodes',
-                            '-x509',
-                            '-subj', '/C=/ST=/L=/O=/CN=' + hostname,
-                            '-reqexts', 'SAN',
-                            '-extensions', 'SAN',
-                            '-config', '/tmp/arpen.openssl.cnf',
-                            '-keyout', path.join(__dirname, '..', 'certs', hostname + '.key'),
-                            '-out', path.join(__dirname, '..', 'certs', hostname + '.cert')
-                        ]
-                    )
-                    .then(result => {
-                        try {
-                            fs.unlinkSync('/tmp/arpen.openssl.cnf');
-                            fs.unlinkSync('.rnd');
-                        } catch (error) {
-                            // do nothing
-                        }
+            await this._app.debug('Creating self-signed certificate');
+            let result = await this._runner.exec(
+                'openssl',
+                [
+                    'req',
+                    '-new',
+                    '-newkey', 'rsa:2048',
+                    '-days', '3650',
+                    '-nodes',
+                    '-x509',
+                    '-subj', '/C=/ST=/L=/O=/CN=' + hostname,
+                    '-reqexts', 'SAN',
+                    '-extensions', 'SAN',
+                    '-config', '/tmp/arpen.openssl.cnf',
+                    '-keyout', path.join(__dirname, '..', 'certs', hostname + '.key'),
+                    '-out', path.join(__dirname, '..', 'certs', hostname + '.cert')
+                ]
+            );
 
-                        if (result.code !== 0)
-                            throw new Error('Could not create self-signed certificate');
-                    });
-            })
-            .then(() => {
-                return this._app.debug('done')
-                    .then(() => {
-                        process.exit(0);
-                    });
-            })
-            .catch(error => {
-                return this.error(error);
-            });
+            try {
+                fs.unlinkSync('/tmp/arpen.openssl.cnf');
+                fs.unlinkSync('.rnd');
+            } catch (error) {
+                // do nothing
+            }
+
+            if (result.code !== 0)
+                throw new Error('Could not create self-signed certificate');
+
+            await this._app.debug('done');
+            process.exit(0);
+        } catch (error) {
+            await this.error(error);
+        }
     }
 
     /**
      * Log error and terminate
      * @param {Array} args
+     * @return {Promise}
      */
-    error(args) {
-        return args.reduce(
-            (prev, cur) => {
-                return prev.then(() => {
+    async error(args) {
+        try {
+            await args.reduce(
+                async (prev, cur) => {
+                    await prev;
                     return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
-                });
-            },
-            Promise.resolve()
-            )
-            .then(
-                () => {
-                    process.exit(1);
                 },
-                () => {
-                    process.exit(1);
-                }
+                Promise.resolve()
             );
+        } catch (error) {
+            // do nothing
+        }
+        process.exit(1);
     }
 }
 

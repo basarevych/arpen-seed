@@ -129,7 +129,8 @@ export class Form {
      * @param {object} el                       jQuery element
      */
     checkForm(el) {
-        let messagesEl = el.find('.messages'), hasMessages = false;
+        let messagesEl = el.find('.messages');
+        let hasMessages = false;
         for (let key of Object.keys(this.data.messages || {})) {
             hasMessages = true;
             let msg = this.data.messages[key];
@@ -141,7 +142,8 @@ export class Form {
         if (hasMessages)
             messagesEl.show('slow');
 
-        let first, focused = false;
+        let first;
+        let focused = false;
         for (let field of Object.keys(this.data.form) || {}) {
             let fieldEl = el.find(`[name="${field}"]`);
             if (!fieldEl.length)

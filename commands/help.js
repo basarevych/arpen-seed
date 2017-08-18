@@ -41,7 +41,7 @@ class Help {
      * @param {string[]} argv           Arguments
      * @return {Promise}
      */
-    run(argv) {
+    async run(argv) {
         let args = argvParser
             .option({
                 name: 'help',
@@ -62,114 +62,105 @@ class Help {
 
     /**
      * General help
+     * @return {Promise}
      */
-    usage() {
-        return this._app.info(
-                'Usage:\tcmd <command> [<parameters]\n\n' +
-                'Commands:\n' +
-                '\thelp\t\tPrint help about any other command\n' +
-                '\tcreate-cert\tCreate self-signed certificates\n' +
-                '\tcreate-db\tCreate the database schema\n' +
-                '\tuser\t\tManage users\n' +
-                '\tclear-cache\tClear the cache'
+    async usage() {
+        await this._app.info(
+            'Usage:\tcmd <command> [<parameters]\n\n' +
+            'Commands:\n' +
+            '\thelp\t\tPrint help about any other command\n' +
+            '\tcreate-cert\tCreate self-signed certificates\n' +
+            '\tcreate-db\tCreate the database schema\n' +
+            '\tuser\t\tManage users\n' +
+            '\tclear-cache\tClear the cache'
 
-            )
-            .then(() => {
-                process.exit(0);
-            });
+        );
+        process.exit(0);
     }
 
     /**
      * Help command
+     * @return {Promise}
      */
-    helpHelp(argv) {
-        return this._app.info(
-                'Usage:\tcmd help <command>\n\n' +
-                '\tPrint help for the given command'
-            )
-            .then(() => {
-                process.exit(0);
-            });
+    async helpHelp(argv) {
+        await this._app.info(
+            'Usage:\tcmd help <command>\n\n' +
+            '\tPrint help for the given command'
+        );
+        process.exit(0);
     }
 
     /**
      * Cert command
+     * @return {Promise}
      */
-    helpCreateCert(argv) {
-        return this._app.info(
-                'Usage:\tcmd create-cert <address>\n\n' +
-                '\tThis command will create self-signed certificates in the certs/ subdirectory\n' +
-                '\t<address> is either hostname or IP address to use in the certificate'
-            )
-            .then(() => {
-                process.exit(0);
-            });
+    async helpCreateCert(argv) {
+        await this._app.info(
+            'Usage:\tcmd create-cert <address>\n\n' +
+            '\tThis command will create self-signed certificates in the certs/ subdirectory\n' +
+            '\t<address> is either hostname or IP address to use in the certificate'
+        );
+        process.exit(0);
     }
 
     /**
      * Create DB command
+     * @return {Promise}
      */
-    helpCreateDb(argv) {
-        return this._app.info(
-                'Usage:\tcmd create-db\n\n' +
-                '\tDrop if present and recreate all the database tables'
-            )
-            .then(() => {
-                process.exit(0);
-            });
+    async helpCreateDb(argv) {
+        await this._app.info(
+            'Usage:\tcmd create-db\n\n' +
+            '\tDrop if present and recreate all the database tables'
+        );
+        process.exit(0);
     }
 
     /**
      * User command
+     * @return {Promise}
      */
-    helpUser(argv) {
-        return this._app.info(
-                'Usage:\tcmd user <email> [-n <name> ] [-p <password>] [-a <role>] [-r <role>]\n\n' +
-                '\tManage users (user is created on first operation):\n' +
-                '\t-n sets display name\n' +
-                '\t-p sets password\n' +
-                '\t-a adds role\n' +
-                '\t-r removes role'
-            )
-            .then(() => {
-                process.exit(0);
-            });
+    async helpUser(argv) {
+        await this._app.info(
+            'Usage:\tcmd user <email> [-n <name> ] [-p <password>] [-a <role>] [-r <role>]\n\n' +
+            '\tManage users (user is created on first operation):\n' +
+            '\t-n sets display name\n' +
+            '\t-p sets password\n' +
+            '\t-a adds role\n' +
+            '\t-r removes role'
+        );
+        process.exit(0);
     }
 
     /**
      * Clear Cache command
+     * @return {Promise}
      */
-    helpClearCache(argv) {
-        return this._app.info(
-                'Usage:\tcmd clear-cache\n\n' +
-                '\tDrop Redis cache'
-            )
-            .then(() => {
-                process.exit(0);
-            });
+    async helpClearCache(argv) {
+        await this._app.info(
+            'Usage:\tcmd clear-cache\n\n' +
+            '\tDrop Redis cache'
+        );
+        process.exit(0);
     }
 
     /**
      * Log error and terminate
      * @param {Array} args
+     * @return {Promise}
      */
-    error(args) {
-        return args.reduce(
-            (prev, cur) => {
-                return prev.then(() => {
-                    return this._app.error(cur.stack || cur.message || cur);
-                });
-            },
-            Promise.resolve()
-            )
-            .then(
-                () => {
-                    process.exit(1);
+    async error(args) {
+        try {
+            await args.reduce(
+                async (prev, cur) => {
+                    await prev;
+                    return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
                 },
-                () => {
-                    process.exit(1);
-                }
+                Promise.resolve()
             );
+        } catch (error) {
+            // do nothing
+        }
+        process.exit(1);
     }
 }
 

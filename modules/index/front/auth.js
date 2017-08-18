@@ -7,8 +7,8 @@
 import { Form } from 'form';
 import { Cookie } from 'cookie';
 
-let signInModal, signInForm = new Form();
-
+let signInModal;
+let signInForm = new Form();
 
 /**
  * Start user session

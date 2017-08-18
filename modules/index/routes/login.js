@@ -50,22 +50,26 @@ class LoginRoute {
         ];
     }
 
-    startSession(user, req) {
-        return this._session.start(user, req)
-            .then(session => {
-                let lifetime = this._config.get('session.expire_timeout');
-                if (lifetime)
-                    lifetime *= 1000;
+    /**
+     * Start user session
+     * @param {UserModel} user      The user
+     * @param {object} req          Request info
+     * @return {Promise}
+     */
+    async startSession(user, req) {
+        let session = await this._session.start(user, req);
+        let lifetime = this._config.get('session.expire_timeout');
+        if (lifetime)
+            lifetime *= 1000;
 
-                return {
-                    success: true,
-                    cookie: {
-                        name: this._session.cookieName,
-                        value: this._session.encodeJwt(session),
-                        lifetime: lifetime || null,
-                    }
-                };
-            });
+        return {
+            success: true,
+            cookie: {
+                name: this._session.cookieName,
+                value: this._session.encodeJwt(session),
+                lifetime: lifetime || null,
+            }
+        };
     }
 
     /**
@@ -73,33 +77,29 @@ class LoginRoute {
      * @param {object} req          Express request
      * @param {object} res          Express response
      * @param {function} next       Express next middleware function
+     * @return {Promise}
      */
-    postLogin(req, res, next) {
-        this._loginForm.validate(req.body)
-            .then(form => {
-                let password = form.getField('password');
-                form.setField('password', '');
+    async postLogin(req, res, next) {
+        try {
+            let form = await this._loginForm.validate(req.body);
+            let password = form.getField('password');
+            form.setField('password', '');
 
-                if (!form.success || req.body._validate)
-                    return res.json(form.toJSON());
+            if (!form.success || req.body._validate)
+                return res.json(form.toJSON());
 
-                return this._userRepo.findByEmail(form.getField('email'))
-                    .then(users => {
-                        let user = users.length && users[0];
-                        if (!user || !user.confirmedAt || !this._util.checkPassword(password, user.password)) {
-                            form.addMessage('error', 'sign_in_invalid_credentials');
-                            return res.json(form.toJSON());
-                        }
+            let users = await this._userRepo.findByEmail(form.getField('email'));
+            let user = users.length && users[0];
+            if (!user || !user.confirmedAt || !this._util.checkPassword(password, user.password)) {
+                form.addMessage('error', 'sign_in_invalid_credentials');
+                return res.json(form.toJSON());
+            }
 
-                        return this.startSession(user, req)
-                            .then(result => {
-                                res.json(result);
-                            });
-                    });
-            })
-            .catch(error => {
-                next(new NError(error, 'postLogin()'));
-            });
+            let info = await this.startSession(user, req);
+            res.json(info);
+        } catch (error) {
+            next(new NError(error, 'postLogin()'));
+        }
     }
 }
 

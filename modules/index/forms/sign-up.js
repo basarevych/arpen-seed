@@ -37,13 +37,13 @@ class SignUpForm {
      * @param {object} vars                 Fields of the form
      * @return {Promise}                    Resolves to Fieldset
      */
-    create(vars) {
+    async create(vars) {
         let form = this._app.get('form');
         form.addField('email', vars.email, { required: true });
         form.addField('name', vars.name);
         form.addField('password1', vars.password1, { required: true });
         form.addField('password2', vars.password2, { required: true });
-        return Promise.resolve(form);
+        return form;
     }
 
     /**
@@ -51,21 +51,19 @@ class SignUpForm {
      * @param {object} vars                 Fields of the form
      * @return {Promise}                    Resolves to Form
      */
-    validate(vars) {
-        return this.create(vars)
-            .then(form => {
-                let password1 = form.getField('password1');
-                if (password1 && !validator.isLength(password1, { min: 6 }))
-                    form.addError('password1', 'form_min_length', { min: 6 });
+    async validate(vars) {
+        let form = await this.create(vars);
+        let password1 = form.getField('password1');
+        if (password1 && !validator.isLength(password1, { min: 6 }))
+            form.addError('password1', 'form_min_length', { min: 6 });
 
-                let password2 = form.getField('password2');
-                if (password2 && !validator.isLength(password2, { min: 6 }))
-                    form.addError('password2', 'form_min_length', { min: 6 });
-                if (password2 && password2 !== password1)
-                    form.addError('password2', 'sign_up_passwords_mismatch');
+        let password2 = form.getField('password2');
+        if (password2 && !validator.isLength(password2, { min: 6 }))
+            form.addError('password2', 'form_min_length', { min: 6 });
+        if (password2 && password2 !== password1)
+            form.addError('password2', 'sign_up_passwords_mismatch');
 
-                return form;
-            });
+        return form;
     }
 }
 

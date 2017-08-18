@@ -2,8 +2,6 @@
  * User command
  * @module commands/user
  */
-const path = require('path');
-const fs = require('fs');
 const argvParser = require('argv');
 const moment = require('moment-timezone');
 
@@ -50,7 +48,7 @@ class User {
      * @param {string[]} argv           Arguments
      * @return {Promise}
      */
-    run(argv) {
+    async run(argv) {
         let args = argvParser
             .option({
                 name: 'help',
@@ -84,92 +82,78 @@ class User {
 
         let email = args.targets[1];
 
-        let user;
-        return this._userRepo.findByEmail(email)
-            .then(users => {
-                user = users.length && users[0];
-                if (!user) {
-                    user = this._userRepo.getModel('user');
-                    user.email = email;
-                    user.displayName = null;
-                    user.password = null;
-                    user.secret = null;
-                    user.createdAt = moment();
-                    user.confirmedAt = user.createdAt;
-                    user.blockedAt = null;
-                }
-                
-                if (args.options.name)
-                    user.displayName = args.options.name;
-                if (args.options.password)
-                    user.password = this._util.encryptPassword(args.options.password);
+        try {
+            let users = await this._userRepo.findByEmail(email);
+            let user = users.length && users[0];
+            if (!user) {
+                user = this._userRepo.getModel('user');
+                user.email = email;
+                user.displayName = null;
+                user.password = null;
+                user.secret = null;
+                user.createdAt = moment();
+                user.confirmedAt = user.createdAt;
+                user.blockedAt = null;
+            }
 
-                if (user._dirty)
-                    return this._userRepo.save(user);
-            })
-            .then(() => {
-                return (args.options['add-role'] || []).reduce(
-                    (prev, cur) => {
-                        return prev.then(() => {
-                            return this._roleRepo.findByTitle(cur)
-                                .then(roles => {
-                                    let role = roles.length && roles[0];
-                                    if (role)
-                                        return this._userRepo.addRole(user, role);
+            if (args.options.name)
+                user.displayName = args.options.name;
+            if (args.options.password)
+                user.password = this._util.encryptPassword(args.options.password);
 
-                                    return this._app.error(`Role ${cur} not found`);
-                                });
-                        });
-                    },
-                    Promise.resolve()
-                );
-            })
-            .then(() => {
-                return (args.options['remove-role'] || []).reduce(
-                    (prev, cur) => {
-                        return prev.then(() => {
-                            return this._roleRepo.findByTitle(cur)
-                                .then(roles => {
-                                    let role = roles.length && roles[0];
-                                    if (role)
-                                        return this._userRepo.removeRole(user, role);
+            if (user._dirty)
+                await this._userRepo.save(user);
 
-                                    return this._app.error(`Role ${cur} not found`);
-                                });
-                        });
-                    },
-                    Promise.resolve()
-                );
-            })
-            .then(() => {
-                process.exit(0);
-            })
-            .catch(error => {
-                return this.error(error);
-            });
+            await (args.options['add-role'] || []).reduce(
+                async (prev, cur) => {
+                    await prev;
+                    let roles = await this._roleRepo.findByTitle(cur);
+                    let role = roles.length && roles[0];
+                    if (role)
+                        await this._userRepo.addRole(user, role);
+                    else
+                        await this._app.error(`Role ${cur} not found`);
+                },
+                Promise.resolve()
+            );
+
+            await (args.options['remove-role'] || []).reduce(
+                async (prev, cur) => {
+                    await prev;
+                    let roles = await this._roleRepo.findByTitle(cur);
+                    let role = roles.length && roles[0];
+                    if (role)
+                        await this._userRepo.removeRole(user, role);
+                    else
+                        await this._app.error(`Role ${cur} not found`);
+                },
+                Promise.resolve()
+            );
+
+            process.exit(0);
+        } catch (error) {
+            await this.error(error);
+        }
     }
 
     /**
      * Log error and terminate
      * @param {Array} args
+     * @return {Promise}
      */
-    error(args) {
-        return args.reduce(
-            (prev, cur) => {
-                return prev.then(() => {
+    async error(args) {
+        try {
+            await args.reduce(
+                async (prev, cur) => {
+                    await prev;
                     return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
-                });
-            },
-            Promise.resolve()
-            )
-            .then(
-                () => {
-                    process.exit(1);
                 },
-                () => {
-                    process.exit(1);
-                }
+                Promise.resolve()
             );
+        } catch (error) {
+            // do nothing
+        }
+        process.exit(1);
     }
 }
 

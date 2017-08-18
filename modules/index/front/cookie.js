@@ -19,10 +19,10 @@ export class Cookie {
         if (lifetime) {
             let date = new Date();
             date.setTime(date.getTime() + lifetime);
-            expires = "; expires=" + date.toGMTString();
+            expires = '; expires=' + date.toGMTString();
         }
 
-        document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+        document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value) + expires + '; path=/';
     }
 
     /**

@@ -41,9 +41,9 @@ class Acl {
      * @param {string} action                           Action
      * @return {Promise}                                Resolves if allowed
      */
-    check(user, resource, action) {
+    async check(user, resource, action) {
         if (!user || !user.id)
-            return Promise.reject(new NError({ httpStatus: 401 }, 'Not Authorized'));
+            throw new NError({ httpStatus: 401 }, 'Not Authorized');
 
         // All user permissions
         let allPermissions = [];
@@ -53,47 +53,40 @@ class Acl {
          * @param {RoleModel} role
          * @return {Promise}
          */
-        let loadRolePermissions = role => {
-            return this._permRepo.findByRole(role)
-                .then(permissions => {
-                    allPermissions = allPermissions.concat(permissions);
+        let loadRolePermissions = async role => {
+            let permissions = await this._permRepo.findByRole(role);
+            allPermissions = allPermissions.concat(permissions);
 
-                    if (!role.parentId)
-                        return;
+            if (!role.parentId)
+                return;
 
-                    return this._roleRepo.find(role.parentId)
-                        .then(roles => {
-                            let parentRole = roles.length && roles[0];
-                            if (parentRole)
-                                return loadRolePermissions(parentRole);
-                        });
-                });
+            let roles = await this._roleRepo.find(role.parentId);
+            let parentRole = roles.length && roles[0];
+            if (parentRole)
+                return loadRolePermissions(parentRole);
         };
 
-        return this._roleRepo.findByUser(user)
-            .then(roles => {
-                if (!roles.length)
-                    throw new NError({ httpStatus: 403 }, 'Forbidden');
+        let roles = await this._roleRepo.findByUser(user);
+        if (!roles.length)
+            throw new NError({ httpStatus: 403 }, 'Forbidden');
 
-                let promises = [];
-                for (let role of roles)
-                    promises.push(loadRolePermissions(role));
+        let promises = [];
+        for (let role of roles)
+            promises.push(loadRolePermissions(role));
 
-                return Promise.all(promises)
-                    .then(() => {
-                        if (!allPermissions.length)
-                            throw new NError({ httpStatus: 403 }, 'Forbidden');
+        await Promise.all(promises);
 
-                        let allowed = allPermissions.some(permission => {
-                            let resourceAllowed = (permission.resource === null) || (permission.resource === resource);
-                            let actionAllowed = (permission.action === null) || (permission.action === action);
-                            return resourceAllowed && actionAllowed;
-                        });
+        if (!allPermissions.length)
+            throw new NError({ httpStatus: 403 }, 'Forbidden');
 
-                        if (!allowed)
-                            throw new NError({ httpStatus: 403 }, 'Forbidden');
-                    });
-            });
+        let allowed = allPermissions.some(permission => {
+            let resourceAllowed = (permission.resource === null) || (permission.resource === resource);
+            let actionAllowed = (permission.action === null) || (permission.action === action);
+            return resourceAllowed && actionAllowed;
+        });
+
+        if (!allowed)
+            throw new NError({ httpStatus: 403 }, 'Forbidden');
     }
 }
 

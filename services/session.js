@@ -5,6 +5,7 @@
 const moment = require('moment-timezone');
 const jwt = require('jsonwebtoken');
 const geoip = require('geoip-lite');
+const NError = require('nerror');
 
 /**
  * Connected user sessions registry service
@@ -84,7 +85,7 @@ class Session {
      * @param {object} req                      Request data
      * @return {Promise}                        Resolves to session model
      */
-    start(user, req) {
+    async start(user, req) {
         let session = this._app.get('models.session');
         session.token = this._util.getRandomString(32, { lower: true, upper: true, digits: true, special: false });
         session.userId = user.id;
@@ -93,10 +94,8 @@ class Session {
         session.createdAt = moment();
         session.updatedAt = session.createdAt;
 
-        return this._sessionRepo.save(session)
-            .then(() => {
-                return session;
-            });
+        await this._sessionRepo.save(session);
+        return session;
     }
 
     /**
@@ -105,56 +104,46 @@ class Session {
      * @param {object} req                      Request data
      * @return {Promise}                        Resolves to [ session, user ]
      */
-    load(token, req) {
+    async load(token, req) {
         if (typeof token !== 'string' || !token.length)
-            return Promise.resolve([ null, null ]);
+            return [ null, null ];
 
-        return new Promise(resolve => {
-                jwt.verify(token, this._config.get('session.secret'), (error, payload) => {
-                    if (error)
-                        this._logger.debug('session', error.message);
+        let payload = await new Promise(resolve => {
+            jwt.verify(token, this._config.get('session.secret'), (error, payload) => {
+                if (error)
+                    this._logger.debug('session', error.message);
 
-                    if (error || !payload || !payload.token)
-                        return resolve(null);
+                if (error || !payload || !payload.token)
+                    return resolve(null);
 
-                    resolve(payload);
-                });
-            })
-            .then(payload => {
-                if (!payload)
-                    return [ null, null ];
-
-                return this._sessionRepo.findByToken(payload.token)
-                    .then(sessions => {
-                        let session = sessions.length && sessions[0];
-                        if (!session)
-                            return null;
-
-                        let cached = this.cache.get(session.id);
-                        if (cached && cached.updatedAt.isAfter(session.updatedAt))
-                            return cached;
-
-                        return session;
-                    })
-                    .then(session => {
-                        if (!session)
-                            return [ null, null ];
-
-                        session.info = this._getInfo(req);
-                        this.update(session);
-
-                        if (!session.userId)
-                            return [ session, null ];
-
-                        return this._userRepo.find(session.userId)
-                            .then(users => {
-                                let user = users.length && users[0];
-                                return [ session, user || null ];
-                            });
-                    });
+                resolve(payload);
             });
-    }
+        });
 
+        if (!payload)
+            return [ null, null ];
+
+        let sessions = await this._sessionRepo.findByToken(payload.token);
+        let session = sessions.length && sessions[0];
+        if (session) {
+            let cached = this.cache.get(session.id);
+            if (cached && cached.updatedAt.isAfter(session.updatedAt))
+                session = cached;
+        }
+
+        if (!session)
+            return [ null, null ];
+
+        session.info = this._getInfo(req);
+        this.update(session);
+
+        if (!session.userId)
+            return [ session, null ];
+
+        let users = await this._userRepo.find(session.userId);
+        let user = users.length && users[0];
+        return [ session, user || null ];
+    }
 
     /**
      * Update session in the DB
@@ -165,17 +154,18 @@ class Session {
         if (!this.cache.has(id)) {
             let schedule = session.updatedAt.add(this.constructor.saveInterval, 'milliseconds').valueOf() - moment().valueOf();
             setTimeout(
-                () => {
+                async () => {
                     let session = this.cache.get(id);
                     if (!session)
                         return;
 
                     this.cache.delete(id);
 
-                    this._sessionRepo.save(session)
-                        .catch(error => {
-                            this._logger.error(new WError(error, 'Session._update()'));
-                        });
+                    try {
+                        await this._sessionRepo.save(session);
+                    } catch (error) {
+                        this._logger.error(new NError(error, 'Session._update()'));
+                    }
                 },
                 schedule > 0 ? schedule : 0
             );
@@ -191,7 +181,8 @@ class Session {
      * @return {object}
      */
     _getInfo(req) {
-        let ip, ipHeader = this._config.get('session.ip_header');
+        let ip;
+        let ipHeader = this._config.get('session.ip_header');
         if (ipHeader)
             ip = req.headers[ipHeader] && req.headers[ipHeader].trim();
         if (!ip)

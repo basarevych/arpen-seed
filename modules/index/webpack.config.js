@@ -6,6 +6,7 @@ const root = path.join.bind(path, path.resolve(__dirname));
  */
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const NoEmitOnErrorsPlugin = require('webpack/lib/NoEmitOnErrorsPlugin');
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 
@@ -54,7 +55,7 @@ module.exports = {
          *
          * See: http://webpack.github.io/docs/configuration.html#resolve-extensions
          */
-        extensions: [ '.js', '.json', '.css', '.scss' ],
+        extensions: [ '*', '.js', '.css', '.scss' ],
 
         // An array of directory names to be resolved to the current directory
         modules: [ root('front'), root('node_modules') ],
@@ -129,6 +130,7 @@ module.exports = {
                 use: [
                     { loader: 'style-loader', options: { sourceMap: true } },
                     { loader: 'css-loader', options: { sourceMap: true } },
+                    { loader: 'postcss-loader', options: { sourceMap: true } },
                 ],
             },
 
@@ -137,6 +139,7 @@ module.exports = {
                 use: [
                     { loader: 'style-loader', options: { sourceMap: true } },
                     { loader: 'css-loader', options: { sourceMap: true } },
+                    { loader: 'postcss-loader', options: { sourceMap: true } },
                     { loader: 'sass-loader', options: { sourceMap: true } },
                 ]
             },
@@ -145,7 +148,7 @@ module.exports = {
                 test: /bootstrap\/dist\/js\//,
                 use: [
                     'imports-loader?jQuery=jquery',
-                    'imports-loader?Tether=tether',
+                    'imports-loader?Popper=popper.js',
                     "imports-loader?Tooltip=bootstrap/js/dist/tooltip",
                     "imports-loader?Alert=bootstrap/js/dist/alert",
                     "imports-loader?Button=bootstrap/js/dist/button",
@@ -205,6 +208,15 @@ module.exports = {
             { from: 'assets/img', to: 'img' },
         ]),
 
+        /**
+         * Plugin: NoEmitOnErrorsPlugin
+         * Description: Skip the emitting phase whenever there are errors while compiling.
+         *
+         * Ensures that no assets are emitted that include errors.
+         *
+         * See: https://webpack.js.org/plugins/no-emit-on-errors-plugin/
+         */
+        new NoEmitOnErrorsPlugin(),
 
         /**
          * Plugin: ProvidePlugin
@@ -218,8 +230,7 @@ module.exports = {
             $: "jquery",
             jQuery: "jquery",
             "window.jQuery": "jquery",
-            Tether: "tether",
-            "window.Tether": "tether",
+            Popper: ['popper.js', 'default'],
             Tooltip: "exports-loader?Tooltip!bootstrap/js/dist/tooltip",
             Alert: "exports-loader?Alert!bootstrap/js/dist/alert",
             Button: "exports-loader?Button!bootstrap/js/dist/button",

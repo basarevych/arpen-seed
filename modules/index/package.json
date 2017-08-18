@@ -8,13 +8,14 @@
   },
   "devDependencies": {
     "autoprefixer": "~7.1.2",
-    "babel-core": "~6.25.0",
+    "babel-core": "~6.26.0",
     "babel-loader": "~7.1.1",
     "babel-preset-env": "~1.6.0",
-    "bootstrap-loader": "~2.1.0",
+    "bootstrap-loader": "~2.2.0",
     "clean-webpack-plugin": "~0.1.16",
     "copy-webpack-plugin": "~4.0.1",
-    "css-loader": "~0.28.4",
+    "css-loader": "~0.28.5",
+    "exports-loader": "~0.6.4",
     "file-loader": "~0.11.2",
     "font-awesome-sass-loader": "~2.0.1",
     "imports-loader": "~0.7.1",
@@ -24,23 +25,12 @@
     "sass-loader": "~6.0.6",
     "style-loader": "~0.18.2",
     "url-loader": "~0.5.9",
-    "webpack": "~3.5.3"
+    "webpack": "~3.5.5"
   },
   "dependencies": {
-    "bootstrap": "~4.0.0-alpha.6",
+    "bootstrap": "~4.0.0-beta",
     "font-awesome": "~4.7.0",
     "jquery": "~3.2.1",
-    "tether": "~1.4.0"
-  },
-  "jshintConfig": {
-    "esversion": 6,
-    "node": true,
-    "jquery": true,
-    "-W083": false,
-    "globals": {
-      "document": false,
-      "window": false,
-      "localStorage": false
-    }
+    "popper.js": "~1.12.3"
   }
 }

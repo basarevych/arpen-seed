@@ -61,27 +61,24 @@ class ConfirmAccountRoute {
      * @param {object} req          Express request
      * @param {object} res          Express response
      * @param {function} next       Express next middleware function
+     * @return {Promise}
      */
-    postConfirm(req, res, next) {
-        let token = String(req.body.secret);
-        return this._userRepo.findBySecret(token)
-            .then(users => {
-                let user = users.length && users[0];
-                if (!user || user.confirmedAt || user.blockedAt)
-                    return res.json({ success: false });
+    async postConfirm(req, res, next) {
+        try {
+            let token = String(req.body.secret);
+            let users = await this._userRepo.findBySecret(token);
+            let user = users.length && users[0];
+            if (!user || user.confirmedAt || user.blockedAt)
+                return res.json({success: false});
 
-                user.confirmedAt = moment();
-                return this._userRepo.save(user)
-                    .then(() => {
-                        return this._loginRoute.startSession(user, req)
-                            .then(result => {
-                                res.json(result);
-                            });
-                    });
-            })
-            .catch(error => {
-                next(new NError(error, 'postConfirm()'));
-            });
+            user.confirmedAt = moment();
+            await this._userRepo.save(user);
+
+            let info = await this._loginRoute.startSession(user, req);
+            res.json(info);
+        } catch (error) {
+            next(new NError(error, 'postConfirm()'));
+        }
     }
 }
 

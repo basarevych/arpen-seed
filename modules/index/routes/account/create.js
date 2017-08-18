@@ -73,110 +73,119 @@ class SignUpRoute {
      * @param {object} req          Express request
      * @param {object} res          Express response
      * @param {function} next       Express next middleware function
+     * @return {Promise}
      */
-    postSignUp(req, res, next) {
-        return this._signUpForm.validate(req.body)
-            .then(form => {
-                let password = form.getField('password1');
-                form.setField('password1', '');
-                form.setField('password2', '');
+    async postSignUp(req, res, next) {
+        let form, user;
 
-                return this._userRepo.findByEmail(form.getField('email'))
-                    .then(users => {
-                        if (users.length)
-                            form.addError('email', 'sign_up_email_exists');
+        try {
+            form = await this._signUpForm.validate(req.body);
 
-                        if (!form.success || req.body._validate)
-                            return res.json(form.toJSON());
+            let password = form.getField('password1');
+            form.setField('password1', '');
+            form.setField('password2', '');
 
-                        let user = this._userRepo.getModel('user');
-                        user.email = form.getField('email');
-                        user.displayName = form.getField('name') || null;
-                        user.password = this._util.encryptPassword(password);
-                        user.secret = this._util.getRandomString(32, { lower: true, upper: true, digits: true, special: false });
-                        user.createdAt = moment();
-                        user.confirmedAt = null;
-                        user.blockedAt = null;
+            let users = await this._userRepo.findByEmail(form.getField('email'));
+            if (users.length)
+                form.addError('email', 'sign_up_email_exists');
 
-                        let project = res.locals.i18n('project_title');
-                        let link = this._config.get('official_url') + '/account/confirm#' + user.secret;
+            if (!form.success || req.body._validate)
+                return res.json(form.toJSON());
 
-                        return this._userRepo.save(user)
-                            .then(
-                                () => {
-                                    return this._roleRepo.findByTitle('User')
-                                        .then(roles => {
-                                            let role = roles.length && roles[0];
-                                            if (!role)
-                                                throw new Error('Role "User" not found');
+            user = this._userRepo.getModel('user');
+            user.email = form.getField('email');
+            user.displayName = form.getField('name') || null;
+            user.password = this._util.encryptPassword(password);
+            user.secret = this._util.getRandomString(32, {lower: true, upper: true, digits: true, special: false});
+            user.createdAt = moment();
+            user.confirmedAt = null;
+            user.blockedAt = null;
+        } catch (error) {
+            return next(new NError(error, 'postSignUp()'));
+        }
 
-                                            return this._userRepo.addRole(user, role);
-                                        })
-                                        .then(() => {
-                                            return new Promise((resolve, reject) => {
-                                                let calls = 0, text, html;
-                                                let commit = () => {
-                                                    if (++calls >= 2)
-                                                        resolve([text, html]);
-                                                };
-                                                try {
-                                                    req.app.render('email/sign-up-html.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
-                                                        if (error)
-                                                            return reject(error);
+        try {
+            await this._userRepo.save(user);
+        } catch (error) {
+            if (error.info && error.info.sqlState === '23505') { // duplicate email
+                form.addMessage('error', 'sign_up_user_failure');
+                return res.json(form.toJSON());
+            }
 
-                                                        html = view;
-                                                        commit();
-                                                    });
-                                                    req.app.render('email/sign-up-text.pug', { i18n: res.locals.i18n, project, link }, (error, view) => {
-                                                        if (error)
-                                                            return reject(error);
+            return next(new NError(error, 'postSignUp()'));
+        }
 
-                                                        text = view;
-                                                        commit();
-                                                    });
-                                                } catch (error) {
-                                                    reject(error);
-                                                }
-                                            });
-                                        })
-                                        .then(([ text, html ]) => {
-                                            return this._emailer.send({
-                                                    from: this._config.get('email.from'),
-                                                    to: form.getField('email'),
-                                                    subject: res.locals.i18n('account_activation_subject', { project }),
-                                                    text: text,
-                                                    html: html
-                                                })
-                                                .then(
-                                                    () => {
-                                                        form.addMessage('info', 'sign_up_success');
-                                                        res.json(form.toJSON());
-                                                    },
-                                                    error => {
-                                                        this._logger.error(error, 'postSignUp()');
+        try {
+            let roles = await this._roleRepo.findByTitle('User');
+            let role = roles.length && roles[0];
+            if (!role)
+                throw new Error('Role "User" not found');
 
-                                                        return this._userRepo.delete(user)
-                                                            .then(() => {
-                                                                form.addMessage('error', 'sign_up_email_failure');
-                                                                res.json(form.toJSON());
-                                                            });
-                                                    }
-                                                );
-                                        });
-                                },
-                                error => {
-                                    if (!error.info || error.info.sqlState !== '23505') // duplicate email
-                                        throw error;
+            await this._userRepo.addRole(user, role);
 
-                                    form.addMessage('error', 'sign_up_user_failure');
-                                    res.json(form.toJSON());
-                                }
-                            );
-                    });
-            })
-            .catch(error => {
-                next(new NError(error, 'postSignUp()'));
+            let project = res.locals.i18n('project_title');
+            let link = this._config.get('official_url') + '/account/confirm#' + user.secret;
+            let [text, html] = await new Promise((resolve, reject) => {
+                let text, html;
+                let calls = 0;
+                let commit = () => {
+                    if (++calls >= 2)
+                        resolve([text, html]);
+                };
+                try {
+                    req.app.render(
+                        'email/sign-up-html.pug',
+                        {
+                            i18n: res.locals.i18n,
+                            project,
+                            link
+                        },
+                        (error, view) => {
+                            if (error)
+                                return reject(error);
+
+                            html = view;
+                            commit();
+                        }
+                    );
+                    req.app.render(
+                        'email/sign-up-text.pug',
+                        {
+                            i18n: res.locals.i18n,
+                            project,
+                            link
+                        },
+                        (error, view) => {
+                            if (error)
+                                return reject(error);
+
+                            text = view;
+                            commit();
+                        }
+                    );
+                } catch (error) {
+                    reject(error);
+                }
             });
+
+            await this._emailer.send({
+                from: this._config.get('email.from'),
+                to: form.getField('email'),
+                subject: res.locals.i18n('account_activation_subject', {project}),
+                text: text,
+                html: html
+            });
+
+            form.addMessage('info', 'sign_up_success');
+            res.json(form.toJSON());
+        } catch (error) {
+            this._logger.error(error, 'postSignUp()');
+
+            await this._userRepo.delete(user);
+
+            form.addMessage('error', 'sign_up_email_failure');
+            res.json(form.toJSON());
+        }
     }
 }
 

@@ -56,15 +56,15 @@ class ProfileRoute {
      * @param {object} req          Express request
      * @param {object} res          Express response
      * @param {function} next       Express next middleware function
+     * @return {Promise}
      */
-    getProfile(req, res, next) {
-        this._acl.check(res.locals.user, 'account.profile', 'list')
-            .then(() => {
-                res.render('account/profile');
-            })
-            .catch(error => {
-                next(new NError(error, 'getProfile()'));
-            });
+    async getProfile(req, res, next) {
+        try {
+            await this._acl.check(res.locals.user, 'account.profile', 'list');
+            res.render('account/profile');
+        } catch (error) {
+            next(new NError(error, 'getProfile()'));
+        }
     }
 
     /**
@@ -72,38 +72,36 @@ class ProfileRoute {
      * @param {object} req          Express request
      * @param {object} res          Express response
      * @param {function} next       Express next middleware function
+     * @return {Promise}
      */
-    postProfile(req, res, next) {
-        this._acl.check(res.locals.user, 'account.profile', 'post')
-            .then(() => {
-                return this._profileForm.validate(req.body);
-            })
-            .then(form => {
-                let curPassword = form.getField('cur_password');
-                form.setField('cur_password', '');
-                let newPassword = form.getField('new_password1');
-                form.setField('new_password1', '');
-                form.setField('new_password2', '');
+    async postProfile(req, res, next) {
+        try {
+            await this._acl.check(res.locals.user, 'account.profile', 'post');
 
-                if (curPassword && !this._util.checkPassword(curPassword, res.locals.user.password))
-                    form.addError('cur_password', 'profile_password_invalid');
+            let form = await this._profileForm.validate(req.body);
+            let curPassword = form.getField('cur_password');
+            form.setField('cur_password', '');
+            let newPassword = form.getField('new_password1');
+            form.setField('new_password1', '');
+            form.setField('new_password2', '');
 
-                if (!form.success || req.body._validate)
-                    return res.json(form.toJSON());
+            if (curPassword && !this._util.checkPassword(curPassword, res.locals.user.password))
+                form.addError('cur_password', 'profile_password_invalid');
 
-                res.locals.user.displayName = form.getField('name') || null;
-                if (newPassword)
-                    res.locals.user.password = this._util.encryptPassword(newPassword);
+            if (!form.success || req.body._validate)
+                return res.json(form.toJSON());
 
-                return this._userRepo.save(res.locals.user)
-                    .then(() => {
-                        form.addMessage('info', 'profile_success');
-                        res.json(form.toJSON());
-                    });
-            })
-            .catch(error => {
-                next(new NError(error, 'postProfile()'));
-            });
+            res.locals.user.displayName = form.getField('name') || null;
+            if (newPassword)
+                res.locals.user.password = this._util.encryptPassword(newPassword);
+
+            await this._userRepo.save(res.locals.user);
+
+            form.addMessage('info', 'profile_success');
+            res.json(form.toJSON());
+        } catch (error) {
+            next(new NError(error, 'postProfile()'));
+        }
     }
 }
 

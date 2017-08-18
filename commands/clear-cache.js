@@ -2,8 +2,6 @@
  * Clear cache command
  * @module commands/clear-cache
  */
-const path = require('path');
-const fs = require('fs');
 const argvParser = require('argv');
 
 /**
@@ -43,8 +41,8 @@ class ClearCache {
      * @param {string[]} argv           Arguments
      * @return {Promise}
      */
-    run(argv) {
-        let args = argvParser
+    async run(argv) {
+        argvParser
             .option({
                 name: 'help',
                 short: 'h',
@@ -52,42 +50,34 @@ class ClearCache {
             })
             .run(argv);
 
-        return this._redis.connect(this._config.get('cache.redis'))
-            .then(client => {
-                return client.query('FLUSHDB')
-                    .then(() => {
-                        client.done();
-                    });
-            })
-            .then(() => {
-                process.exit(0);
-            })
-            .catch(error => {
-                return this.error(error);
-            });
+        try {
+            let client = await this._redis.connect(this._config.get('cache.redis'));
+            await client.query('FLUSHDB');
+            client.done();
+            process.exit(0);
+        } catch (error) {
+            await this.error(error);
+        }
     }
 
     /**
      * Log error and terminate
      * @param {Array} args
+     * @return {Promise}
      */
-    error(args) {
-        return args.reduce(
-            (prev, cur) => {
-                return prev.then(() => {
+    async error(args) {
+        try {
+            await args.reduce(
+                async (prev, cur) => {
+                    await prev;
                     return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
-                });
-            },
-            Promise.resolve()
-        )
-        .then(
-            () => {
-                process.exit(1);
-            },
-            () => {
-                process.exit(1);
-            }
-        );
+                },
+                Promise.resolve()
+            );
+        } catch (error) {
+            // do nothing
+        }
+        process.exit(1);
     }
 }
 

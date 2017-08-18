@@ -7,6 +7,7 @@ const NError = require('nerror');
 
 /**
  * Remove role from a user
+ * @instance
  * @method removeRole
  * @memberOf module:repositories/user~UserRepository
  * @param {UserModel|number} user           User model or ID
@@ -15,42 +16,30 @@ const NError = require('nerror');
  *                                          this instance of Postgres.
  * @return {Promise}                        Resolves to number of deleted records
  */
-module.exports = function (user, role, pg) {
-    return Promise.resolve()
-        .then(() => {
-            if (typeof pg === 'object')
-                return pg;
+module.exports = async function (user, role, pg) {
+    let client;
 
-            return this._postgres.connect(pg);
-        })
-        .then(client => {
-            return client.query(
-                    `DELETE
-                       FROM user_roles
-                      WHERE user_id = $1
-                        AND role_id = $2`,
-                    [
-                        typeof user === 'object' ? user.id : user,
-                        typeof role === 'object' ? role.id : role
-                    ]
-                )
-                .then(result => {
-                    return result.rowCount;
-                })
-                .then(
-                    value => {
-                        if (typeof pg !== 'object')
-                            client.done();
-                        return value;
-                    },
-                    error => {
-                        if (typeof pg !== 'object')
-                            client.done();
-                        throw error;
-                    }
-                );
-        })
-        .catch(error => {
-            throw new NError(error, 'UserRepository.removeRole()');
-        });
+    try {
+        client = typeof pg === 'object' ? pg : await this._postgres.connect(pg);
+        let result = await client.query(
+            `DELETE
+               FROM user_roles
+              WHERE user_id = $1
+                AND role_id = $2`,
+            [
+                typeof user === 'object' ? user.id : user,
+                typeof role === 'object' ? role.id : role
+            ]
+        );
+
+        if (typeof pg !== 'object')
+            client.done();
+
+        return result.rowCount;
+    } catch (error) {
+        if (client && typeof pg !== 'object')
+            client.done();
+
+        throw new NError(error, { user, role }, 'UserRepository.removeRole()');
+    }
 };
