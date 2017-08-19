@@ -4,9 +4,6 @@ html
         title= i18n('page_title')
         meta(charset="utf-8")
         meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
-        script(src="/twbs.bundle.js")
-        script(src="/fa.bundle.js")
-        script(src="/index.bundle.js")
 
     body
         include header
@@ -18,13 +15,13 @@ html
                 if data
                     pre= data
                 else
-                    if statusCode == 401
+                    if statusCode === 401
                         | !{i18n('error_401_html')}
-                    else if statusCode == 403
+                    else if statusCode === 403
                         | !{i18n('error_403_html')}
-                    else if statusCode == 404
+                    else if statusCode === 404
                         | !{i18n('error_404_html')}
-                    else if statusCode == 500
+                    else if statusCode === 500
                         | !{i18n('error_500_html')}
             .row
                 each error in errors

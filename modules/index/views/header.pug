@@ -1,3 +1,7 @@
+script(src="/twbs.bundle.js")
+script(src="/fa.bundle.js")
+script(src="/index.bundle.js")
+
 #signInModal.modal.fade(style="display: none" tabindex="-1" role="dialog" aria-labelledby="signInModalLabel" aria-hidden="true")
     .modal-dialog(role="document")
         form(onsubmit="return false")
@@ -15,13 +19,13 @@
                             span.control-required #{i18n('form_control_required')}
                         .col-sm-8
                             input#signInModalEmail.form-control(type="email" name="email" validate)
-                            .errors
+                            .invalid-feedback
                     .form-group.row
                         label.col-sm-4.col-form-label.text-sm-right(for="signInModalPassword") #{i18n('sign_in_password_label')}
                             span.control-required #{i18n('form_control_required')}
                         .col-sm-8
                             input#signInModalPassword.form-control(type="password" name="password")
-                            .errors
+                            .invalid-feedback
                 .modal-footer
                     button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_in_cancel_button')}
                     button.btn.btn-primary(type="submit") #{i18n('sign_in_submit_button')}

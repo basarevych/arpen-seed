@@ -38,13 +38,11 @@ export class Form {
     static reset(el, input) {
         el.find('.messages').empty().hide();
         if (input) {
-            input.removeClass('form-control-danger');
-            let groupEl = el.parents('.form-group');
-            groupEl.removeClass('has-danger').find('.errors').empty();
+            input.removeClass('is-invalid');
+            input.parents('.form-group').find('.invalid-feedback').empty();
         } else {
-            el.find('.form-group').removeClass('has-danger');
-            el.find('.form-control').removeClass('form-control-danger');
-            el.find('.errors').empty();
+            el.find('.form-control').removeClass('is-invalid');
+            el.find('.invalid-feedback').empty();
         }
     }
 
@@ -111,16 +109,12 @@ export class Form {
      * @param {string} name                     Field name
      */
     checkField(el, name) {
-        let groupEl = el.find(`[name="${name}"]`).parents('.form-group');
-        let errorsEl = groupEl.find('.errors');
-        groupEl.removeClass('has-danger');
-        groupEl.find('.form-control').removeClass('form-control-danger');
+        let errorsEl = el.find(`[name="${name}"]`).parents('.form-group').find('.invalid-feedback');
         errorsEl.empty();
 
         if (this.data.form[name] && !this.data.form[name].valid) {
-            groupEl.addClass('has-danger');
             for (let key of Object.keys(this.data.form[name].errors))
-                errorsEl.append($('<div class="form-control-feedback"></div>').text(this.data.form[name].errors[key].message));
+                errorsEl.append($('<div></div>').text(this.data.form[name].errors[key].message));
         }
     }
 
@@ -153,14 +147,11 @@ export class Form {
                 first = fieldEl;
 
             if (!this.data.form[field].valid) {
-                fieldEl.addClass('form-control-danger');
+                fieldEl.addClass('is-invalid');
 
-                let groupEl = fieldEl.parents('.form-group');
-                groupEl.addClass('has-danger');
-
-                let errorsEl = groupEl.find('.errors');
+                let errorsEl = fieldEl.parents('.form-group').find('.invalid-feedback');
                 for (let key of Object.keys(this.data.form[field].errors))
-                    errorsEl.append($('<div class="form-control-feedback"></div>').text(this.data.form[field].errors[key].message));
+                    errorsEl.append($('<div></div>').text(this.data.form[field].errors[key].message));
 
                 if (!focused && !fieldEl.prop('readonly') && !fieldEl.prop('disabled')) {
                     fieldEl.focus();
