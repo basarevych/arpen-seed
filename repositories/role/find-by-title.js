@@ -28,17 +28,10 @@ module.exports = async function (title, pg) {
         );
         let rows = result.rowCount ? result.rows : [];
 
-        let models = [];
-        for (let row of rows) {
-            let model = this.getModel();
-            model._unserialize(row);
-            models.push(model);
-        }
-
         if (typeof pg !== 'object')
             client.done();
 
-        return models;
+        return this.getModel(rows);
     } catch (error) {
         if (client && typeof pg !== 'object')
             client.done();
