@@ -125,14 +125,12 @@ class Session {
 
         let sessions = await this._sessionRepo.findByToken(payload.token);
         let session = sessions.length && sessions[0];
-        if (session) {
-            let cached = this.cache.get(session.id);
-            if (cached && cached.updatedAt.isAfter(session.updatedAt))
-                session = cached;
-        }
-
         if (!session)
             return [ null, null ];
+
+        let cached = this.cache.get(session.id);
+        if (cached && cached.updatedAt.isAfter(session.updatedAt))
+            session = cached;
 
         session.info = this._getInfo(req);
         this.update(session);
@@ -142,6 +140,9 @@ class Session {
 
         let users = await this._userRepo.find(session.userId);
         let user = users.length && users[0];
+        if (!user)
+            return [ session, null ];
+
         return [ session, user || null ];
     }
 
