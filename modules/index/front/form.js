@@ -109,13 +109,15 @@ export class Form {
      * @param {string} name                     Field name
      */
     checkField(el, name) {
-        let errorsEl = el.find(`[name="${name}"]`).parents('.form-group').find('.invalid-feedback');
-        errorsEl.empty();
+        if (!this.data.form[name] || this.data.form[name].valid)
+            return;
 
-        if (this.data.form[name] && !this.data.form[name].valid) {
-            for (let key of Object.keys(this.data.form[name].errors))
-                errorsEl.append($('<div></div>').text(this.data.form[name].errors[key].message));
-        }
+        let fieldEl = el.find(`[name="${name}"]`);
+        fieldEl.addClass('is-invalid');
+
+        let errorsEl = fieldEl.parents('.form-group').find('.invalid-feedback');
+        for (let key of Object.keys(this.data.form[name].errors))
+            errorsEl.append($('<div></div>').html(this.data.form[name].errors[key].message));
     }
 
     /**
@@ -151,7 +153,7 @@ export class Form {
 
                 let errorsEl = fieldEl.parents('.form-group').find('.invalid-feedback');
                 for (let key of Object.keys(this.data.form[field].errors))
-                    errorsEl.append($('<div></div>').text(this.data.form[field].errors[key].message));
+                    errorsEl.append($('<div></div>').html(this.data.form[field].errors[key].message));
 
                 if (!focused && !fieldEl.prop('readonly') && !fieldEl.prop('disabled')) {
                     fieldEl.focus();

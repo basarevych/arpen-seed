@@ -62,6 +62,7 @@ $(() => {
                 return;
 
             let timestamp = Date.now();
+            Form.reset(profileWrapper, $(event.target));
             setTimeout(() => {
                 if (!Form.isLocked(profileWrapper) && profileForm.timestamp < timestamp) {
                     $.post('/account/profile', Object.assign({_validate: true}, Form.extract(profileWrapper)), data => {
@@ -89,6 +90,7 @@ $(() => {
                 return;
 
             let timestamp = Date.now();
+            Form.reset(signUpWrapper, $(event.target));
             setTimeout(() => {
                 if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
                     $.post('/account/create', Object.assign({_validate: true}, Form.extract(signUpWrapper)), data => {

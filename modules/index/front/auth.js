@@ -74,6 +74,7 @@ $(() => {
             return;
 
         let timestamp = Date.now();
+        Form.reset(signInModal, $(event.target));
         setTimeout(() => {
             if (!Form.isLocked(signInModal) && signInForm.timestamp < timestamp) {
                 $.post('/login', Object.assign({_validate: true}, Form.extract(signInModal)), data => {
