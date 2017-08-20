@@ -62,10 +62,10 @@ class ClearCache {
 
     /**
      * Log error and terminate
-     * @param {Array} args
+     * @param {...*} args
      * @return {Promise}
      */
-    async error(args) {
+    async error(...args) {
         try {
             await args.reduce(
                 async (prev, cur) => {
