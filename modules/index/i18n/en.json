@@ -7,10 +7,6 @@
     "message": "ARPEN",
     "description": "Title of browser tab"
   },
-  "loader_alt": {
-    "message": "Processing...",
-    "description": "Alt message for loader images"
-  },
   "error_noscript": {
     "message": "JavaScript is required",
     "description": "Message when JavaScript is disabled"
