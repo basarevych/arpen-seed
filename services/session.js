@@ -67,7 +67,7 @@ class Session {
      * @return {string}
      */
     get cookieName() {
-        return `${this._config.project}sid`;
+        return `sid_${this._config.project}`;
     }
 
     /**
