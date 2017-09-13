@@ -84,7 +84,7 @@ class CreateDb {
             let promise = this._runner.exec('su', suOptions, {pipe: process});
             process.stdin.emit('data', sql + '\n');
             let result = await promise;
-            process.exit(result.code);
+            return result.code;
         } catch (error) {
             await this.error(error);
         }

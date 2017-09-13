@@ -54,7 +54,7 @@ class ClearCache {
             let client = await this._redis.connect(this._config.get('cache.redis'));
             await client.query('FLUSHDB');
             client.done();
-            process.exit(0);
+            return 0;
         } catch (error) {
             await this.error(error);
         }

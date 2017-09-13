@@ -130,7 +130,7 @@ class User {
                 Promise.resolve()
             );
 
-            process.exit(0);
+            return 0;
         } catch (error) {
             await this.error(error);
         }

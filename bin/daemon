@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const path = require('path');
+const App = require('arpen').App;
 const Daemon = require('arpen').Daemon;
 
 let args = process.argv.slice(2);
@@ -26,5 +27,5 @@ daemon
     .run(args)
     .catch(error => {
         console.error(error.stack || error.message || error);
-        process.exit(1);
+        process.exit(App.fatalExitCode);
     });
