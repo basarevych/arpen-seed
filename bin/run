@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const path = require('path');
+const App = require('arpen').App;
 const Server = require('arpen').Server;
 
 let argv = process.argv.slice(2);
@@ -14,5 +15,5 @@ server
     .run({}, ...argv)
     .catch(error => {
         console.error(error.stack || error.message || error);
-        process.exit(1);
+        process.exit(App.fatalExitCode);
     });
