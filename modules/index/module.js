@@ -60,17 +60,21 @@ class Index {
     }
 
     /**
-     * Register routes with the server
-     * @return {Array}
+     * Register module with the server
+     * @param {object} server                                       Server instance
+     * @return {Promise}
      */
-    routers() {
-        return [
+    async register(server) {
+        if (server.constructor.provides !== 'servers.express')
+            return;
+
+        server.routes.push(
             this._indexRoute.router,
             this._loginRoute.router,
             this._signUpRoute.router,
             this._confirmAccountRoute.router,
             this._profileRoute.router,
-        ];
+        );
     }
 }
 
