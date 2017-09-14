@@ -68,7 +68,7 @@ class Index {
         if (server.constructor.provides !== 'servers.express')
             return;
 
-        server.routes.push(
+        server.routers.push(
             this._indexRoute.router,
             this._loginRoute.router,
             this._signUpRoute.router,
