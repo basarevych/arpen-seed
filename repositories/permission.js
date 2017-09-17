@@ -3,7 +3,7 @@
  * @module repositories/permission
  */
 const path = require('path');
-const BaseRepository = require('arpen/src/repositories/base');
+const BaseRepository = require('arpen/src/repositories/postgres');
 
 /**
  * Permission repository class

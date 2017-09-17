@@ -30,6 +30,14 @@ class PermissionModel extends BaseModel {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * Role ID setter
      * @type {undefined|number}
      */

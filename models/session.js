@@ -34,6 +34,14 @@ class SessionModel extends BaseModel {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * Token setter
      * @type {undefined|string}
      */

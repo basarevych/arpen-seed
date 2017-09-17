@@ -35,6 +35,14 @@ class UserModel extends BaseModel {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * Email setter
      * @type {undefined|string}
      */

@@ -29,6 +29,14 @@ class RoleModel extends BaseModel {
     }
 
     /**
+     * Dependencies as constructor arguments
+     * @type {string[]}
+     */
+    static get requires() {
+        return [ 'postgres', 'util' ];
+    }
+
+    /**
      * Parent ID setter
      * @type {undefined|number|null}
      */

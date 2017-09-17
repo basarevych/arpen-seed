@@ -3,7 +3,7 @@
  * @module repositories/user
  */
 const path = require('path');
-const BaseRepository = require('arpen/src/repositories/base');
+const BaseRepository = require('arpen/src/repositories/postgres');
 
 /**
  * User repository class
