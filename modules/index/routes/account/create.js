@@ -2,7 +2,7 @@
  * Sign up route
  * @module index/routes/account/create
  */
-const express = require('express');
+const express = require('arpen-express').Express;
 const moment = require('moment-timezone');
 const NError = require('nerror');
 

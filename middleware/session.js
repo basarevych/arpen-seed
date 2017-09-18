@@ -20,11 +20,11 @@ class Session {
     }
 
     /**
-     * Service name is 'middleware.session'
+     * Service name is 'express.session'
      * @type {string}
      */
     static get provides() {
-        return 'middleware.session';
+        return 'express.session';
     }
 
     /**

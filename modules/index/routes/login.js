@@ -2,7 +2,7 @@
  * Login route
  * @module index/routes/login
  */
-const express = require('express');
+const express = require('arpen-express').Express;
 const NError = require('nerror');
 
 /**

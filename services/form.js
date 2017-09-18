@@ -18,7 +18,7 @@ class Form {
         this.fields = new Map();
 
         this._util = util;
-        this._i18n = middleware.get('middleware.i18n');
+        this._i18n = middleware.get('express.i18n');
     }
 
     /**
@@ -34,7 +34,7 @@ class Form {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'util', 'middleware' ];
+        return [ 'util', 'express.middleware' ];
     }
 
     /**

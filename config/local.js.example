@@ -15,6 +15,8 @@ module.exports = {
 
     // Loaded modules
     modules: [
+        '!arpen-express/src',
+        '!arpen-i18n/src',
         'index',
     ],
 
@@ -38,14 +40,14 @@ module.exports = {
                 body_limit: "500mb",
             },
             middleware: [ // Middleware, in this order, service names
-                'middleware.favicon',
-                'middleware.requestLogger',
-                'middleware.requestParser',
-                'middleware.staticFiles',
-                'middleware.i18n',
-                'middleware.session',
-                'middleware.routes',
-                'middleware.errorHandler',              // should be the last one
+                'express.favicon',
+                'express.requestLogger',
+                'express.requestParser',
+                'express.staticFiles',
+                'express.i18n',
+                'express.session',
+                'express.routes',
+                'express.errorHandler',                 // should be the last one
             ],
         },
         https: {
@@ -70,14 +72,14 @@ module.exports = {
                 body_limit: "500mb",
             },
             middleware: [ // Middleware, in this order, service names
-                'middleware.favicon',
-                'middleware.requestLogger',
-                'middleware.requestParser',
-                'middleware.staticFiles',
-                'middleware.i18n',
-                'middleware.session',
-                'middleware.routes',
-                'middleware.errorHandler',              // should be the last one
+                'express.favicon',
+                'express.requestLogger',
+                'express.requestParser',
+                'express.staticFiles',
+                'express.i18n',
+                'express.session',
+                'express.routes',
+                'express.errorHandler',                 // should be the last one
             ],
         },
     },

@@ -2,7 +2,7 @@
  * Profile route
  * @module index/routes/account/profile
  */
-const express = require('express');
+const express = require('arpen-express').Express;
 const NError = require('nerror');
 
 /**

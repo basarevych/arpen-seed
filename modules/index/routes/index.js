@@ -2,7 +2,7 @@
  * Index route
  * @module index/routes/index
  */
-const express = require('express');
+const express = require('arpen-express').Express;
 
 /**
  * Index route class
