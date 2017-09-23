@@ -4,8 +4,8 @@
   "private": true,
   "dependencies": {
     "argv": "~0.0.2",
-    "arpen": "~0.2.5",
-    "arpen-express": "~0.0.1",
+    "arpen": "~0.2.6",
+    "arpen-express": "~0.0.2",
     "arpen-i18n": "~0.0.1",
     "bcrypt": "~1.0.3",
     "daemon": "~1.1.0",
