@@ -24,6 +24,7 @@ class ProfileRoute {
         this._userRepo = userRepo;
         this._profileForm = profileForm;
 
+        this.priority = 1000;
         this.router = express.Router();
         this.router.get('/account/profile', this.getProfile.bind(this));
         this.router.post('/account/profile', this.postProfile.bind(this));

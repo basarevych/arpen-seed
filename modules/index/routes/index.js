@@ -12,6 +12,7 @@ class IndexRoute {
      * Create service
      */
     constructor() {
+        this.priority = 0;
         this.router = express.Router();
         this.router.get('/', this.getIndex.bind(this));
     }

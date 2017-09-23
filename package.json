@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "argv": "~0.0.2",
-    "arpen": "~0.2.0",
+    "arpen": "~0.2.5",
     "arpen-express": "~0.0.1",
     "arpen-i18n": "~0.0.1",
     "bcrypt": "~1.0.3",
@@ -19,7 +19,6 @@
     "pg": "~7.3.0",
     "pg-pubsub": "~0.3.0",
     "pty.js": "~0.3.1",
-    "read": "~1.0.7",
     "redis": "~2.8.0",
     "validator": "~8.2.0"
   },

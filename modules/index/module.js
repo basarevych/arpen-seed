@@ -11,20 +11,10 @@ class Index {
      * Create the module
      * @param {App} app                                     The application
      * @param {object} config                               Configuration
-     * @param {IndexRoute} indexRoute                       Index route
-     * @param {LoginRoute} loginRoute                       Login route
-     * @param {SignUpRoute} signUpRoute                     Create account route
-     * @param {ConfirmAccountRoute} confirmAccountRoute     Confirm account route
-     * @param {ProfileRoute} profileRoute                   Profile route
      */
-    constructor(app, config, indexRoute, loginRoute, signUpRoute, confirmAccountRoute, profileRoute) {
+    constructor(app, config) {
         this._app = app;
         this._config = config;
-        this._indexRoute = indexRoute;
-        this._loginRoute = loginRoute;
-        this._signUpRoute = signUpRoute;
-        this._confirmAccountRoute = confirmAccountRoute;
-        this._profileRoute = profileRoute;
     }
 
     /**
@@ -43,11 +33,6 @@ class Index {
         return [
             'app',
             'config',
-            'modules.index.routes.index',
-            'modules.index.routes.login',
-            'modules.index.routes.account.create',
-            'modules.index.routes.account.confirm',
-            'modules.index.routes.account.profile',
         ];
     }
 
@@ -56,25 +41,19 @@ class Index {
      * @return {Promise}
      */
     async bootstrap() {
-        return this._app.get('invalidateCache').register();
+        await this._app.get('invalidateCache').register();
+        this.routes = this._app.get(/^modules\.index\.routes\..+$/);
+        console.log(Array.from(this.routes.keys()));
     }
 
     /**
-     * Register module with the server
-     * @param {object} server                                       Server instance
-     * @return {Promise}
+     * Get module routers
+     * @return {object[]}
      */
-    async register(server) {
-        if (server.constructor.provides !== 'servers.express')
-            return;
-
-        server.routers.push(
-            this._indexRoute.router,
-            this._loginRoute.router,
-            this._signUpRoute.router,
-            this._confirmAccountRoute.router,
-            this._profileRoute.router,
-        );
+    routers() {
+        return Array.from(this.routes.values()).map(route => {
+            return { priority: route.priority, router: route.router };
+        });
     }
 }
 

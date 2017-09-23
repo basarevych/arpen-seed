@@ -51,12 +51,11 @@ class Session {
                     res.locals.session = session;
                 if (user)
                     res.locals.user = user;
-
-                next();
             } catch (error) {
                 this._logger.error(error);
-                next();
             }
+
+            next();
         });
     }
 }

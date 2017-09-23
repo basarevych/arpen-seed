@@ -24,6 +24,7 @@ class LoginRoute {
         this._userRepo = userRepo;
         this._loginForm = loginForm;
 
+        this.priority = 0;
         this.router = express.Router();
         this.router.post('/login', this.postLogin.bind(this));
     }

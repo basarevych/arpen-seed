@@ -21,6 +21,7 @@ class ConfirmAccountRoute {
         this._userRepo = userRepo;
         this._loginRoute = loginRoute;
 
+        this.priority = 1000;
         this.router = express.Router();
         this.router.get('/account/confirm', this.getConfirm.bind(this));
         this.router.post('/account/confirm', this.postConfirm.bind(this));

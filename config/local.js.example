@@ -102,9 +102,21 @@ module.exports = {
             port: 5432,
             user: 'username',
             password: 'password',
-            db_name: 'dbname',
-            min_pool: 10,
-            max_pool: 100,
+            database: 'dbname',
+            min: 10,
+            max: 100,
+        },
+    },
+
+    // MySQL servers
+    mysql: {
+        main: {
+            host: 'localhost',
+            port: 3306,
+            user: 'username',
+            password: 'password',
+            database: 'dbname',
+            connectionLimit: 10,
         },
     },
 

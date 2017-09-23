@@ -29,6 +29,7 @@ class SignUpRoute {
         this._roleRepo = roleRepo;
         this._signUpForm = signUpForm;
 
+        this.priority = 1000;
         this.router = express.Router();
         this.router.get('/account/create', this.getSignUp.bind(this));
         this.router.post('/account/create', this.postSignUp.bind(this));
