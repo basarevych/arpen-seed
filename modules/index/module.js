@@ -43,7 +43,6 @@ class Index {
     async bootstrap() {
         await this._app.get('invalidateCache').register();
         this.routes = this._app.get(/^modules\.index\.routes\..+$/);
-        console.log(Array.from(this.routes.keys()));
     }
 
     /**
