@@ -2,7 +2,7 @@
  * Index route
  * @module index/routes/index
  */
-const express = require('arpen-express').Express;
+const express = require('express');
 
 /**
  * Index route class
@@ -18,11 +18,11 @@ class IndexRoute {
     }
 
     /**
-     * Service name is 'modules.index.routes.index'
+     * Service name is 'routes.index'
      * @type {string}
      */
     static get provides() {
-        return 'modules.index.routes.index';
+        return 'routes.index';
     }
 
     /**

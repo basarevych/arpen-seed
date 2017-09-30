@@ -2,7 +2,7 @@
  * Sign up route
  * @module index/routes/account/create
  */
-const express = require('arpen-express').Express;
+const express = require('express');
 const moment = require('moment-timezone');
 const NError = require('nerror');
 
@@ -36,11 +36,11 @@ class SignUpRoute {
     }
 
     /**
-     * Service name is 'modules.index.routes.account.create'
+     * Service name is 'routes.account.create'
      * @type {string}
      */
     static get provides() {
-        return 'modules.index.routes.account.create';
+        return 'routes.account.create';
     }
 
     /**
@@ -55,7 +55,7 @@ class SignUpRoute {
             'util',
             'repositories.user',
             'repositories.role',
-            'modules.index.forms.signUp'
+            'forms.signUp'
         ];
     }
 
@@ -80,7 +80,7 @@ class SignUpRoute {
         let form, user;
 
         try {
-            form = await this._signUpForm.validate(req.body);
+            form = await this._signUpForm.validate(res.locals.locale, req.body);
 
             let password = form.getField('password1');
             form.setField('password1', '');

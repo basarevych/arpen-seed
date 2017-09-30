@@ -17,11 +17,11 @@ class SignUpForm {
     }
 
     /**
-     * Service name is 'modules.index.forms.signUp'
+     * Service name is 'forms.signUp'
      * @type {string}
      */
     static get provides() {
-        return 'modules.index.forms.signUp';
+        return 'forms.signUp';
     }
 
     /**
@@ -34,11 +34,13 @@ class SignUpForm {
 
     /**
      * Create new instance of the form
+     * @param {string} locale               Locale
      * @param {object} vars                 Fields of the form
      * @return {Promise}                    Resolves to Fieldset
      */
-    async create(vars) {
+    async create(locale, vars) {
         let form = this._app.get('form');
+        form.locale = locale;
         form.addField('email', vars.email, { required: true });
         form.addField('name', vars.name);
         form.addField('password1', vars.password1, { required: true });
@@ -48,11 +50,12 @@ class SignUpForm {
 
     /**
      * Validate the form
+     * @param {string} locale               Locale
      * @param {object} vars                 Fields of the form
      * @return {Promise}                    Resolves to Form
      */
-    async validate(vars) {
-        let form = await this.create(vars);
+    async validate(locale, vars) {
+        let form = await this.create(locale, vars);
         let password1 = form.getField('password1');
         if (password1 && !validator.isLength(password1, { min: 6 }))
             form.addError('password1', 'form_min_length', { min: 6 });

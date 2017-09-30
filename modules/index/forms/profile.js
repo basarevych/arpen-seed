@@ -17,11 +17,11 @@ class ProfileForm {
     }
 
     /**
-     * Service name is 'modules.index.forms.profile'
+     * Service name is 'forms.profile'
      * @type {string}
      */
     static get provides() {
-        return 'modules.index.forms.profile';
+        return 'forms.profile';
     }
 
     /**
@@ -34,11 +34,13 @@ class ProfileForm {
 
     /**
      * Create new instance of the form
+     * @param {string} locale               Locale
      * @param {object} vars                 Fields of the form
      * @return {Promise}                    Resolves to Fieldset
      */
-    async create(vars) {
+    async create(locale, vars) {
         let form = this._app.get('form');
+        form.locale = locale;
         form.addField('name', vars.name);
         form.addField('cur_password', vars.cur_password);
         form.addField('new_password1', vars.new_password1);
@@ -48,11 +50,12 @@ class ProfileForm {
 
     /**
      * Validate the form
+     * @param {string} locale               Locale
      * @param {object} vars                 Fields of the form
      * @return {Promise}                    Resolves to Form
      */
-    async validate(vars) {
-        let form = await this.create(vars);
+    async validate(locale, vars) {
+        let form = await this.create(locale, vars);
         let curPassword = form.getField('cur_password');
         if (curPassword && !validator.isLength(curPassword, { min: 6 }))
             form.addError('cur_password', 'form_min_length', { min: 6 });

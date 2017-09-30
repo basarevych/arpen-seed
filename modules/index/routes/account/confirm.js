@@ -2,7 +2,7 @@
  * Confirm account route
  * @module index/routes/account/confirm
  */
-const express = require('arpen-express').Express;
+const express = require('express');
 const moment = require('moment-timezone');
 const NError = require('nerror');
 
@@ -28,11 +28,11 @@ class ConfirmAccountRoute {
     }
 
     /**
-     * Service name is 'modules.index.routes.account.confirm'
+     * Service name is 'routes.account.confirm'
      * @type {string}
      */
     static get provides() {
-        return 'modules.index.routes.account.confirm';
+        return 'routes.account.confirm';
     }
 
     /**
@@ -43,7 +43,7 @@ class ConfirmAccountRoute {
         return [
             'config',
             'repositories.user',
-            'modules.index.routes.login'
+            'routes.login'
         ];
     }
 

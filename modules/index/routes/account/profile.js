@@ -2,7 +2,7 @@
  * Profile route
  * @module index/routes/account/profile
  */
-const express = require('arpen-express').Express;
+const express = require('express');
 const NError = require('nerror');
 
 /**
@@ -31,11 +31,11 @@ class ProfileRoute {
     }
 
     /**
-     * Service name is 'modules.index.routes.account.profile'
+     * Service name is 'routes.account.profile'
      * @type {string}
      */
     static get provides() {
-        return 'modules.index.routes.account.profile';
+        return 'routes.account.profile';
     }
 
     /**
@@ -48,7 +48,7 @@ class ProfileRoute {
             'acl',
             'repositories.session',
             'repositories.user',
-            'modules.index.forms.profile'
+            'forms.profile'
         ];
     }
 
@@ -79,7 +79,7 @@ class ProfileRoute {
         try {
             await this._acl.check(res.locals.user, 'account.profile', 'post');
 
-            let form = await this._profileForm.validate(req.body);
+            let form = await this._profileForm.validate(res.locals.locale, req.body);
             let curPassword = form.getField('cur_password');
             form.setField('cur_password', '');
             let newPassword = form.getField('new_password1');

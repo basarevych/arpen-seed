@@ -9,16 +9,17 @@
 class Form {
     /**
      * Create service
+     * @param {I18n} i18n                   I18n Service
      * @param {Util} util                   Util service
-     * @param {Map} middleware              Middleware store
      */
-    constructor(util, middleware) {
+    constructor(i18n, util) {
         this.success = true;
         this.messages = new Map();
         this.fields = new Map();
 
+        this._locale = 'en';
+        this._i18n = i18n;
         this._util = util;
-        this._i18n = middleware.get('express.i18n');
     }
 
     /**
@@ -34,7 +35,23 @@ class Form {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'util', 'express.middleware' ];
+        return [ 'i18n', 'util' ];
+    }
+
+    /**
+     * Locale setter
+     * @param {string} locale
+     */
+    set locale(locale) {
+        this._locale = locale;
+    }
+
+    /**
+     * Locale getter
+     * @return {string}
+     */
+    get locale() {
+        return this._locale;
     }
 
     /**
@@ -51,7 +68,7 @@ class Form {
         }
 
         message.type = type;
-        message.message = this._translate(key, params);
+        message.message = this._i18n.translate(this.locale, key, params);
 
         if (type === 'error')
             this.success = false;
@@ -123,8 +140,7 @@ class Form {
             field.errors.set(key, error);
         }
 
-        error.message = this._translate(key, params);
-
+        error.message = this._i18n.translate(this.locale, key, params);
         this.success = field.valid = false;
     }
 
@@ -166,19 +182,6 @@ class Form {
         }
 
         return json;
-    }
-
-    /**
-     * Translate message
-     * @param {string} key                              Translation key
-     * @param {object} [params]                         Translation parameters
-     * @return {string}
-     */
-    _translate(key, params) {
-        let args = [ key ];
-        if (params)
-            args.push(params);
-        return this._i18n.translate.apply(this._i18n, args);
     }
 }
 

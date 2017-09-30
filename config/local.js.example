@@ -116,7 +116,18 @@ module.exports = {
             user: 'username',
             password: 'password',
             database: 'dbname',
-            connectionLimit: 10,
+            connection_limit: 100,
+        },
+    },
+
+    // MongoDB servers
+    mongo: {
+        main: {
+            host: 'localhost',
+            port: 27017,
+            user: 'username',
+            password: 'password',
+            database: 'dbname',
         },
     },
 

@@ -2,7 +2,7 @@
  * Login route
  * @module index/routes/login
  */
-const express = require('arpen-express').Express;
+const express = require('express');
 const NError = require('nerror');
 
 /**
@@ -30,11 +30,11 @@ class LoginRoute {
     }
 
     /**
-     * Service name is 'modules.index.routes.login'
+     * Service name is 'routes.login'
      * @type {string}
      */
     static get provides() {
-        return 'modules.index.routes.login';
+        return 'routes.login';
     }
 
     /**
@@ -47,7 +47,7 @@ class LoginRoute {
             'session',
             'util',
             'repositories.user',
-            'modules.index.forms.login'
+            'forms.login'
         ];
     }
 
@@ -82,7 +82,7 @@ class LoginRoute {
      */
     async postLogin(req, res, next) {
         try {
-            let form = await this._loginForm.validate(req.body);
+            let form = await this._loginForm.validate(res.locals.locale, req.body);
             let password = form.getField('password');
             form.setField('password', '');
 
