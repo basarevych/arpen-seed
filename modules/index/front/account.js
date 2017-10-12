@@ -20,12 +20,12 @@ function signUp() {
     $.post('/account/create', Form.extract(signUpWrapper), data => {
         Form.reset(signUpWrapper);
         Form.unlock(signUpWrapper);
-        if (signUpForm.timestamp < timestamp) {
+        if (signUpForm.timestamp <= timestamp) {
             signUpForm.update(signUpWrapper, data, true);
             signUpForm.checkForm(signUpWrapper);
-            signUpForm.timestamp = timestamp;
         }
     });
+    signUpForm.timestamp = timestamp;
     Form.lock(signUpWrapper);
 }
 
@@ -37,12 +37,12 @@ function updateProfile() {
     $.post('/account/profile', Form.extract(profileWrapper), data => {
         Form.reset(profileWrapper);
         Form.unlock(profileWrapper);
-        if (profileForm.timestamp < timestamp) {
+        if (profileForm.timestamp <= timestamp) {
             profileForm.update(profileWrapper, data, true);
             profileForm.checkForm(profileWrapper);
-            profileForm.timestamp = timestamp;
         }
     });
+    profileForm.timestamp = timestamp;
     Form.lock(profileWrapper);
 }
 
@@ -62,9 +62,9 @@ $(() => {
                 return;
 
             let timestamp = Date.now();
-            Form.reset(profileWrapper, $(event.target));
             setTimeout(() => {
                 if (!Form.isLocked(profileWrapper) && profileForm.timestamp < timestamp) {
+                    Form.reset(profileWrapper, $(event.target));
                     $.post('/account/profile', Object.assign({_validate: true}, Form.extract(profileWrapper)), data => {
                         if (!Form.isLocked(profileWrapper) && profileForm.timestamp < timestamp) {
                             profileForm.update(profileWrapper, data, false);
@@ -90,9 +90,9 @@ $(() => {
                 return;
 
             let timestamp = Date.now();
-            Form.reset(signUpWrapper, $(event.target));
             setTimeout(() => {
                 if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
+                    Form.reset(signUpWrapper, $(event.target));
                     $.post('/account/create', Object.assign({_validate: true}, Form.extract(signUpWrapper)), data => {
                         if (!Form.isLocked(signUpWrapper) && signUpForm.timestamp < timestamp) {
                             signUpForm.update(signUpWrapper, data, false);

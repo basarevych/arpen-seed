@@ -2,7 +2,7 @@
  * Role model
  * @module models/role
  */
-const BaseModel = require('arpen/src/models/base');
+const BaseModel = require('arpen/src/models/postgres');
 
 /**
  * Role model class
@@ -26,14 +26,6 @@ class RoleModel extends BaseModel {
      */
     static get provides() {
         return 'models.role';
-    }
-
-    /**
-     * Dependencies as constructor arguments
-     * @type {string[]}
-     */
-    static get requires() {
-        return [ 'postgres', 'util' ];
     }
 
     /**

@@ -15,8 +15,8 @@ module.exports = {
 
     // Loaded modules
     modules: [
-        '!arpen-express/src',
-        '!arpen-i18n/src',
+        '~arpen-express/src',
+        '~arpen-i18n/src',
         'index',
     ],
 
@@ -128,6 +128,7 @@ module.exports = {
             user: 'username',
             password: 'password',
             database: 'dbname',
+            pool_size: 100,
         },
     },
 

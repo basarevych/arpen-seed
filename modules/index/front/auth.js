@@ -34,13 +34,13 @@ function signIn() {
             window.location.reload();
         } else {
             Form.unlock(signInModal);
-            if (signInForm.timestamp < timestamp) {
+            if (signInForm.timestamp <= timestamp) {
                 signInForm.update(signInModal, data, true);
                 signInForm.checkForm(signInModal);
-                signInForm.timestamp = timestamp;
             }
         }
     });
+    signInForm.timestamp = timestamp;
     Form.lock(signInModal);
 }
 
@@ -74,9 +74,9 @@ $(() => {
             return;
 
         let timestamp = Date.now();
-        Form.reset(signInModal, $(event.target));
         setTimeout(() => {
             if (!Form.isLocked(signInModal) && signInForm.timestamp < timestamp) {
+                Form.reset(signInModal, $(event.target));
                 $.post('/login', Object.assign({_validate: true}, Form.extract(signInModal)), data => {
                     if (!Form.isLocked(signInModal) && signInForm.timestamp < timestamp) {
                         signInForm.update(signInModal, data, false);

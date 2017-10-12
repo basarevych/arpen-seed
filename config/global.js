@@ -7,11 +7,7 @@ module.exports = {
 
     // Load base classes and services, path names
     autoload: [
-        '!arpen/src',
-        'models',
-        'repositories',
-        'services',
-        'middleware',
-        'commands',
+        '~arpen/src',
+        'src',
     ],
 };

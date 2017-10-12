@@ -2,7 +2,7 @@
  * Permission model
  * @module models/permission
  */
-const BaseModel = require('arpen/src/models/base');
+const BaseModel = require('arpen/src/models/postgres');
 
 /**
  * Permission model class
@@ -27,14 +27,6 @@ class PermissionModel extends BaseModel {
      */
     static get provides() {
         return 'models.permission';
-    }
-
-    /**
-     * Dependencies as constructor arguments
-     * @type {string[]}
-     */
-    static get requires() {
-        return [ 'postgres', 'util' ];
     }
 
     /**

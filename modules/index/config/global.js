@@ -4,9 +4,7 @@
 module.exports = {
     // Load module classes and services, path names
     autoload: [
-        'module.js',
-        'forms',
-        'routes',
+        'src',
     ],
 
     // Translation directories
