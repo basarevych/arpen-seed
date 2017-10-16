@@ -15,8 +15,8 @@ module.exports = {
 
     // Loaded modules
     modules: [
-        '~arpen-express/src',
-        '~arpen-i18n/src',
+        '~arpen-express',
+        '~arpen-i18n',
         'index',
     ],
 
@@ -49,6 +49,15 @@ module.exports = {
                 'express.routes',
                 'express.errorHandler',                 // should be the last one
             ],
+            session: {
+                bridge: 'expressSession',
+                session_repository: 'repositories.session',
+                user_repository: 'repositories.user',
+                expire_timeout: 14 * 24 * 60 * 60,  // seconds, delete inactive sessions
+                save_interval: 60,                  // seconds, 0 to update session in the DB on every request
+                secret: 'some unique secret here',  // could be "pwgen 32 1" output
+                //ip_header: 'X-Custom-Header',     // Name of header to get IP from (socket IP otherwise)
+            },
         },
         https: {
             class: 'servers.express',
@@ -81,6 +90,15 @@ module.exports = {
                 'express.routes',
                 'express.errorHandler',                 // should be the last one
             ],
+            session: {
+                bridge: 'expressSession',
+                session_repository: 'repositories.session',
+                user_repository: 'repositories.user',
+                expire_timeout: 14 * 24 * 60 * 60,  // seconds, delete inactive sessions
+                save_interval: 60,                  // seconds, 0 to update session in the DB on every request
+                secret: 'some unique secret here',  // could be "pwgen 32 1" output
+                //ip_header: 'X-Custom-Header',     // Name of header to get IP from (socket IP otherwise)
+            },
         },
     },
 
@@ -139,13 +157,6 @@ module.exports = {
             port: 6379,
             //password: 'password',
         },
-    },
-
-    session: {
-        expire_timeout: 14 * 24 * 60 * 60,  // seconds, delete inactive sessions
-        save_interval: 60,                  // seconds, 0 to update session in the DB on every request
-        secret: 'some unique secret here',  // could be "pwgen 32 1" output
-        //ip_header: 'X-Custom-Header',     // Name of header to get IP from (socket IP otherwise)
     },
 
     email: {

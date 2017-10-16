@@ -12,14 +12,12 @@ class LoginRoute {
     /**
      * Create service
      * @param {object} config               Config service
-     * @param {Session} session             Session service
      * @param {Util} util                   Util service
      * @param {UserRepository} userRepo     User repository
      * @param {LoginForm} loginForm         Login form
      */
-    constructor(config, session, util, userRepo, loginForm) {
+    constructor(config, util, userRepo, loginForm) {
         this._config = config;
-        this._session = session;
         this._util = util;
         this._userRepo = userRepo;
         this._loginForm = loginForm;
@@ -27,6 +25,7 @@ class LoginRoute {
         this.priority = 0;
         this.router = express.Router();
         this.router.post('/login', this.postLogin.bind(this));
+        this.router.post('/logout', this.postLogout.bind(this));
     }
 
     /**
@@ -44,33 +43,10 @@ class LoginRoute {
     static get requires() {
         return [
             'config',
-            'session',
             'util',
             'repositories.user',
             'forms.login'
         ];
-    }
-
-    /**
-     * Start user session
-     * @param {UserModel} user      The user
-     * @param {object} req          Request info
-     * @return {Promise}
-     */
-    async startSession(user, req) {
-        let session = await this._session.start(user, req);
-        let lifetime = this._config.get('session.expire_timeout');
-        if (lifetime)
-            lifetime *= 1000;
-
-        return {
-            success: true,
-            cookie: {
-                name: this._session.cookieName,
-                value: this._session.encodeJwt(session),
-                lifetime: lifetime || null,
-            }
-        };
     }
 
     /**
@@ -96,10 +72,29 @@ class LoginRoute {
                 return res.json(form.toJSON());
             }
 
-            let info = await this.startSession(user, req);
-            res.json(info);
+            req.user = user;
+            res.json({ success: true });
         } catch (error) {
             next(new NError(error, 'postLogin()'));
+        }
+    }
+
+    /**
+     * Process logout request
+     * @param {object} req          Express request
+     * @param {object} res          Express response
+     * @param {function} next       Express next middleware function
+     * @return {Promise}
+     */
+    async postLogout(req, res, next) {
+        try {
+            req.user = null;
+            for (let key of Object.keys(req.session))
+                delete req.session[key];
+
+            res.json({ success: true });
+        } catch (error) {
+            next(new NError(error, 'postLogout()'));
         }
     }
 }

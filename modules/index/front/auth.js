@@ -5,22 +5,9 @@
 'use strict';
 
 import { Form } from 'form';
-import { Cookie } from 'cookie';
 
 let signInModal;
 let signInForm = new Form();
-
-/**
- * Start user session
- * @param {object} cookie                   Cookie params
- * @param {string} cookie.name
- * @param {string} cookie.value
- * @param {number} [cookie.lifetime]
- */
-export function startSession(cookie) {
-    localStorage.setItem('sidName', cookie.name);
-    Cookie.set(cookie.name, cookie.value, cookie.lifetime);
-}
 
 /**
  * Sign in
@@ -30,7 +17,6 @@ function signIn() {
     $.post('/login', Form.extract(signInModal), data => {
         Form.reset(signInModal);
         if (data.success) {
-            startSession(data.cookie);
             window.location.reload();
         } else {
             Form.unlock(signInModal);
@@ -48,8 +34,9 @@ function signIn() {
  * Sign out
  */
 function signOut() {
-    Cookie.del(localStorage.getItem('sidName'));
-    window.location.reload();
+    $.post('/logout', () => {
+        window.location.reload();
+    });
 }
 
 /**
