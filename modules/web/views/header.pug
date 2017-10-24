@@ -1,0 +1,31 @@
+script(src="/twbs.bundle.js")
+script(src="/fa.bundle.js")
+script(src="/site.bundle.js")
+
+#signInModal.modal.fade(style="display: none" tabindex="-1" role="dialog" aria-labelledby="signInModalLabel" aria-hidden="true")
+    .modal-dialog(role="document")
+        form(onsubmit="return false")
+            input(type="text" style="display: none")
+            input(type="password" style="display: none")
+            .modal-content
+                .modal-header
+                    h5.modal-title#signInModalLabel #{i18n('sign_in_title')}
+                    button.close(type="button" data-dismiss="modal" aria-label="#{i18n('modal_close_button')}")
+                        span(aria-hidden="true") &times;
+                .modal-body
+                    .form-group.messages.center
+                    .form-group.row
+                        label.col-sm-4.col-form-label.text-sm-right(for="signInModalEmail") #{i18n('sign_in_email_label')}
+                            span.control-required #{i18n('form_control_required')}
+                        .col-sm-8
+                            input#signInModalEmail.form-control(type="email" name="email" validate)
+                            .invalid-feedback
+                    .form-group.row
+                        label.col-sm-4.col-form-label.text-sm-right(for="signInModalPassword") #{i18n('sign_in_password_label')}
+                            span.control-required #{i18n('form_control_required')}
+                        .col-sm-8
+                            input#signInModalPassword.form-control(type="password" name="password")
+                            .invalid-feedback
+                .modal-footer
+                    button.btn.btn-secondary(type="button" data-dismiss="modal") #{i18n('sign_in_cancel_button')}
+                    button.btn.btn-primary(type="submit") #{i18n('sign_in_submit_button')}

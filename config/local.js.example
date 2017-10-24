@@ -54,6 +54,7 @@ module.exports = {
                 session_repository: 'repositories.session',
                 user_repository: 'repositories.user',
                 expire_timeout: 14 * 24 * 60 * 60,  // seconds, delete inactive sessions
+                expire_interval: 60 * 60,           // seconds, check inactive sessions
                 save_interval: 60,                  // seconds, 0 to update session in the DB on every request
                 secret: 'some unique secret here',  // could be "pwgen 32 1" output
                 //ip_header: 'X-Custom-Header',     // Name of header to get IP from (socket IP otherwise)
@@ -95,6 +96,7 @@ module.exports = {
                 session_repository: 'repositories.session',
                 user_repository: 'repositories.user',
                 expire_timeout: 14 * 24 * 60 * 60,  // seconds, delete inactive sessions
+                expire_interval: 60 * 60,           // seconds, check inactive sessions
                 save_interval: 60,                  // seconds, 0 to update session in the DB on every request
                 secret: 'some unique secret here',  // could be "pwgen 32 1" output
                 //ip_header: 'X-Custom-Header',     // Name of header to get IP from (socket IP otherwise)
@@ -174,6 +176,7 @@ module.exports = {
 
     cache: {
         enable: true,
+        postgres: 'main',
         redis: 'main',                      // Name of Redis configuration to use
         expire_min: 3 * 60,                 // seconds, minimum time to cache values for (random)
         expire_max: 5 * 60,                 // seconds, maximum time to cache values for (random)

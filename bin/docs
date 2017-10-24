@@ -21,4 +21,5 @@ find "$basepath" \
     -c "$basepath/jsdoc.json" \
     -t "$basepath/node_modules/ink-docstrap/template" \
     -R README.md -d "$basepath/docs" -r "$basepath/node_modules/arpen/src" \
-    "$basepath/node_modules/arpen-express/src" "$basepath/node_modules/arpen-i18n/src"
+    "$basepath/node_modules/arpen-express/src" "$basepath/node_modules/arpen-express/front/jquery" \
+    "$basepath/node_modules/arpen-i18n/src"
