@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "argv": "~0.0.2",
-    "arpen": "~0.2.25",
+    "arpen": "~0.2.26",
     "arpen-express": "~0.0.13",
     "arpen-i18n": "~0.0.9",
     "bcrypt": "~1.0.3",
@@ -19,7 +19,7 @@
     "moment-timezone": "~0.5.13",
     "nerror": "~1.0.0",
     "pg": "~7.3.0",
-    "pg-pubsub": "~0.3.0",
+    "pg-format": "~1.0.4",
     "pty.js": "~0.3.1",
     "redis": "~2.8.0",
     "validator": "~9.1.0"

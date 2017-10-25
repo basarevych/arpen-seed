@@ -27,7 +27,7 @@ module.exports = async function (expiration, pg) {
         let result = await client.query(
             `DELETE 
                FROM ${this.constructor.table}
-              WHERE updated_at < ?`,
+              WHERE updated_at < $1`,
             [ exp._serialize({ timeZone: this.constructor.timeZone }).updated_at ]
         );
 
