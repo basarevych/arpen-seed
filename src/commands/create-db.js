@@ -2,7 +2,6 @@
  * Create DB command
  * @module commands/create-db
  */
-const os = require('os');
 const argvParser = require('argv');
 
 /**
@@ -13,12 +12,16 @@ class CreateDb {
      * Create the service
      * @param {App} app                 The application
      * @param {object} config           Configuration
-     * @param {Runner} runner           Runner service
+     * @param {Filer} filer             Filer service
+     * @param {Postgres} postgres       Postgres service
+     * @param {Util} util               Util service
      */
-    constructor(app, config, runner) {
+    constructor(app, config, filer, postgres, util) {
         this._app = app;
         this._config = config;
-        this._runner = runner;
+        this._filer = filer;
+        this._postgres = postgres;
+        this._util = util;
     }
 
     /**
@@ -34,7 +37,7 @@ class CreateDb {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'runner' ];
+        return [ 'app', 'config', 'filer', 'postgres', 'util' ];
     }
 
     /**
@@ -43,48 +46,34 @@ class CreateDb {
      * @return {Promise}
      */
     async run(argv) {
-        let args = argvParser
+        argvParser
             .option({
                 name: 'help',
                 short: 'h',
                 type: 'boolean',
-            })
-            .option({
-                name: 'user',
-                short: 'u',
-                type: 'string',
             })
             .run(argv);
 
         const instance = 'main';
 
         try {
-            if (process.getuid())
-                throw new Error('Run this command as root');
-
-            let suOptions;
-            if (os.platform() === 'freebsd') {
-                suOptions = [
-                    '-m', args.options.user || 'pgsql',
-                    '-c', `psql -h ${this._config.get(`postgres.${instance}.host`)} -d postgres -f -`
-                ];
-            } else {
-                suOptions = [
-                    '-c',
-                    `psql -h ${this._config.get(`postgres.${instance}.host`)} -d postgres -f -`,
-                    args.options.user || 'postgres'
-                ];
-            }
-
+            let filename = '/tmp/arpen.db.' + this._util.getRandomString(16);
             let sql = `create user ${this._config.get(`postgres.${instance}.user`)} with password '${this._config.get(`postgres.${instance}.password`)}';
-                       create database ${this._config.get(`postgres.${instance}.db_name`)};
-                       grant all privileges on database ${this._config.get(`postgres.${instance}.db_name`)} to ${this._config.get(`postgres.${instance}.user`)};
-                       \\q`;
+                       create database ${this._config.get(`postgres.${instance}.database`)};
+                       grant all privileges on database ${this._config.get(`postgres.${instance}.database`)} to ${this._config.get(`postgres.${instance}.user`)};`;
+            await this._filer.lockWrite(filename, sql);
 
-            let promise = this._runner.exec('su', suOptions, {pipe: process});
-            process.stdin.emit('data', sql + '\n');
-            let result = await promise;
-            return result.code;
+            await this._postgres.exec(
+                filename,
+                {
+                    host: this._config.get(`postgres.${instance}.host`),
+                    port: this._config.get(`postgres.${instance}.port`),
+                    database: 'postgres',
+                }
+            );
+
+            await this._filer.remove(filename);
+            return 0;
         } catch (error) {
             await this.error(error);
         }

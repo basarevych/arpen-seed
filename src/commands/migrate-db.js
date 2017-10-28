@@ -9,27 +9,25 @@ const argvParser = require('argv');
 /**
  * Command class
  */
-class Migrate {
+class MigrateDb {
     /**
      * Create the service
      * @param {App} app                 The application
      * @param {object} config           Configuration
-     * @param {Runner} runner           Runner service
      * @param {Postgres} postgres       Postgres service
      */
-    constructor(app, config, runner, postgres) {
+    constructor(app, config, postgres) {
         this._app = app;
         this._config = config;
-        this._runner = runner;
         this._postgres = postgres;
     }
 
     /**
-     * Service name is 'commands.migrate'
+     * Service name is 'commands.migrateDb'
      * @type {string}
      */
     static get provides() {
-        return 'commands.migrate';
+        return 'commands.migrateDb';
     }
 
     /**
@@ -37,7 +35,7 @@ class Migrate {
      * @type {string[]}
      */
     static get requires() {
-        return [ 'app', 'config', 'runner', 'postgres' ];
+        return [ 'app', 'config', 'postgres' ];
     }
 
     /**
@@ -73,14 +71,14 @@ class Migrate {
             client.done();
 
             let deltas = [];
-            for (let i = currentVersion; i < latestVersion; i++)
-                deltas.push(i ? `schema.${i}-${i + 1}.sql` : `schema.1.sql`);
+            for (let i = currentVersion + 1; i <= latestVersion; i++)
+                deltas.push(`schema.${i}.sql`);
 
             await deltas.reduce(
                 async (prev, cur) => {
                     await prev;
 
-                    let filename = path.join(__dirname, '..', 'database', cur);
+                    let filename = path.join(__dirname, '..', '..', 'database', cur);
                     try {
                         fs.accessSync(filename, fs.constants.F_OK);
                     } catch (error) {
@@ -88,7 +86,7 @@ class Migrate {
                     }
 
                     await this._app.info(`==> ${path.basename(filename)}\n`);
-                    return this.psqlExec(filename, instance);
+                    return this._postgres.exec(filename, instance);
                 },
                 Promise.resolve()
             );
@@ -118,42 +116,6 @@ class Migrate {
         }
         process.exit(1);
     }
-
-    /**
-     * Run psql
-     * @param {string} filename
-     * @param {string} instance
-     * @return {Promise}
-     */
-    async psqlExec(filename, instance) {
-        let expect = new Map();
-        expect.set(/assword.*:/, this._config.get(`postgres.${instance}.password`));
-
-        let proc = this._runner.spawn(
-            'psql',
-            [
-                '-U', this._config.get(`postgres.${instance}.user`),
-                '-d', this._config.get(`postgres.${instance}.db_name`),
-                '-h', this._config.get(`postgres.${instance}.host`),
-                '-p', this._config.get(`postgres.${instance}.port`),
-                '-W',
-                '-f', filename,
-            ],
-            {
-                env: {
-                    'LANGUAGE': 'C',
-                    'LANG': 'C',
-                    'LC_ALL': 'C',
-                    'PATH': '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
-                },
-            },
-            expect
-        );
-        proc.cmd.on('data', data => {
-            process.stdout.write(data);
-        });
-        return proc.promise;
-    }
 }
 
-module.exports = Migrate;
+module.exports = MigrateDb;
